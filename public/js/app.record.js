@@ -1,8 +1,105 @@
 document.addEventListener('DOMContentLoaded', function () {
 
+    // GamepadEvent Initialization
+    var haveEvents = 'GamepadEvent' in window;
+    var haveWebkitEvents = 'WebKitGamepadEvent' in window;
+    var controllers = {};
+    var rAF = window.mozRequestAnimationFrame ||
+    window.webkitRequestAnimationFrame ||
+    window.requestAnimationFrame;
+
+    var joystick_axes=[0,0];
+    var dir_command=[0,0];
+
+    // End
+
+
+    // gamepad events
+    if (haveEvents) {
+        window.addEventListener("gamepadconnected", connecthandler);
+        window.addEventListener("gamepaddisconnected", disconnecthandler);
+    } else if (haveWebkitEvents) {
+        window.addEventListener("webkitgamepadconnected", connecthandler);
+        window.addEventListener("webkitgamepaddisconnected", disconnecthandler);
+    } else {
+        setInterval(scangamepads, 500);
+    }
+    function connecthandler(e) {
+        // we have to take this as a previous step to everything
+        console.log('connecting');
+        addgamepad(e.gamepad);
+    }
+    function addgamepad(gamepad) {
+        controllers[gamepad.index] = gamepad;
+        console.log('myindex',gamepad.index);
+        rAF(updateStatus);
+    }
+    function disconnecthandler(e) {
+        removegamepad(e.gamepad);
+    }
+    function removegamepad(gamepad) {
+        delete controllers[gamepad.index];
+    }
+    function scangamepads() {
+        var gamepads = navigator.getGamepads ? navigator.getGamepads() : (navigator.webkitGetGamepads ? navigator.webkitGetGamepads() : []);
+        for (var i = 0; i < gamepads.length; i++) {
+            if (gamepads[i]) {
+                if (!(gamepads[i].index in controllers)) {
+                    addgamepad(gamepads[i]);
+                } else {
+                    controllers[gamepads[i].index] = gamepads[i];
+                }
+            }
+        }
+        check_h= document.getElementById("control1");
+    }
+
+    function proccess_axe(send_axes){
+
+        var commands=0;
+        //Joystick commands
+        //commands:x
+        if(Math.abs(send_axes)>0.01){
+            if(send_axes<0){
+                commands=-1
+            }else{
+                commands=1
+            }
+        }
+        return commands;
+    }
+    function updateStatus() {
+        scangamepads();
+
+        var controller = controllers[0];
+        for (var i=0; i<controller.buttons.length; i++) {
+            var val = controller.buttons[i];
+            var pressed = val == 1.0;
+            if (typeof(val) == "object") {
+                pressed = val.pressed;
+                val = val.value;
+            }
+            var pct = Math.round(val * 100) + "%";
+            if (pressed) {
+                console.log("Pressed",i);
+            }
+        }
+        for (var i=0; i<controller.axes.length; i++) {
+            if (i==0||i==1){
+                joystick_axes[i]=controller.axes[i];
+                dir_command[i]=proccess_axe(joystick_axes[i]);
+                //dir_command[i]=joystick_axes[i];
+                console.log(joystick_axes[i],":",dir_command[i]);
+            }
+        }
+        //rAF(updateStatus);
+    }
+    //end of gamepad events
+
+
     String.prototype.replaceAll = function(search, replacement) {
-    var target = this;
-    return target.replace(new RegExp(search, 'g'), replacement);
+        var target = this;
+        return target.replace(new RegExp(search, 'g'), replacement);
     };
 
     function download(filename, text) {
@@ -56,8 +153,8 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     var editor = ace.edit("editor");
-        editor.setTheme("ace/theme/monokai");
-        editor.session.setMode("ace/mode/javascript");
+    editor.setTheme("ace/theme/monokai");
+    editor.session.setMode("ace/mode/javascript");
 
     var socket = new io.connect('http://localhost:3000', {path: '/connection/eeg',reconnect: true});
     var counter = 0;
@@ -75,27 +172,27 @@ document.addEventListener('DOMContentLoaded', function () {
 
     a=new AudioContext()
     function beep(vol, freq, duration){
-      v=a.createOscillator()
-      u=a.createGain()
-      v.connect(u)
-      v.frequency.value=freq
-      v.type="square"
-      u.connect(a.destination)
-      u.gain.value=vol*0.01
-      v.start(a.currentTime)
-      v.stop(a.currentTime+duration*0.001)
+        v=a.createOscillator()
+        u=a.createGain()
+        v.connect(u)
+        v.frequency.value=freq
+        v.type="square"
+        u.connect(a.destination)
+        u.gain.value=vol*0.01
+        v.start(a.currentTime)
+        v.stop(a.currentTime+duration*0.001)
     }
     //beep_sound.loop = true;
     socket.on('connect', function () {
-      socket.on('dev', function(data){
-        let connection_information = data[2];
-        let total = 0;
-        for (let index = 0; index<=13; index=index+1){
-          total = total + connection_information[index];
-        }
-        let avg = total/14/4*100;
-        $("#quality").text(avg);
-      });
+        socket.on('dev', function(data){
+            let connection_information = data[2];
+            let total = 0;
+            for (let index = 0; index<=13; index=index+1){
+                total = total + connection_information[index];
+            }
+            let avg = total/14/4*100;
+            $("#quality").text(avg);
+        });
         console.log('Connected to server');
         $("#run_experiment").off('click');
         execution_line = 0;
@@ -109,8 +206,8 @@ document.addEventListener('DOMContentLoaded', function () {
             let func = commands[0];
             let args = commands[1].split(')')[0];
             let data = {
-                    'command': func,
-                    'args': args
+                'command': func,
+                'args': args
             };
             if (func === "experiment"){
                 console.log('Recognizing Experiment')
@@ -122,23 +219,23 @@ document.addEventListener('DOMContentLoaded', function () {
 
         socket.on('beep', function(data){
             if (role)
-                 // browsers limit the number of concurrent audio contexts, so you better re-use'em
-                beep(100, 250, data)
+            // browsers limit the number of concurrent audio contexts, so you better re-use'em
+            beep(100, 250, data)
         });
 
         socket.on('present',function(data){
             let image = "<img src='"+data+"' style='max-height:50%, width: auto;'>";
             $("#subject-container").removeClass('d-none');
             if (role)
-                $("#subject-container").html(image);
+            $("#subject-container").html(image);
         });
         socket.on('play',function(data){
             audio_sound.src=data;
             if (role)
-                setTimeout(function(){
-                    audio_sound.loop = false;
-                    audio_sound.play();
-                }, 10);
+            setTimeout(function(){
+                audio_sound.loop = false;
+                audio_sound.play();
+            }, 10);
         });
         socket.on('finish', function(){
             if (role){
@@ -154,10 +251,7 @@ document.addEventListener('DOMContentLoaded', function () {
         socket.on('ball',function(data){
             if (role){
                 $("#subject-container").html("<div class='d-none' id='ball-container'><span class='dot' id='ball'></span></div>");
-                if (data.orientation === 'manual'){
-                  // JOSMAR code
-                }
-                else if (data.orientation === 'random'){
+                if (data.orientation === 'random'){
                     $("#subject-container").html('<canvas id="canvas" style="position: absolute; top: 0; left: 0;"></canvas>');
                     $("#ball-container").removeClass('d-none');
                     var canvas = document.getElementById('canvas');
@@ -176,19 +270,11 @@ document.addEventListener('DOMContentLoaded', function () {
                     var dy = 0;
                     var delta = 5; // range (from 0) of possible dx or dy change
                     var max = 15; // maximum dx or dy values
-                    canvas.addEventListener("click", togglestart);
 
-                    function togglestart() {
-                        if (interval == undefined) interval = window.setInterval(animate, 1000 / 60); // 60 FPS
-                        else {
-                            interval = clearInterval(interval);
-                            console.log(interval);
-                        }
-                    }
 
-                    var interval = window.setInterval(animate, 1000 / 60);
+                    var interval = window.setInterval(random_animate, 1000 / 60);
 
-                    function animate() {
+                    function random_animate() {
                         var d2x = (Math.random() * delta - delta / 2); //change dx and dy by random value
                         var d2y = (Math.random() * delta - delta / 2);
 
@@ -211,15 +297,71 @@ document.addEventListener('DOMContentLoaded', function () {
                         cxt.clearRect(0, 0, canvas.width, canvas.height); // wiping canvas
                         cxt.fill();
                     }
-                }else if (data.orientation ==='bottom'){
-                    // ball goes down
-                    $("#ball-container").removeClass('d-none');
-                    $("#ball").css('top', '1%');
-                    $("#ball").css('left','50%');
+
                     setTimeout(function(){
-                        $("#ball").animate({
-                            top:'97%'
-                        },
+                        interval = clearInterval(interval);
+                        console.log('Interval was cleared.');
+                    },data.duration);
+
+                }else if(data.orientation ==='controller'){
+                    $("#subject-container").html('<canvas id="canvas" style="position: absolute; top: 0; left: 0;"></canvas>');
+                    $("#ball-container").removeClass('d-none');
+                    var canvas = document.getElementById('canvas');
+
+                    canvas.width = window.innerWidth;
+                    canvas.height = window.innerHeight;
+
+                    var x = canvas.width / 2; //initial position
+                    var y = canvas.height / 2;
+
+                    var cxt = canvas.getContext('2d');
+                    cxt.fillStyle = '#FF0000'; //color
+                    var radius = 10;
+
+                    var dx = 0;
+                    var dy = 0;
+                    var delta = 5; // range (from 0) of possible dx or dy change
+                    var max = 15; // maximum dx or dy values
+
+                    var interval = window.setInterval(controller_animate, 1000 / 60);
+                    // controller animate
+                    function controller_animate() {
+                        console.log("Hey i'm animating");
+                        updateStatus();
+                        var d2x = dir_command[0]*delta; //change dx and dy by random value
+                        var d2y = dir_command[1]*delta;
+
+                        x += d2x;
+                        y += d2y;
+
+                        if(x>canvas.width-radius){x=canvas.width-radius}
+                        if(x<0+radius){x=0+radius}
+                        if(y>canvas.height-radius){y=canvas.height-radius}
+                        if(y<0+radius){y=0+radius}
+
+                        cxt.beginPath(); //drawing circle
+                        cxt.arc(x, y, radius, 0, 2 * Math.PI, false);
+                        cxt.clearRect(0, 0, canvas.width, canvas.height); // wiping canvas
+                        cxt.fill();
+                    }
+                    // end
+
+                    setTimeout(
+                        function(){
+                            interval = clearInterval(interval);
+                            console.log('Interval was cleared.');
+                        }
+                        , data.duration);
+
+                    }else if (data.orientation ==='bottom'){
+                        // ball goes down
+                        $("#ball-container").removeClass('d-none');
+                        $("#ball").css('top', '1%');
+                        $("#ball").css('left','50%');
+                        setTimeout(function(){
+                            $("#ball").animate({
+                                top:'97%'
+                            },
                             600,
                             function(){
 
@@ -235,131 +377,131 @@ document.addEventListener('DOMContentLoaded', function () {
                         $("#ball").animate({
                             top:'0px'
                         },
-                            600,
-                            function(){
+                        600,
+                        function(){
 
-                            }
-                        )
-                    },data.duration);
-                }else if (data.orientation === 'left'){
-                    // ball goes left
-                    $("#ball-container").removeClass('d-none');
-                    $("#ball").css('top', '50%');
-                    $("#ball").css('left','97%');
-                    setTimeout(function(){
-                        $("#ball").animate({
-                            left:'1%'
-                        },
-                            600,
-                            function(){
+                        }
+                    )
+                },data.duration);
+            }else if (data.orientation === 'left'){
+                // ball goes left
+                $("#ball-container").removeClass('d-none');
+                $("#ball").css('top', '50%');
+                $("#ball").css('left','97%');
+                setTimeout(function(){
+                    $("#ball").animate({
+                        left:'1%'
+                    },
+                    600,
+                    function(){
 
-                            }
-                        )
-                    },data.duration);
-                }else if (data.orientation === 'right'){
-                    // ball goes right
-                    $("#ball-container").removeClass('d-none');
-                    $("#ball").css('top', '50%');
-                    $("#ball").css('left','1%');
-                    setTimeout(function(){
-                        $("#ball").animate({
-                            left:'97%'
-                        },
-                            600,
-                            function(){
-
-                            }
-                        )
-                    },data.duration);
-                }else{
-                    console.log('Unrecognized data');
-                }
-            }
-        });
-        socket.on('clear',function(data){
-            if (data === "screen"){
-                console.log('Recognizing Clear Screen')
-                let emptyness = "";
-                $("#subject-container").html(emptyness);
-            }else if (data === "audio"){
-                console.log('Recognizing Clear Sound')
-                audio_sound.pause();
-                audio_sound.currentTime=0;
-            }
-        })
-        socket.on('command',function(data){
-            console.log(data);
-            if (data === "ready" && !role){
-                beep_sound.pause();
-                execution_line = execution_line + 1;
-                console.log(sentences[execution_line]);
-                let commands = sentences[execution_line].split('(');
-                console.log(commands);
-                let func = commands[0];
-                let args = commands[1].split(')')[0];
-                let data = {
-                        'command': func,
-                        'args': args
-                };
-                if (func === "experiment"){
-                    console.log('Recognizing Experiment')
-                    experiment = args;
-                }
-                else if (func === "beep"){
-                    console.log('Recognizing Beep')
-                }else if (func === "present"){
-                    console.log('Recognizing Presentation')
-
-                }else if (func === "play"){
-                    console.log('Recognizing Play')
-
-                }else if (func === "clear"){
-                    console.log('Recognizing Clear');
-                }else if (func === "ball"){
-                    console.log("Recognizing ball");
-                }else if (func === "wait"){
-                    if (args>0 || args.length>0){
-                        console.log('waiting server response');
-                    }else{
-                        console.log('Recognizing Wait')
-                        $("#trigger_button").removeClass('disabled');
-                        waiting_for_trigger = true;
-                        $("#trigger_button").off('click');
-                        $("#trigger_button").click(function(e){
-                            e.preventDefault();
-                            socket.emit('command',{
-                                "command": 'wait'
-                            });
-                            $("#trigger_button").addClass('disabled');
-                            waiting_for_trigger = false;
-                        });
                     }
-                }else if (func === "finish"){
-                    console.log('finished');
-                    $("#run_experiment").removeClass("disabled");
-                    $("#trigger_button").addClass('disabled');
-                    console.log('this way');
-                    socket.emit('command',{
-                        "command":'finish'
-                    });
-                    execution_line = 0;
+                )
+            },data.duration);
+        }else if (data.orientation === 'right'){
+            // ball goes right
+            $("#ball-container").removeClass('d-none');
+            $("#ball").css('top', '50%');
+            $("#ball").css('left','1%');
+            setTimeout(function(){
+                $("#ball").animate({
+                    left:'97%'
+                },
+                600,
+                function(){
+
                 }
-                if (!waiting_for_trigger){
-                    socket.emit('command', data);
-                }
+            )
+        },data.duration);
+    }else{
+        console.log('Unrecognized data');
+    }
+}
+});
+socket.on('clear',function(data){
+    if (data === "screen"){
+        console.log('Recognizing Clear Screen')
+        let emptyness = "";
+        $("#subject-container").html(emptyness);
+    }else if (data === "audio"){
+        console.log('Recognizing Clear Sound')
+        audio_sound.pause();
+        audio_sound.currentTime=0;
+    }
+})
+socket.on('command',function(data){
+    console.log(data);
+    if (data === "ready" && !role){
+        beep_sound.pause();
+        execution_line = execution_line + 1;
+        console.log(sentences[execution_line]);
+        let commands = sentences[execution_line].split('(');
+        console.log(commands);
+        let func = commands[0];
+        let args = commands[1].split(')')[0];
+        let data = {
+            'command': func,
+            'args': args
+        };
+        if (func === "experiment"){
+            console.log('Recognizing Experiment')
+            experiment = args;
+        }
+        else if (func === "beep"){
+            console.log('Recognizing Beep')
+        }else if (func === "present"){
+            console.log('Recognizing Presentation')
+
+        }else if (func === "play"){
+            console.log('Recognizing Play')
+
+        }else if (func === "clear"){
+            console.log('Recognizing Clear');
+        }else if (func === "ball"){
+            console.log("Recognizing ball");
+        }else if (func === "wait"){
+            if (args>0 || args.length>0){
+                console.log('waiting server response');
             }else{
-                console.log('Either user has no right role or an error has occured while receiving command from server');
+                console.log('Recognizing Wait')
+                $("#trigger_button").removeClass('disabled');
+                waiting_for_trigger = true;
+                $("#trigger_button").off('click');
+                $("#trigger_button").click(function(e){
+                    e.preventDefault();
+                    socket.emit('command',{
+                        "command": 'wait'
+                    });
+                    $("#trigger_button").addClass('disabled');
+                    waiting_for_trigger = false;
+                });
             }
-        });
+        }else if (func === "finish"){
+            console.log('finished');
+            $("#run_experiment").removeClass("disabled");
+            $("#trigger_button").addClass('disabled');
+            console.log('this way');
+            socket.emit('command',{
+                "command":'finish'
+            });
+            execution_line = 0;
+        }
+        if (!waiting_for_trigger){
+            socket.emit('command', data);
+        }
+    }else{
+        console.log('Either user has no right role or an error has occured while receiving command from server');
+    }
+});
 
-        socket.on('dev', function(data){
+socket.on('dev', function(data){
 
-        });
-        socket.on('data',function(data){
+});
+socket.on('data',function(data){
 
-        });
-        socket.on('subject-html',function(data){
-            $("#subject-container").html(data);
-        });
-    });
+});
+socket.on('subject-html',function(data){
+    $("#subject-container").html(data);
+});
+});
 }, false);

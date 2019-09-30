@@ -1,0 +1,8 @@
+/* Default test chart height of 220px. */
+.test .epoch {
+    height: 800px;
+}
+
+.broken {
+    color: red;
+}

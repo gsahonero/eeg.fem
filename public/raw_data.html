@@ -1,0 +1,113 @@
+<html>
+<head>
+    <title>RAW EEG EPOC</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/rickshaw/1.6.3/rickshaw.min.css">
+    <link rel="stylesheet" href="./css/epoch.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+<body>
+    <div id="myChart" style="width: 200px; height: 200px"></div>
+
+    <style>
+    body {
+        padding: 20px;
+    }
+
+    #chart_container {
+        position: relative;
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+    #demo_chart {
+        position: relative;
+        left: 100px;
+    }
+
+    #y_axis {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 100px;
+    }
+
+    </style>
+    <div class="container-fluid" id="chart_container">
+        <div id="y_axis"></div>
+        <div id="demo_chart"></div>
+    </div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-6">
+                <img src="./img/emotiv.jpg" alt="">
+            </div>
+            <div class="col-md-6">
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="channel1_check">
+                    <label class="form-check-label" for="channel1_check">Channel 1 - FC6</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="channel2_check">
+                    <label class="form-check-label" for="channel2_check">Channel 2 - F7</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="channel3_check">
+                    <label class="form-check-label" for="channel3_check">Channel 3 - O2</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="channel4_check">
+                    <label class="form-check-label" for="channel4_check">Channel 4 - P7</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="channel5_check">
+                    <label class="form-check-label" for="channel5_check">Channel 5 - T8</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="channel6_check">
+                    <label class="form-check-label" for="channel6_check">Channel 6 - AF4</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="channel7_check">
+                    <label class="form-check-label" for="channel7_check">Channel 7 - FC5</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="channel8_check">
+                    <label class="form-check-label" for="channel8_check">Channel 8 - F8</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="channel9_check">
+                    <label class="form-check-label" for="channel9_check">Channel 9 - P8</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="channel10_check">
+                    <label class="form-check-label" for="channel10_check">Channel 10 - F4</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="channel11_check">
+                    <label class="form-check-label" for="channel11_check">Channel 11 - O1</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="channel12_check">
+                    <label class="form-check-label" for="channel12_check">Channel 12 - AF3</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="channel13_check">
+                    <label class="form-check-label" for="channel13_check">Channel 13 - T7</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="channel14_check">
+                    <label class="form-check-label" for="channel14_check">Channel 14 - F3</label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.2.0/d3.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/rickshaw/1.6.5/rickshaw.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"> </script>
+    <script src="./js/epoch.min.js"></script>
+    <script src="./js/app.js"></script>
+    https://itnext.io/javascript-real-time-visualization-of-high-frequency-streams-d6533c774794
+</body>
+</html>

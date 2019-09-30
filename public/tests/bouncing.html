@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <script src="../js/jquery-1.10.1.min.js"></script>
+    <script src="../js/d3.v3.js" charset="utf-8"></script>
+    <script src="../js/epoch.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/epoch.css">
+</head>
+<body>
+    <style>
+        .max-size{
+            max-height: 50vh;
+            position: fixed;
+            left: 10%;
+            top: 35%;
+        }
+        .container{
+            text-align: center;
+        }
+        #editor{
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            min-height: 800px;
+        }
+        #welcome-screen{
+            align-items: center;
+            text-align: center;
+            margin-top: 30vh;
+        }
+        html{
+            height:100%;
+        }
+        .vertical-center{
+            min-height: 100%;
+            min-height: 100vh;
+            min-width: 100%;
+            position: fixed;
+            display: flex;
+            align-items: center;
+        }
+        .dot {
+          height: 25px;
+          width: 25px;
+          background-color: red;
+          border-radius: 50%;
+          display: inline-block;
+          position: absolute;
+          top: 1%;
+          left: 50%;
+        }
+    </style>
+
+    <div style="text-align:text-center;">
+        <span class="dot" id="ball"></span>
+    </div>
+<script src="../js/popper.min.js"></script>
+<script src="../js/bootstrap.min.js"></script>
+<script src="../js/socket.io.js"> </script>
+<script src="../js/smoothie.js"></script>
+<script src="../js/ace/ace.js"></script>
+
+<script>
+    setTimeout(function(){
+        $("#ball").animate({
+            top:'97%'
+        },
+            600,
+            function(){
+
+            }
+        )
+    },1000);
+</script>
+</body>
+</html>

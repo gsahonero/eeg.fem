@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="./css/bootstrap.min.css">
+        <script src="./js/jquery-1.10.1.min.js"></script>
+        <script src="./js/d3.v3.js" charset="utf-8"></script>
+        <script src="./js/epoch.js"></script>
+        <link rel="stylesheet" type="text/css" href="./css/epoch.css">
+    </head>
+    <body>
+        <style>
+            .max-size{
+                max-height: 50vh;
+                position: fixed;
+                left: 10%;
+                top: 35%;
+            }
+            .container{
+                text-align: center;
+            }
+        </style>
+        <div class="container">
+            <div class="test">
+                <h2>Check Headset Connection</h2>
+                <p>Acquiring data from sockets. <a href="./">Click here to return to Dashboard</a></p>
+            </div>
+        </div>
+        <div class="container">
+            <h3>Select a channel of your preference:</h3>
+            <div class="row">
+                <div class="col-md-6">
+                    <img class="img-fluid max-size" src="./img/emotiv.jpg" alt="">
+                </div>
+                <div class="col-md-6" style="text-align: left;">
+                    <div class="alert" role="alert" id="FC6">
+                        Channel 1 - FC6
+                    </div>
+                    <div class="alert" role="alert" id="F7">
+                        Channel 2 - F7
+                    </div>
+                    <div class="alert" role="alert" id="O2">
+                        Channel 3 - O2
+                    </div>
+                    <div class="alert" role="alert" id="P7">
+                        Channel 4 - P7
+                    </div>
+                    <div class="alert" role="alert" id="T8">
+                        Channel 5 - T8
+                    </div>
+                    <div class="alert" role="alert" id="AF4">
+                        Channel 6 - AF4
+                    </div>
+                    <div class="alert" role="alert" id="FC5">
+                        Channel 7 - FC5
+                    </div>
+                    <div class="alert" role="alert" id="F8">
+                        Channel 8 - F8
+                    </div>
+                    <div class="alert" role="alert" id="P8">
+                        Channel 9 - P8
+                    </div>
+                    <div class="alert" role="alert" id="F4">
+                        Channel 10 - F4
+                    </div>
+                    <div class="alert" role="alert" id="O1">
+                        Channel 11 - O1
+                    </div>
+                    <div class="alert" role="alert" id="AF3">
+                        Channel 12 - AF3
+                    </div>
+                    <div class="alert" role="alert" id="T7">
+                        Channel 13 - T7
+                    </div>
+                    <div class="alert" role="alert" id="F3">
+                        Channel 14 - F3
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="./js/popper.min.js"></script>
+        <script src="./js/bootstrap.min.js"></script>
+        <script src="./js/socket.io.js"> </script>
+        <script src="./js/smoothie.js"></script>
+        <script src="./js/app.check.js"></script>
+    </body>
+</html>

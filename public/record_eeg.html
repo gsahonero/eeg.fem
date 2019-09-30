@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="./css/bootstrap.min.css">
+    <script src="./js/jquery-1.10.1.min.js"></script>
+    <script src="./js/d3.v3.js" charset="utf-8"></script>
+    <script src="./js/epoch.js"></script>
+    <link rel="stylesheet" type="text/css" href="./css/epoch.css">
+</head>
+<body>
+    <style>
+        img {
+            height: 80vh;
+            width: 80vh;
+        }
+        .max-size{
+            max-height: 50vh;
+            position: fixed;
+            left: 10%;
+            top: 35%;
+        }
+        .container{
+            text-align: center;
+        }
+        #editor{
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            min-height: 800px;
+        }
+        #welcome-screen{
+            align-items: center;
+            text-align: center;
+            margin-top: 30vh;
+        }
+        html{
+            height:100%;
+        }
+        .vertical-center{
+            min-height: 100%;
+            min-height: 100vh;
+            min-width: 100%;
+            position: fixed;
+            display: flex;
+            align-items: center;
+        }
+
+        .dot {
+          height: 25px;
+          width: 25px;
+          background-color: red;
+          border-radius: 50%;
+          display: inline-block;
+          position: absolute;
+        }
+    </style>
+    <div class="container" id="welcome-screen">
+        Load view for
+        <button type="button" class="btn btn-large btn-block btn-success" id="load-subject">Subject</button>
+        <button type="button" class="btn btn-large btn-block btn-danger" id="load-researcher">Researcher</button>
+    </div>
+
+    <div class="jumbotron vertical-center" style="background-color:white;">
+        <div id="subject-container" class="container d-none">
+            <div class="d-none" id="ball-container">
+                <span class="dot" id="ball"></span>
+            </div>
+            <h3>Waiting... Please, be patient</h3>
+        </div>
+    </div>
+
+    <div class="container d-none" id="title">
+        <div class="test">
+            <h2>Record EEG</h2>
+            <p>Acquiring data from sockets. <a href="./">Click here to return to Dashboard</a></p>
+        </div>
+    </div>
+    <div class="container d-none" id="content">
+        <h3>Design your experiment:</h3>
+        <div class="row">
+            <div class="col-md-6">
+                <div id="editor">experiment(visual-imagery-1);
+id(123456);
+wait(1000,first_wait);
+finish();</div>
+        </div>
+        <div class="col-md-6" style="text-align: left;">
+        Connection level: <a id="quality"> </a>
+            <a class="btn btn-primary btn-lg btn-block" href="#" role="button" id="run_experiment">Run experiment</a>
+            <a class="btn btn-secondary btn-lg btn-block" href="#" role="button" id="load_experiment">Load experiment from file</a>
+            <a class="btn btn-secondary btn-lg btn-block" href="#" role="button" id="save_experiment">Save experiment to file</a>
+            <div class="container">
+                Interaction region:
+                <a class="btn btn-danger btn-lg btn-block disabled" href="record_eeg.html" role="button" id="trigger_button">Trigger button</a>
+
+            </div>
+            <input type="file" id="file-upload" style="display:none;"/>
+            <p>
+                A note on the allowed functions, remember that record of the session is permanent:
+            </p>
+            <ol>
+                <li><b>experiment(arg)</b> - selects a main folder <i>(arg)</i> from images and audios are retrieved. These files should be in server.</li>
+                <li><b>id(arg)</b> - selects a local folder <i>(arg)</i> where the data will be saved. This local folder is inside a main folder which name was declared by the <i>experiment</i> function. Data is saved by default in Desktop.</li>
+                <li><b>beep(arg)</b> - produces a beep sound for <i>arg</i> milliseconds.</li>
+                <li><b>present(arg)</b> - presents on screen the image which file name is <i>arg</i>.</li>
+                <li><b>play(arg)</b> - plays the sound which file name is <i>arg</i>.</li>
+                <li><b>clear(arg)</b> - clear <i>arg</i> channel. If <i>arg</i> is 'screen' then clear the presented image. If <i>arg</i> is 'sound', stops the ongoing sound or music. This does not apply to the beep function.</li>
+                <li><b>wait()</b> - enables trigger button as interruption switch. If argument is a number, waits for that amount of time in milliseconds. If argument is a number and a text separated by comma, the text is the marker description and the number is the amount of time in milliseconds.</li>
+                <li><b>finish()</b> - marks the end of script.</li>
+                <li><b>Semicolon usage is mandatory</b></li>
+            </ol>
+        </div>
+    </div>
+</div>
+
+<script src="./js/popper.min.js"></script>
+<script src="./js/bootstrap.min.js"></script>
+<script src="./js/socket.io.js"> </script>
+<script src="./js/smoothie.js"></script>
+<script src="./js/ace/ace.js"></script>
+<script src="./js/app.record.js"></script>
+</body>
+</html>

@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 } else {
                     controllers[gamepads[i].index] = gamepads[i];
                 }
-            }
+            }   
         }
         check_h= document.getElementById("control1");
     }
@@ -115,14 +115,27 @@ document.addEventListener('DOMContentLoaded', function () {
         document.body.removeChild(element);
     }
 
-    $("#load-subject").click(function(){
-        $("#subject-container").attr('class','container');
 
-        setTimeout(function(){
-            $("#subject-container").html("");
-        }, 2000);
+    $("#load-subject").click(function(){
         $("#welcome-screen").attr('class','d-none');
-        role = 1;
+        $("#subject-container").attr('class','container');
+        
+        var myVar = setInterval(refreshJoystick, 1000/60); 
+        function refreshJoystick()
+        {
+            if(navigator.getGamepads().length > 0){
+                
+                clearInterval(myVar);
+                $("#subject-container").html("<h3>Waiting, please be patient ...</h3>");
+                setTimeout(function(){
+                    $("#subject-container").html("");
+                }, 2000);
+                role = 1;
+            }
+            else{
+                $("#subject-container").html("<h3>Press any button</h3>");            
+            }
+        }    
     });
 
     $("#load-researcher").click(function(){
@@ -505,3 +518,4 @@ socket.on('subject-html',function(data){
 });
 });
 }, false);
+

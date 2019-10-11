@@ -167,7 +167,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     var editor = ace.edit("editor");
     editor.setTheme("ace/theme/monokai");
-    editor.session.setMode("ace/mode/javascript");
+    editor.session.setMode("ace/mode/custom");
 
     var socket = new io.connect('http://localhost:3000', {path: '/connection/eeg',reconnect: true});
     var counter = 0;

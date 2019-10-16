@@ -114,26 +114,54 @@ document.addEventListener('DOMContentLoaded', function () {
 
         document.body.removeChild(element);
     }
+    function findAudio() {
+        let audio_list=[]
+        code = editor.getValue();
+        // we should go until sentences.length-1 EYE WITH THIS
+        sentences = code.replaceAll('\n','').split(';');
+        for(var i=0; i<sentences.length-1;i++){
+            var parameters=readLine(sentences[i]);
+            if(parameters.command == "play"){
+                audio_list.push(parameters.args)
+            }  
+        }
+        return audio_list
+    }
+    function readLine(line){
+        let commands = line.split('(');
+        let func = commands[0];
+        let args = commands[1].split(')')[0];
+        let data = {
+            'command': func,
+            'args': args
+        };
+        return data;
+    }
 
 
     $("#load-subject").click(function(){
         $("#welcome-screen").attr('class','d-none');
-        $("#subject-container").attr('class','container');
-        
+        $("#joystick-screen").attr('class','container');
+    
         var myVar = setInterval(refreshJoystick, 1000/60); 
-        function refreshJoystick()
-        {
-            if(navigator.getGamepads().length > 0){
-                
+        function setExperiment()
+            {
                 clearInterval(myVar);
+                $("#joystick-screen").attr('class','d-none');
+                $("#subject-container").attr('class','container');
                 $("#subject-container").html("<h3>Waiting, please be patient ...</h3>");
                 setTimeout(function(){
                     $("#subject-container").html("");
                 }, 2000);
                 role = 1;
             }
-            else{
-                $("#subject-container").html("<h3>Press any button</h3>");            
+        $("#skip-button").click(function(e){
+            setExperiment();
+        });
+        function refreshJoystick()
+        {
+            if(navigator.getGamepads().length > 0){
+                setExperiment();
             }
         }    
     });
@@ -207,6 +235,12 @@ document.addEventListener('DOMContentLoaded', function () {
             $("#quality").text(avg);
         });
         console.log('Connected to server');
+
+        $("#import_audio").click(function(e){
+            let myAudio=findAudio();
+            console.log(myAudio);
+
+        });
         $("#run_experiment").off('click');
         execution_line = 0;
         $("#run_experiment").click(function(e){
@@ -518,4 +552,3 @@ socket.on('subject-html',function(data){
 });
 });
 }, false);
-

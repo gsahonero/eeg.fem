@@ -62,6 +62,11 @@
         <button type="button" class="btn btn-large btn-block btn-danger" id="load-researcher">Researcher</button>
     </div>
 
+    <div class="container d-none" id="joystick-screen">
+        <h3>Press any Button</h3> 
+        <a id="skip-button" href="javascript:void(0)">Skip</a>
+    </div>
+
     <div class="jumbotron vertical-center" style="background-color:white;">
         <div id="subject-container" class="container d-none">
             <div class="d-none" id="ball-container">
@@ -84,7 +89,7 @@
                 <div id="editor">experiment(visual-imagery-1);
 id(123456);
 wait(1000,first_wait);
-ball(controller,7000);
+play(Mario1.mp3);
 finish();</div>
         </div>
         <div class="col-md-6" style="text-align: left;">
@@ -92,6 +97,7 @@ finish();</div>
             <a class="btn btn-primary btn-lg btn-block" href="#" role="button" id="run_experiment">Run experiment</a>
             <a class="btn btn-secondary btn-lg btn-block" href="#" role="button" id="load_experiment">Load experiment from file</a>
             <a class="btn btn-secondary btn-lg btn-block" href="#" role="button" id="save_experiment">Save experiment to file</a>
+            <a class="btn btn-secondary btn-lg btn-block" href="#" role="button" id="import_audio">Import audio resources</a>
             <div class="container">
                 Interaction region:
                 <a class="btn btn-danger btn-lg btn-block disabled" href="record_eeg.html" role="button" id="trigger_button">Trigger button</a>

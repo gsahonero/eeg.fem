@@ -800,7 +800,7 @@ io.on('connect', function(socket){
             number_of_step = number_of_step + 1;
             means_marker = "play";
             console.log('Recognized play '+args)
-            io.emit('play','./data/'+experiment+'/'+args);
+            io.emit('play',args);
             io.emit('command','ready');
         }else if (func === "wait"){
             number_of_step = number_of_step + 1;
@@ -872,6 +872,14 @@ io.on('connect', function(socket){
             console.log('command not recognized.');
         }
     });
+
+    socket.on('audio_files',(data)=>{
+        socket.broadcast.emit('audio_files',data);
+    })
+    socket.on('folder',(data)=>{
+        socket.broadcast.emit('folder','./data/'+data);
+        
+    })
 
     //Raw data
     socket.on('joystick:button',(data)=>{

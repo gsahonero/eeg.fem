@@ -123,7 +123,11 @@ document.addEventListener('DOMContentLoaded', function () {
             var parameters=readLine(sentences[i]);
             if(parameters.command == "play"){
                 audio_list.push(parameters.args)
-            }  
+            }
+            if(parameters.command == "experiment"){
+                experiment=parameters.args
+                console.log("file",parameters.args);
+            }    
         }
         return audio_list
     }
@@ -136,6 +140,20 @@ document.addEventListener('DOMContentLoaded', function () {
             'args': args
         };
         return data;
+    }
+    function importMusic(names){
+        let my_audio;
+        let my_tag;
+        let my_object=[];
+        names.forEach(function(element) {
+            console.log(element);
+            console.log("hey",experiment);
+            my_audio = new Audio(experiment+'/'+element);
+            my_tag = element;
+            my_object.push({music: my_audio, tag: my_tag});
+            //var beep_sound = new Audio('./data/beep.mp3');
+        });
+        return my_object
     }
 
 
@@ -201,7 +219,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var counter = 0;
     var step = 0;
     var code = "";
-    var experiment = "";
+    var experiment = ":p";
     var sentences = "";
     var execution_line = 0;
     var waiting_for_trigger = false;
@@ -210,6 +228,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var role = 0;
     var audio_sound = new Audio();
     var beep_sound = new Audio('./data/beep.mp3');
+    var music_list=[]
 
     a=new AudioContext()
     function beep(vol, freq, duration){
@@ -239,7 +258,9 @@ document.addEventListener('DOMContentLoaded', function () {
         $("#import_audio").click(function(e){
             let myAudio=findAudio();
             console.log(myAudio);
-
+            console.log(experiment);
+            socket.emit('folder',experiment);
+            socket.emit('audio_files',myAudio);
         });
         $("#run_experiment").off('click');
         execution_line = 0;
@@ -262,8 +283,20 @@ document.addEventListener('DOMContentLoaded', function () {
             }
             console.log('Sending initial command')
             socket.emit('command', data);
+            
         });
 
+        socket.on('audio_files', function(data){
+            if(role){
+                console.log(data);
+                music_list= importMusic(data);   
+                console.log(music_list);
+                
+            }  
+        });
+        socket.on('folder', function(data){
+            experiment=data;  
+        });
         socket.on('beep', function(data){
             if (role)
             // browsers limit the number of concurrent audio contexts, so you better re-use'em
@@ -277,12 +310,21 @@ document.addEventListener('DOMContentLoaded', function () {
             $("#subject-container").html(image);
         });
         socket.on('play',function(data){
-            audio_sound.src=data;
-            if (role)
-            setTimeout(function(){
-                audio_sound.loop = false;
-                audio_sound.play();
-            }, 10);
+            console.log("Mydata: ",data);
+            if (role){
+                music_list.forEach(function(element) {
+                    console.log("TAG:",element.tag, "DESIRED:",data);
+                    if(element.tag == data){
+                        console.log(element);
+                        setTimeout(function(){
+                            element.music.loop = false;
+                            element.music.play();
+                        }, 10);
+                    }
+                    
+                });
+            }
+            
         });
         socket.on('finish', function(){
             if (role){
@@ -471,9 +513,14 @@ socket.on('clear',function(data){
         let emptyness = "";
         $("#subject-container").html(emptyness);
     }else if (data === "audio"){
+        
         console.log('Recognizing Clear Sound')
-        audio_sound.pause();
-        audio_sound.currentTime=0;
+        music_list.forEach(function(element) {
+            element.music.pause();
+            element.music.currentTime=0;
+        });
+        
+        
     }
 })
 socket.on('command',function(data){

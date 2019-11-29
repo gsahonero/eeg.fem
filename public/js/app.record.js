@@ -24,22 +24,50 @@ document.addEventListener('DOMContentLoaded', function () {
     } else {
         setInterval(scangamepads, 500);
     }
+
+    /**
+     * Maneja las conexiones de los controles. Conecta un gamepad
+     *
+     * @param {*} e Lista de gamepads
+     */
     function connecthandler(e) {
         // we have to take this as a previous step to everything
         console.log('connecting');
+        console.log(typeof(e));
         addgamepad(e.gamepad);
     }
+    /**
+     * Añade un control a la lista de gamepads
+     *
+     * @param {*} gamepad Tiene como parametro el control que será añadido
+     */
     function addgamepad(gamepad) {
         controllers[gamepad.index] = gamepad;
         console.log('myindex',gamepad.index);
         rAF(updateStatus);
     }
+
+    /**
+     * Remueve el control de la lista de gamepads
+     *
+     * @param {*} e Tiene como parametro el control que será retirado
+     */
     function disconnecthandler(e) {
         removegamepad(e.gamepad);
     }
+    /**
+     *  Remueve el control gamepad de la lista
+     * 
+     * @param {*} gamepad Control que será retirado
+     */
     function removegamepad(gamepad) {
         delete controllers[gamepad.index];
     }
+    /**
+     * Escanea para revisar si existen gamepads conectados a la computadora, 
+     * en caso de que existiesen utiliza la función addgamepad()
+     * 
+     */
     function scangamepads() {
         var gamepads = navigator.getGamepads ? navigator.getGamepads() : (navigator.webkitGetGamepads ? navigator.webkitGetGamepads() : []);
         for (var i = 0; i < gamepads.length; i++) {
@@ -54,13 +82,18 @@ document.addEventListener('DOMContentLoaded', function () {
         check_h= document.getElementById("control1");
     }
 
-    function proccess_axe(send_axes){
-
+    /**
+    * process_axe 
+    * Convierte la entrada análoga de uno de los ejes a un valor de -1,0,1
+    * @param {float} raw_axe valor de un eje de joystick en formato float de -1 a 1
+    * @returns {integer} Valor de eje discreto, puede ser (-1,0,1)
+    */
+    function proccess_axe(raw_axe){
         var commands=0;
         //Joystick commands
         //commands:x
-        if(Math.abs(send_axes)>0.01){
-            if(send_axes<0){
+        if(Math.abs(raw_axe)>0.01){
+            if(raw_axe<0){
                 commands=-1
             }else{
                 commands=1
@@ -68,6 +101,13 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         return commands;
     }
+    
+    
+    /**
+     * Monitorea si es que se conectó un nuevo gamepad y el estado de los botones
+     * digitales y analógicos del control
+     *
+     */
     function updateStatus() {
         scangamepads();
 
@@ -97,11 +137,18 @@ document.addEventListener('DOMContentLoaded', function () {
     //end of gamepad events
 
 
+    
     String.prototype.replaceAll = function(search, replacement) {
         var target = this;
         return target.replace(new RegExp(search, 'g'), replacement);
     };
 
+    /**
+     * Descarga el script escrito en el editor de la pantalla de Researcher en formato de archivo txt
+     *
+     * @param {String} filename Nombre con el cual se desea guardar el script
+     * @param {String} text Texto que será almacenado dentro del documento txt
+     */
     function download(filename, text) {
         var element = document.createElement('a');
         element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
@@ -114,6 +161,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
         document.body.removeChild(element);
     }
+    
+    /**
+     * Revisa si existe alguna instancia de play(parameter) escrita en el script. Los nombres de los archivos
+     * encontrados como parametros son guardados en un Objeto 
+     * 
+     * @returns {Object} audiolist Retorna un objeto que contiene los nombres de los archivos que
+     *                     deben ser cargados   
+     */
     function findAudio() {
         let audio_list=[]
         code = editor.getValue();
@@ -131,6 +186,12 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         return audio_list
     }
+    /**
+     * Extrae información de una linea de comando 
+     *
+     * @param {String} line linea de código que posee el formato de   command(argument) 
+     * @returns {Object} data Objeto que contiene el nombre del comando y sus argumentos
+     */
     function readLine(line){
         let commands = line.split('(');
         let func = commands[0];
@@ -141,7 +202,15 @@ document.addEventListener('DOMContentLoaded', function () {
         };
         return data;
     }
-    function importMusic(names){
+
+    /**
+     *
+     *
+     * @param {Object} names Nombres de archivos de audio a ser importados
+     * @returns {Object} Contiene una lista de objetos con el
+     *                   archivo de audio y un string como identificador
+     */
+    function importMusic(names){        
         let my_audio;
         let my_tag;
         let my_object=[];
@@ -162,6 +231,10 @@ document.addEventListener('DOMContentLoaded', function () {
         $("#joystick-screen").attr('class','container');
     
         var myVar = setInterval(refreshJoystick, 1000/60); 
+        /**
+         * Cambia el estilo de la pagina a una página en blanco
+         *
+         */
         function setExperiment()
             {
                 clearInterval(myVar);
@@ -176,6 +249,11 @@ document.addEventListener('DOMContentLoaded', function () {
         $("#skip-button").click(function(e){
             setExperiment();
         });
+        
+        /**
+         * En caso de existir un joystick conectado llama a la función setExperiment()
+         *
+         */
         function refreshJoystick()
         {
             if(navigator.getGamepads().length > 0){

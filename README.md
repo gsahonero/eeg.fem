@@ -55,10 +55,10 @@ Semicolon usage is mandatory
 
 ## How to use
 1. Connect the headset to your PC
-2. Start the program. Open the file where you have cloned the repository and then type in the termina:
+2. Start the program. Open the file where you have cloned the repository and then type in the terminal:
 ```bash
 cd eeg.fem
 node start
 ```
-If the process started correctly you should receive the following message: *Server is running on port 3000!
+If the process started correctly you should receive the following message: *Server is running on port 3000!*
 

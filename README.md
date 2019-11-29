@@ -60,6 +60,6 @@ Semicolon usage is mandatory
 cd eeg.fem
 node start
 ```
-If the process started correctly you should receive the following message: *Server is running on port 3000!*
+If the process started correctly you should receive the following message: *Server is running on port 3000!*.
 3. Open your favorite browser, then enter to the localhost. In this case the program is running on port 3000, so you'll have to enter to: http://localhost:3000/
 

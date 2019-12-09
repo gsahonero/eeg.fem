@@ -138,6 +138,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
     
+    /**
+     *
+     * Busca todas las instancias de una palabra y las reemplaza
+     * @param {String} search       word that will be searched
+     * @param {String} replacement  Word that will be the replacement
+     * @returns Changes the document to a new version with the words replaced
+     */
     String.prototype.replaceAll = function(search, replacement) {
         var target = this;
         return target.replace(new RegExp(search, 'g'), replacement);
@@ -204,7 +211,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     /**
-     *
+     *  Importa los archivos de música con el no
      *
      * @param {Object} names Nombres de archivos de audio a ser importados
      * @returns {Object} Contiene una lista de objetos con el
@@ -214,6 +221,12 @@ document.addEventListener('DOMContentLoaded', function () {
         let my_audio;
         let my_tag;
         let my_object=[];
+        /**
+         *  Crea un objeto que contiene un identificador y el archivo de audio cargado
+         *
+         * @param {String} element Cada elemento dentro de la lista de nombres
+         *                        
+         */
         names.forEach(function(element) {
             console.log(element);
             console.log("hey",experiment);
@@ -225,14 +238,18 @@ document.addEventListener('DOMContentLoaded', function () {
         return my_object
     }
 
-
+    /**
+     *
+     *  Carga la pagina del sujeto de prueba
+     * 
+     */
     $("#load-subject").click(function(){
         $("#welcome-screen").attr('class','d-none');
         $("#joystick-screen").attr('class','container');
     
         var myVar = setInterval(refreshJoystick, 1000/60); 
         /**
-         * Cambia el estilo de la pagina a una página en blanco
+         * Setea la página del sujeto de experimentacion.
          *
          */
         function setExperiment()
@@ -241,11 +258,20 @@ document.addEventListener('DOMContentLoaded', function () {
                 $("#joystick-screen").attr('class','d-none');
                 $("#subject-container").attr('class','container');
                 $("#subject-container").html("<h3>Waiting, please be patient ...</h3>");
+                
+                /**
+                 * Vacía la página del sujeto de experimentacion después de 2s.
+                 *
+                 */
                 setTimeout(function(){
                     $("#subject-container").html("");
                 }, 2000);
                 role = 1;
             }
+        /**
+         * Setea la página del sujeto de experimentacion.
+         *
+         */
         $("#skip-button").click(function(e){
             setExperiment();
         });
@@ -259,15 +285,22 @@ document.addEventListener('DOMContentLoaded', function () {
             if(navigator.getGamepads().length > 0){
                 setExperiment();
             }
-        }    
+        }
     });
-
+    /*
+     * Setea la página del sujeto de experimentacion.
+     *
+     */
     $("#load-researcher").click(function(){
         $("#welcome-screen").attr('class','d-none');
         $("#title").attr('class','container');
         $("#content").attr('class','container');
         role = 0;
     })
+     /*
+     * Carga el texto de un experimento existente
+     *
+     */
     $("#load_experiment").click(function(e){
         e.preventDefault();
         $("#file-upload").on('change', function(){
@@ -284,7 +317,10 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }).click();
     });
-
+     /*
+     * Guarda el experimento escrito en el editor en un documento de texto.
+     *
+     */
     $("#save_experiment").click(function(e){
         download('script.txt', editor.getValue());
     });
@@ -309,6 +345,14 @@ document.addEventListener('DOMContentLoaded', function () {
     var music_list=[]
 
     a=new AudioContext()
+    
+    /**
+     *  Plays a customizable beep sound
+     *
+     * @param {Integer} vol Set the intensity of the sound
+     * @param {Integer} freq    Set the frequency of the wave
+     * @param {*} duration  Duration of the beep
+     */
     function beep(vol, freq, duration){
         v=a.createOscillator()
         u=a.createGain()
@@ -321,6 +365,10 @@ document.addEventListener('DOMContentLoaded', function () {
         v.stop(a.currentTime+duration*0.001)
     }
     //beep_sound.loop = true;
+    /**
+    * Setea la página del sujeto de experimentacion.
+    *
+    */
     socket.on('connect', function () {
         socket.on('dev', function(data){
             let connection_information = data[2];
@@ -332,7 +380,11 @@ document.addEventListener('DOMContentLoaded', function () {
             $("#quality").text(avg);
         });
         console.log('Connected to server');
-
+        
+        /**
+        * Al presionar el boton de import audio se envía la lista de música escrita en el script a la ppestaña
+        * del sujeto
+        */
         $("#import_audio").click(function(e){
             let myAudio=findAudio();
             console.log(myAudio);
@@ -342,6 +394,11 @@ document.addEventListener('DOMContentLoaded', function () {
         });
         $("#run_experiment").off('click');
         execution_line = 0;
+        /**
+        * Inicia el experimento. Realiza todas las funciones escritas en el script linea a linea, y
+        * envía las instrucciones al sujeto de experimentacion
+        *
+        */
         $("#run_experiment").click(function(e){
             e.preventDefault();
             $("#run_experiment").addClass('disabled');
@@ -363,7 +420,11 @@ document.addEventListener('DOMContentLoaded', function () {
             socket.emit('command', data);
             
         });
-
+        /**
+        * Inicia el experimento. Realiza todas las funciones escritas en el script linea a linea, y
+        * envía las instrucciones al sujeto de experimentacion
+        *
+        */
         socket.on('audio_files', function(data){
             if(role){
                 console.log(data);
@@ -372,21 +433,32 @@ document.addEventListener('DOMContentLoaded', function () {
                 
             }  
         });
+        /**
+         *  Al recibir la instrucción folder guarda el experimento en una variable llamada experiment
+         */
         socket.on('folder', function(data){
             experiment=data;  
         });
+        /**
+         *  Al recibir la instrucción "beep" genera un beep mediante la función del mismo nombre
+         */
         socket.on('beep', function(data){
             if (role)
             // browsers limit the number of concurrent audio contexts, so you better re-use'em
             beep(100, 250, data)
         });
-
+        /**
+         *  Al recibir la instrucción "present" muestra una imagen
+         */
         socket.on('present',function(data){
             let image = "<img src='"+data+"' style='max-height:50%, width: auto;'>";
             $("#subject-container").removeClass('d-none');
             if (role)
             $("#subject-container").html(image);
         });
+        /**
+         *  Al recibir la instrucción "play" reproduce un archivo de música
+         */
         socket.on('play',function(data){
             console.log("Mydata: ",data);
             if (role){
@@ -404,6 +476,9 @@ document.addEventListener('DOMContentLoaded', function () {
             }
             
         });
+        /**
+         *  Al recibir la instrucción "finish" finaliza con el experimento
+         */
         socket.on('finish', function(){
             if (role){
                 $("#subject-container").html("<h3>Waiting... Please, be patient</h3>");
@@ -412,9 +487,16 @@ document.addEventListener('DOMContentLoaded', function () {
                 }, 2000);
             }
         });
+        /**
+         *  Al recibir la instrucción "error" muestra un mensaje en forma de alert
+         */
         socket.on('error',function(){
             alert('An error in server has occurred.');
         });
+        /**
+         *  Al recibir la instrucción "ball" muestra una bola, la cual tiene distinta animación de acuerdo a 
+         * sus parametros
+         */
         socket.on('ball',function(data){
             if (role){
                 $("#subject-container").html("<div class='d-none' id='ball-container'><span class='dot' id='ball'></span></div>");
@@ -441,6 +523,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     var interval = window.setInterval(random_animate, 1000 / 60);
 
+                    /**
+                     *  Controls the animation of the ball, it makes it move randomly
+                     *
+                     */
                     function random_animate() {
                         var d2x = (Math.random() * delta - delta / 2); //change dx and dy by random value
                         var d2y = (Math.random() * delta - delta / 2);
@@ -464,7 +550,10 @@ document.addEventListener('DOMContentLoaded', function () {
                         cxt.clearRect(0, 0, canvas.width, canvas.height); // wiping canvas
                         cxt.fill();
                     }
-
+                    /**
+                     *  Detiene la ejecución de la función realizada por intervalos 
+                     *
+                     */
                     setTimeout(function(){
                         interval = clearInterval(interval);
                         console.log('Interval was cleared.');
@@ -492,6 +581,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     var interval = window.setInterval(controller_animate, 1000 / 60);
                     // controller animate
+                    /**
+                     *  Controls the animation by joystick input
+                     *
+                     */
                     function controller_animate() {
                         console.log("Hey i'm animating");
                         updateStatus();
@@ -514,6 +607,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     // end
 
                     setTimeout(
+                        
                         function(){
                             interval = clearInterval(interval);
                             console.log('Interval was cleared.');
@@ -525,6 +619,9 @@ document.addEventListener('DOMContentLoaded', function () {
                         $("#ball-container").removeClass('d-none');
                         $("#ball").css('top', '1%');
                         $("#ball").css('left','50%');
+                        /**
+                         *  Makes the ball appear on the bottom
+                         */
                         setTimeout(function(){
                             $("#ball").animate({
                                 top:'97%'
@@ -585,6 +682,9 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 }
 });
+/**
+ *  Al recibir la instrucción "clear" borra lo presente en pantalla
+ */
 socket.on('clear',function(data){
     if (data === "screen"){
         console.log('Recognizing Clear Screen')
@@ -601,6 +701,9 @@ socket.on('clear',function(data){
         
     }
 })
+/**
+ *  Al recibir la instrucción "command" se confirma que la página del sujeto termino de realizar el comando
+ */
 socket.on('command',function(data){
     console.log(data);
     if (data === "ready" && !role){

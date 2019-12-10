@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
 
+    //List of lines for the chart, one for every channel
     var line1 = new TimeSeries();
     var line2 = new TimeSeries();
     var line3 = new TimeSeries();
@@ -15,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var line13 = new TimeSeries();
     var line14 = new TimeSeries();
 
-
+    //New smoothie chart
       var smoothie = new SmoothieChart({
             grid: {
                 fillStyle:'#ffffff',  
@@ -67,18 +68,26 @@ document.addEventListener('DOMContentLoaded', function () {
     playing = false,
     interval = null;
 
+    //Socket connection
     var socket = new io.connect('http://localhost:3000', {path: '/connection/eeg',reconnect: true});
     var counter = 0;
     socket.on('connect', function () {
         socket.on('dev', function(data){
             console.log(data)
         });
+        /*
+        * When the instruction 'data' is received , it changes the graph according to the data received
+        */
         socket.on('data',function(data){
 
             counter = counter + 1;
             if (counter<100)
                 console.log(data)
-            setTimeout(function(){
+            setTimeout(
+                /*
+                * Refresh the graph of the EEG signals every 5 ms 
+                */
+                function(){
                 if ($("#channel1_check").prop('checked')){
                     line1.append(new Date().getTime(), data[2]);
                 }

@@ -1,5 +1,12 @@
 document.addEventListener('DOMContentLoaded', function () {
 
+    
+    /**
+     *  Changes the style according to the params
+     *
+     * @param {*} param Connection quality
+     * @returns appearance to be shown
+     */
     function defineClass(param){
         if (param === 0){
             verdict = "alert alert-dark";
@@ -20,6 +27,9 @@ document.addEventListener('DOMContentLoaded', function () {
     var socket = new io.connect('http://localhost:3000', {path: '/connection/eeg',reconnect: true});
     var counter = 0;
     socket.on('connect', function () {
+        /*
+        * Refresh the connection information everytime 'dev' instruction is received
+        */
         socket.on('dev', function(data){
             let connection_information = data[2];
             $("#AF3").attr('class', defineClass(connection_information[0]));

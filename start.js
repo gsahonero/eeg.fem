@@ -20,6 +20,12 @@ const server = app.listen(port, () => {
 
 var io = require('socket.io')(server,{path:'/connection/eeg'});
 
+/**
+ * Looks for all the instances of a word, and replaces it
+ * @param {String} search       word that will be searched
+ * @param {String} replacement  Word that will be the replacement
+ * @returns Changes the document to a new version with the words replaced
+ */
 String.prototype.replaceAll = function(search, replacement) {
     var target = this;
     return target.replace(new RegExp(search, 'g'), replacement);
@@ -746,12 +752,20 @@ const header = [
 let streams = ['eeg','dev']
 c.sub(streams)
 
-//
+/*
+*   Instructions to be followed in case of receiving messages from the clients
+*/
 io.on('connect', function(socket){
+    /*
+    *   When it receives the 'command' instruction, it responds depending on the command read 
+    */
     socket.on('command',function(code){
         let func = code.command;
         let args = code.args;
-
+        /*
+        * If the command read is'experiment', it recognizes the experiment and
+        * starts recording data
+        */
         if (func === "experiment"){
             number_of_step = number_of_step + 1;
             finished = false;
@@ -763,7 +777,12 @@ io.on('connect', function(socket){
             to_record_data=[];
             console.log('Starting to record');
             record_index = 0;
-        }else if (func === "id"){
+        }
+        /*
+        * If the command read is'id', it saves the id of the subject, sends a confirmation message,
+        * and creates a folder with the experiment/id
+        */
+        else if (func === "id"){
             number_of_step = number_of_step + 1;
             console.log('Recognized ID '+id)
             id = args;
@@ -771,9 +790,19 @@ io.on('connect', function(socket){
             fs.mkdir('./public/data/'+experiment+'/'+id, function(err){
                 console.log('Error while creating folder for id:'+id+'. Error:'+err);
             });
-        }else if (func === "record"){
+        }
+        /*
+        * If the command read is'record', it doesnt do anything
+        */
+        else if (func === "record"){
             // deprecated
-        }else if (func === "beep"){
+        }
+        /*
+        * If the command read is 'beep', it increases the number of step, sends a confirmation message,
+        * and sends  a message of beep with args to generate beep
+        */
+
+        else if (func === "beep"){
             number_of_step = number_of_step + 1;
             means_marker = "beep";
             console.log('Recognized beep '+args)
@@ -782,7 +811,12 @@ io.on('connect', function(socket){
             setTimeout(function(){
                 io.emit('command','ready');
             }, parseInt(args, 10)+20);
-        }else if (func === "present"){
+        }
+        /*
+        * If the command read is 'present', it increases the number of step, sends a present instruction with 
+        * the folder direction of the image to be shown, and after that sends a confirmation message.
+        */
+        else if (func === "present"){
             number_of_step = number_of_step + 1;
             means_marker = "present";
             console.log('Recognized present '+args)
@@ -790,19 +824,32 @@ io.on('connect', function(socket){
             io.emit('present','./data/'+experiment+'/'+args);
             // send signal to present image
             io.emit('command','ready');
-        }else if (func === "clear"){
+        }
+        /*
+        * If the command read is 'clear', it increases the number of step, sends a clear instruction,
+        * and after that sends a confirmation message.
+        */
+        else if (func === "clear"){
             number_of_step = number_of_step + 1;
             means_marker = "cleared";
             console.log('Recognized clear '+args)
             io.emit('clear',args);
             io.emit('command','ready');
+        /*
+        * If the command read is 'play', it increases the number of step, sends a play instruction, and after that sends a confirmation message.
+        */
         }else if (func === "play"){
             number_of_step = number_of_step + 1;
             means_marker = "play";
             console.log('Recognized play '+args)
             io.emit('play',args);
             io.emit('command','ready');
-        }else if (func === "wait"){
+        }
+        /*
+        * If the command read is 'wait', it increases the number of step, and after that sends a
+        * confirmation message when the time shown in args elapsed.
+        */
+        else if (func === "wait"){
             number_of_step = number_of_step + 1;
             means_marker = "wait";
             console.log('Recognized wait '+args)
@@ -819,7 +866,12 @@ io.on('connect', function(socket){
             }else{
                 io.emit('command','ready');
             }
-        }else if (func === "ball"){
+        }
+        /*
+        * If the command read is 'ball', it increases the number of step, sends an instruction with 
+        * an object that contains the args , and after that sends a confirmation message.
+        */
+        else if (func === "ball"){
             number_of_step = number_of_step + 1;
             means_marker = "ball";
             console.log('Recognized ball ' + args)
@@ -831,7 +883,12 @@ io.on('connect', function(socket){
             setTimeout(function(){
                 io.emit('command','ready');
             }, arg.duration);
-        }else if (func === "finish"){
+        }
+        /*
+        * If the command read is 'finish', it restart the number of step, saves a .csv document on
+        * the experiment/id folder with the date information on its name.
+        */
+        else if (func === "finish"){
             number_of_step = 0;
             if (finished == false){
                 finished = true;
@@ -873,15 +930,24 @@ io.on('connect', function(socket){
         }
     });
 
+
+    /*
+    * When the instruction 'audio_files' is received , it broadcasts the info to the clients
+    */
     socket.on('audio_files',(data)=>{
         socket.broadcast.emit('audio_files',data);
     })
+    /*
+    * When the instruction 'folder' is received , it broadcasts the message to the clients
+    */
     socket.on('folder',(data)=>{
         socket.broadcast.emit('folder','./data/'+data);
         
     })
 
-    //Raw data
+    /*
+    * Actions of the joystick are saved on state
+    */
     socket.on('joystick:button',(data)=>{
         state[0]=data;
     });

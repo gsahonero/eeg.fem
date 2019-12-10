@@ -26,9 +26,9 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     /**
-     * Maneja las conexiones de los controles. Conecta un gamepad
+     * Handles the connection of the controllers. Connects a gamepad
      *
-     * @param {*} e Lista de gamepads
+     * @param {*} e Gamepad List
      */
     function connecthandler(e) {
         // we have to take this as a previous step to everything
@@ -37,9 +37,9 @@ document.addEventListener('DOMContentLoaded', function () {
         addgamepad(e.gamepad);
     }
     /**
-     * Añade un control a la lista de gamepads
+     * Adds a controller to the gamepad list
      *
-     * @param {*} gamepad Tiene como parametro el control que será añadido
+     * @param {*} gamepad Controller that will be added
      */
     function addgamepad(gamepad) {
         controllers[gamepad.index] = gamepad;
@@ -48,25 +48,24 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     /**
-     * Remueve el control de la lista de gamepads
+     * Removes the controller from the gamepad list
      *
-     * @param {*} e Tiene como parametro el control que será retirado
+     * @param {*} e Controller that will be removed
      */
     function disconnecthandler(e) {
         removegamepad(e.gamepad);
     }
     /**
-     *  Remueve el control gamepad de la lista
+     *  Removes the controller from the list
      * 
-     * @param {*} gamepad Control que será retirado
+     * @param {*} gamepad Controller that will be removed
      */
     function removegamepad(gamepad) {
         delete controllers[gamepad.index];
     }
     /**
-     * Escanea para revisar si existen gamepads conectados a la computadora, 
-     * en caso de que existiesen utiliza la función addgamepad()
-     * 
+     * Scans to check if there are connected gamepads to the computer, if that's the case,
+     * it uses the function addgamepad()
      */
     function scangamepads() {
         var gamepads = navigator.getGamepads ? navigator.getGamepads() : (navigator.webkitGetGamepads ? navigator.webkitGetGamepads() : []);
@@ -84,9 +83,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     /**
     * process_axe 
-    * Convierte la entrada análoga de uno de los ejes a un valor de -1,0,1
-    * @param {float} raw_axe valor de un eje de joystick en formato float de -1 a 1
-    * @returns {integer} Valor de eje discreto, puede ser (-1,0,1)
+    * Converts the analog input from the axes to a integer (-1,0,1)
+    * @param {float} raw_axe Axe value from joystick axe, in float format from -1 to 1
+    * @returns {integer} Discrete axe value (-1,0,1)
     */
     function proccess_axe(raw_axe){
         var commands=0;
@@ -104,9 +103,8 @@ document.addEventListener('DOMContentLoaded', function () {
     
     
     /**
-     * Monitorea si es que se conectó un nuevo gamepad y el estado de los botones
-     * digitales y analógicos del control
-     *
+     * Monitors if there is a new gamepad connected, and checks the state of the analog and
+     * digital inputs.
      */
     function updateStatus() {
         scangamepads();
@@ -139,8 +137,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     
     /**
-     *
-     * Busca todas las instancias de una palabra y las reemplaza
+     * Looks for all the instances of a word, and replaces it
      * @param {String} search       word that will be searched
      * @param {String} replacement  Word that will be the replacement
      * @returns Changes the document to a new version with the words replaced
@@ -151,10 +148,10 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     /**
-     * Descarga el script escrito en el editor de la pantalla de Researcher en formato de archivo txt
-     *
-     * @param {String} filename Nombre con el cual se desea guardar el script
-     * @param {String} text Texto que será almacenado dentro del documento txt
+     * Downloads the script written in the researcher screen, in .txt format
+     * 
+     * @param {String} filename Name of the downloloaded file.
+     * @param {String} text Text that will be stored into the .txt document.
      */
     function download(filename, text) {
         var element = document.createElement('a');
@@ -170,11 +167,10 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     
     /**
-     * Revisa si existe alguna instancia de play(parameter) escrita en el script. Los nombres de los archivos
-     * encontrados como parametros son guardados en un Objeto 
+     * Checks if there exist some instance of play(parameter); command written on the script.
+     * The names of the files found will be saved on an object
      * 
-     * @returns {Object} audiolist Retorna un objeto que contiene los nombres de los archivos que
-     *                     deben ser cargados   
+     * @returns {Object} Object that contains the names of the files that need to be loaded.
      */
     function findAudio() {
         let audio_list=[]
@@ -194,10 +190,10 @@ document.addEventListener('DOMContentLoaded', function () {
         return audio_list
     }
     /**
-     * Extrae información de una linea de comando 
+     * Extract information from a command line 
      *
-     * @param {String} line linea de código que posee el formato de   command(argument) 
-     * @returns {Object} data Objeto que contiene el nombre del comando y sus argumentos
+     * @param {String} line Command line from the researcher script editor
+     * @returns {Object} Object that contains the name of the command and its arguments  command(args)
      */
     function readLine(line){
         let commands = line.split('(');
@@ -211,18 +207,17 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     /**
-     *  Importa los archivos de música con el no
+     *  Imports the music files from a list
      *
-     * @param {Object} names Nombres de archivos de audio a ser importados
-     * @returns {Object} Contiene una lista de objetos con el
-     *                   archivo de audio y un string como identificador
+     * @param {Object} names Name of music files to be imported
+     * @returns {Object} List of objects that contain the audio file, and a string as an identificator
      */
     function importMusic(names){        
         let my_audio;
         let my_tag;
         let my_object=[];
         /**
-         *  Crea un objeto que contiene un identificador y el archivo de audio cargado
+         * Creates an object that contains an identifier and audio file stored 
          *
          * @param {String} element Cada elemento dentro de la lista de nombres
          *                        
@@ -240,8 +235,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     /**
      *
-     *  Carga la pagina del sujeto de prueba
-     * 
+     *  Loads the subject screen      
      */
     $("#load-subject").click(function(){
         $("#welcome-screen").attr('class','d-none');
@@ -249,7 +243,7 @@ document.addEventListener('DOMContentLoaded', function () {
     
         var myVar = setInterval(refreshJoystick, 1000/60); 
         /**
-         * Setea la página del sujeto de experimentacion.
+         * Sets the experiment screen
          *
          */
         function setExperiment()
@@ -269,7 +263,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 role = 1;
             }
         /**
-         * Setea la página del sujeto de experimentacion.
+         * Sets the page of the experiment if the skip button is pressed
          *
          */
         $("#skip-button").click(function(e){
@@ -277,7 +271,8 @@ document.addEventListener('DOMContentLoaded', function () {
         });
         
         /**
-         * En caso de existir un joystick conectado llama a la función setExperiment()
+         * 
+         * If there exists a joystick connected it calls the function setExperiment()
          *
          */
         function refreshJoystick()
@@ -288,8 +283,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
     /*
-     * Setea la página del sujeto de experimentacion.
-     *
+     * Sets the experiment subject page.
      */
     $("#load-researcher").click(function(){
         $("#welcome-screen").attr('class','d-none');
@@ -298,7 +292,7 @@ document.addEventListener('DOMContentLoaded', function () {
         role = 0;
     })
      /*
-     * Carga el texto de un experimento existente
+     * Loads an existing experiment
      *
      */
     $("#load_experiment").click(function(e){
@@ -318,7 +312,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }).click();
     });
      /*
-     * Guarda el experimento escrito en el editor en un documento de texto.
+     * Saves the experiment written on the editor into a .txt document.
      *
      */
     $("#save_experiment").click(function(e){
@@ -366,8 +360,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     //beep_sound.loop = true;
     /**
-    * Setea la página del sujeto de experimentacion.
-    *
+    * Sets the page of the experimentation subject
     */
     socket.on('connect', function () {
         socket.on('dev', function(data){
@@ -382,8 +375,8 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log('Connected to server');
         
         /**
-        * Al presionar el boton de import audio se envía la lista de música escrita en el script a la ppestaña
-        * del sujeto
+        * If the "import audio" button is pressed , the music list written on the script is sent to the subject tab
+        * 
         */
         $("#import_audio").click(function(e){
             let myAudio=findAudio();
@@ -395,8 +388,9 @@ document.addEventListener('DOMContentLoaded', function () {
         $("#run_experiment").off('click');
         execution_line = 0;
         /**
-        * Inicia el experimento. Realiza todas las funciones escritas en el script linea a linea, y
-        * envía las instrucciones al sujeto de experimentacion
+        * 
+        * Starts the experiment. It sends every instruction written in the researcher script line by line
+        * to the subject.
         *
         */
         $("#run_experiment").click(function(e){
@@ -421,8 +415,8 @@ document.addEventListener('DOMContentLoaded', function () {
             
         });
         /**
-        * Inicia el experimento. Realiza todas las funciones escritas en el script linea a linea, y
-        * envía las instrucciones al sujeto de experimentacion
+        * 
+        * When the 'audio_files' instruction is received it imports music
         *
         */
         socket.on('audio_files', function(data){
@@ -434,13 +428,13 @@ document.addEventListener('DOMContentLoaded', function () {
             }  
         });
         /**
-         *  Al recibir la instrucción folder guarda el experimento en una variable llamada experiment
+         * When the 'folder' instruction is received, the experiment is saved on a variable called experiment  
          */
         socket.on('folder', function(data){
             experiment=data;  
         });
         /**
-         *  Al recibir la instrucción "beep" genera un beep mediante la función del mismo nombre
+         * When the 'beep' instruction is received, it generates a beep calling a function with the same name
          */
         socket.on('beep', function(data){
             if (role)
@@ -448,7 +442,7 @@ document.addEventListener('DOMContentLoaded', function () {
             beep(100, 250, data)
         });
         /**
-         *  Al recibir la instrucción "present" muestra una imagen
+         *  When the 'present' instruction is received, it shows an image.
          */
         socket.on('present',function(data){
             let image = "<img src='"+data+"' style='max-height:50%, width: auto;'>";
@@ -457,7 +451,7 @@ document.addEventListener('DOMContentLoaded', function () {
             $("#subject-container").html(image);
         });
         /**
-         *  Al recibir la instrucción "play" reproduce un archivo de música
+         *  When the 'play' instruction is received, it reproduces a music file.
          */
         socket.on('play',function(data){
             console.log("Mydata: ",data);
@@ -477,7 +471,7 @@ document.addEventListener('DOMContentLoaded', function () {
             
         });
         /**
-         *  Al recibir la instrucción "finish" finaliza con el experimento
+         *  When the 'finish' instruction is received, the experiment is finished
          */
         socket.on('finish', function(){
             if (role){
@@ -488,14 +482,14 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
         /**
-         *  Al recibir la instrucción "error" muestra un mensaje en forma de alert
+         *  When the 'error' instruction is received, it shows a message via alert
          */
         socket.on('error',function(){
             alert('An error in server has occurred.');
         });
         /**
-         *  Al recibir la instrucción "ball" muestra una bola, la cual tiene distinta animación de acuerdo a 
-         * sus parametros
+         *  When the 'ball' instruction is received, it shows a ball, that has a different
+         * animation depending on its paramenters
          */
         socket.on('ball',function(data){
             if (role){
@@ -551,8 +545,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         cxt.fill();
                     }
                     /**
-                     *  Detiene la ejecución de la función realizada por intervalos 
-                     *
+                     *  Stops the execution of the function running on intervals
                      */
                     setTimeout(function(){
                         interval = clearInterval(interval);
@@ -683,7 +676,7 @@ document.addEventListener('DOMContentLoaded', function () {
 }
 });
 /**
- *  Al recibir la instrucción "clear" borra lo presente en pantalla
+ * When the 'clear' instruction is received, it deletes whatever is present on the screen
  */
 socket.on('clear',function(data){
     if (data === "screen"){
@@ -702,7 +695,7 @@ socket.on('clear',function(data){
     }
 })
 /**
- *  Al recibir la instrucción "command" se confirma que la página del sujeto termino de realizar el comando
+ * When the 'commnad' instruction is received, its confirmed that the subject executed successfully the command.
  */
 socket.on('command',function(data){
     console.log(data);

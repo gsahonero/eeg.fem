@@ -24,7 +24,7 @@ To run the program you just need to type:
 ```bash
 node start
 ```
-Open your explorer, and type localhost:3000, this is the default client port, but it can be changed in the file: put name of file here
+Open your explorer, and type http://localhost:3000/, this is the default client port, but it can be changed in the file: put name of file here
 If the process is done correctly there should appear this page:
 Image.jpg
 The program has the following options:

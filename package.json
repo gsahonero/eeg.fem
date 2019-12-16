@@ -6,10 +6,13 @@
   "dependencies": {
     "convert-array-to-csv": "^1.0.9",
     "express": "^4.17.1",
+    "fs-web": "^1.0.1",
     "socket.io": "^2.2.0",
     "ws": "^6.1.4"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "delivery": "0.0.6"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

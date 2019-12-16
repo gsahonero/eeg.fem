@@ -3,6 +3,7 @@ const WebSocket = require('ws');
 
 // Requires:
 var fs = require('fs');
+var dl  = require('delivery');
 
 const { convertArrayToCSV } = require('convert-array-to-csv');
 const converter = require('convert-array-to-csv');
@@ -756,6 +757,20 @@ c.sub(streams)
 *   Instructions to be followed in case of receiving messages from the clients
 */
 io.on('connect', function(socket){
+    
+    var delivery = dl.listen(socket);
+    delivery.on('receive.success',function(file){
+        var params = file.params;
+        fs.writeFile(file.name,file.buffer, function(err){
+        if(err){
+            console.log('File could not be saved.');
+        }else{
+            console.log('File saved.');
+        };
+        });
+    });
+     
+    
     /*
     *   When it receives the 'command' instruction, it responds depending on the command read 
     */
@@ -787,8 +802,10 @@ io.on('connect', function(socket){
             console.log('Recognized ID '+id)
             id = args;
             io.emit('command','ready');
-            fs.mkdir('./public/data/'+experiment+'/'+id, function(err){
-                console.log('Error while creating folder for id:'+id+'. Error:'+err);
+            fs.mkdir('./public/data/'+experiment+'/'+id,{recursive: true} ,function(err){
+                if(err){
+                    console.log('Error while creating folder for id:'+id+'. Error:'+err);   
+                }
             });
         }
         /*

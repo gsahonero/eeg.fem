@@ -2,8 +2,7 @@ const WebSocket = require('ws');
 
 
 // Requires:
-var fs = require('fs');
-var dl  = require('delivery');
+
 
 const { convertArrayToCSV } = require('convert-array-to-csv');
 const converter = require('convert-array-to-csv');
@@ -15,12 +14,17 @@ const app = express();
 var http = require('http').Server(app);
 const port = 3000;
 app.use(express.static('public'))
-const server = app.listen(port, () => {
+const server = http.listen(port, () => {
   console.log(`Server is running on port ${port}!`)
 });
 
-var io = require('socket.io')(server,{path:'/connection/eeg'});
+app.get('/socket.io-file-client.js', (req, res, next) => {
+    return res.sendFile(__dirname + '/node_modules/socket.io-file-client/socket.io-file-client.js');
+});
 
+var io = require('socket.io')(http,{path:'/connection/eeg'});
+var fs = require('fs');
+const SocketIOFile = require('socket.io-file');
 /**
  * Looks for all the instances of a word, and replaces it
  * @param {String} search       word that will be searched
@@ -758,17 +762,48 @@ c.sub(streams)
 */
 io.on('connect', function(socket){
     
-    var delivery = dl.listen(socket);
-    delivery.on('receive.success',function(file){
-        var params = file.params;
-        fs.writeFile(file.name,file.buffer, function(err){
-        if(err){
-            console.log('File could not be saved.');
-        }else{
-            console.log('File saved.');
-        };
-        });
+    var uploader = new SocketIOFile(socket, {
+		// uploadDir: {			// multiple directories
+		// 	music: 'data/music',
+		// 	document: 'data/document'
+		// },
+		uploadDir: 'public/data/'+experiment,							// simple directory
+        
+        // accepts: ['audio/mpeg', 'audio/mp3'],		// chrome and some of browsers checking mp3 as 'audio/mp3', not 'audio/mpeg'
+		// maxFileSize: 4194304, 						// 4 MB. default is undefined(no limit)
+		chunkSize: 10240,							// default is 10240(1KB)
+		transmissionDelay: 0,						// delay of each transmission, higher value saves more cpu resources, lower upload speed. default is 0(no delay)
+		overwrite: false, 							// overwrite file if exists, default is true.
+		// rename: function(filename) {
+		// 	var split = filename.split('.');	// split filename by .(extension)
+		// 	var fname = split[0];	// filename without extension
+		// 	var ext = split[1];
+
+		// 	return `${fname}_${count++}.${ext}`;
+		// }
     });
+    console.log(uploader.options.uploadDir);
+    
+    
+	uploader.on('start', (fileInfo) => {
+		console.log('Start uploading');
+		console.log("THIS IS THE UPLOADER",uploader);
+	});
+	uploader.on('stream', (fileInfo) => {
+		console.log(`${fileInfo.wrote} / ${fileInfo.size} byte(s)`);
+	});
+	uploader.on('complete', (fileInfo) => {
+		console.log('Upload Complete.');
+        console.log(fileInfo);
+        console.log(experiment," / ",id);
+        
+	});
+	uploader.on('error', (err) => {
+		console.log('Error!', err);
+	});
+	uploader.on('abort', (fileInfo) => {
+		console.log('Aborted: ', fileInfo);
+	});
      
     
     /*
@@ -959,7 +994,29 @@ io.on('connect', function(socket){
     */
     socket.on('folder',(data)=>{
         socket.broadcast.emit('folder','./data/'+data);
+        experiment = data; 
+        let dir_path='./public/data/'+experiment;
+
+        console.log("The experiment is:", experiment);
+        fs.mkdir(dir_path,{recursive: true} ,function(err){
+            if(err){
+                console.log('Error while creating folder for id:'+id+'. Error:'+err);   
+            }
+            else{
+                console.log('Created folder: '+dir_path);
+            }
+        });
+        uploader.options.uploadDir = dir_path;
         
+        /*
+            Reads the list of files in an specified path
+        */
+        fs.readdir(dir_path, function(err, items) {
+            console.log(items);
+            for (var i=0; i<items.length; i++) {
+                console.log(typeof(items[i]), "/", items[i]);
+            }
+        });
     })
 
     /*

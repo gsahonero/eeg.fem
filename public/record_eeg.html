@@ -55,25 +55,10 @@
           display: inline-block;
           position: absolute;
         }
-        #drop_zone {
-            border: 2px dashed #ccc;
-            border-radius: 20px;
-            margin: 50px auto;
+        #form{
             padding: 20px;
         }
-        #drop_zone.highlight {
-            border-color: purple;
-        }
-        #gallery {
-            margin-top: 10px;
-        }
-        #gallery img {
-            width: 150px;
-            height: auto;
-            margin-bottom: 10px;
-            margin-right: 10px;
-            vertical-align: middle;
-        }
+        
     </style>
     <div class="container" id="welcome-screen">
         Load view for
@@ -116,23 +101,13 @@ finish();</div>
             <a class="btn btn-primary btn-lg btn-block" href="#" role="button" id="run_experiment">Run experiment</a>
             <a class="btn btn-secondary btn-lg btn-block" href="#" role="button" id="load_experiment">Load experiment from file</a>
             <a class="btn btn-secondary btn-lg btn-block" href="#" role="button" id="save_experiment">Save experiment to file</a>
-            <a class="btn btn-secondary btn-lg btn-block" href="#" role="button" id="import_audio">Import audio resources</a>
+            <a class="btn btn-secondary btn-lg btn-block" href="#" role="button" id="compile_experiment">Compile</a>
             
-            <div id="drop_zone" >
-                <form class="my-form">
-                    <p>Upload multiple files with the file dialog or by dragging and dropping images onto the dashed region</p>
-                    <input type="file" id="fileElem" multiple accept="image/*" onchange="handleFiles(this.files)">
-                </form>
-                <progress id="progress-bar" max=100 value=0></progress>
-                <div id="gallery" /></div>
-            </div>
-            
-              <div class="container">
-                Interaction region:
-                <a class="btn btn-danger btn-lg btn-block disabled" href="record_eeg.html" role="button" id="trigger_button">Trigger button</a>
+            <form id="form">
+                <input type="file" id="file" multiple />
+                <input type="submit" value="Upload" />
+            </form>
 
-            </div>
-            <input type="file" id="file-upload" style="display:none;"/>
             <p>
                 A note on the allowed functions, remember that record of the session is permanent:
             </p>
@@ -154,6 +129,7 @@ finish();</div>
     <script src="./js/popper.min.js"></script>
     <script src="./js/bootstrap.min.js"></script>
     <script src="./js/socket.io.js"> </script>
+    <script src="/socket.io-file-client.js"></script>
     <script src="./js/smoothie.js"></script>
     <script src="./js/ace/ace.js"></script>
     <script src="./js/app.record.js"></script>

@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
-
-
+    
     //Dropzone Initialization
     var dropzone = document.getElementById("drop_zone");
     //dropzone.ondrop = dropHandler(event);
@@ -331,6 +330,11 @@ document.addEventListener('DOMContentLoaded', function () {
     editor.session.setMode("ace/mode/custom");
 
     var socket = new io.connect('http://localhost:3000', {path: '/connection/eeg',reconnect: true});
+    //Initialization for socket-file
+    var uploader = new SocketIOFileClient(socket);
+    var form = document.getElementById('form');
+
+
     var counter = 0;
     var step = 0;
     var code = "";
@@ -365,10 +369,47 @@ document.addEventListener('DOMContentLoaded', function () {
         v.start(a.currentTime)
         v.stop(a.currentTime+duration*0.001)
     }
-    //beep_sound.loop = true;
+    
     /**
     * Sets the page of the experimentation subject
     */
+   uploader.on('ready', function() {
+    console.log('SocketIOFile ready to go!');
+    console.log(uploader);
+    
+    });
+    uploader.on('loadstart', function() {
+        console.log('Loading file to browser before sending...');
+    });
+    uploader.on('progress', function(progress) {
+        console.log('Loaded ' + progress.loaded + ' / ' + progress.total);
+    });
+    uploader.on('start', function(fileInfo) {
+        console.log('Start uploading', fileInfo);
+    });
+    uploader.on('stream', function(fileInfo) {
+        console.log('Streaming... sent ' + fileInfo.sent + ' bytes.');
+    });
+    uploader.on('complete', function(fileInfo) {
+        console.log('Upload Complete', fileInfo);
+    });
+    uploader.on('error', function(err) {
+        console.log('Error!', err);
+    });
+    uploader.on('abort', function(fileInfo) {
+        console.log('Aborted: ', fileInfo);
+    });
+
+    form.onsubmit = function(ev) {
+        ev.preventDefault();
+        
+        // Send File Element to upload
+        var fileEl = document.getElementById('file');
+        // var uploadIds = uploader.upload(fileEl);
+
+        // Or just pass file objects directly
+        var uploadIds = uploader.upload(fileEl.files);
+    };
     socket.on('connect', function () {
         socket.on('dev', function(data){
             let connection_information = data[2];
@@ -384,13 +425,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
         
         /**
-        * If the "import audio" button is pressed , the music list written on the script is sent to the subject tab
+        * If the "Compile" button is pressed , a file is corresponding to the experiment is created and
+        *  music list written on the script is sent to the subject tab
         * 
         */
-        $("#import_audio").click(function(e){
+        $("#compile_experiment").click(function(e){
             let myAudio=findAudio();
             console.log(myAudio);
-            console.log(experiment);
             socket.emit('folder',experiment);
             socket.emit('audio_files',myAudio);
         });
@@ -423,49 +464,46 @@ document.addEventListener('DOMContentLoaded', function () {
             socket.emit('command', data);
             
         });
-        /**
-        * 
-        * When the 'audio_files' instruction is received it imports music
-        *
+        /*
+        *   Rules to be followed by the subject
         */
-        socket.on('audio_files', function(data){
-            if(role){
+        if(role)
+        {
+            /**
+            * 
+            * When the 'audio_files' instruction is received it imports music
+            *
+            */
+            socket.on('audio_files', function(data){
                 console.log(data);
                 music_list= importMusic(data);   
                 console.log(music_list);
-                
-            }  
-        });
-        /**
-         * When the 'folder' instruction is received, the experiment is saved on a variable called experiment  
-         */
-        socket.on('folder', function(data){
-            experiment=data;  
-        });
-        /**
-         * When the 'beep' instruction is received, it generates a beep calling a function with the same name
-         */
-        socket.on('beep', function(data){
-            if (role)
-            // browsers limit the number of concurrent audio contexts, so you better re-use'em
-            beep(100, 250, data)
-        });
-        /**
-         *  When the 'present' instruction is received, it shows an image.
-         */
-        socket.on('present',function(data){
-            let image = "<img src='"+data+"' style='max-height:50%, width: auto;'>";
-            $("#subject-container").removeClass('d-none');
-            if (role)
-            $("#subject-container").html(image);
-        });
-        /**
-         *  When the 'play' instruction is received, it reproduces a music file.
-         */
-        socket.on('play',function(data){
-            console.log("Mydata: ",data);
-            if (role){
-                music_list.forEach(function(element) {
+            });
+
+            /**
+             * When the 'beep' instruction is received, it generates a beep calling a function with the same name
+             */
+            socket.on('beep', function(data){
+                // browsers limit the number of concurrent audio contexts, so you better re-use'em
+                beep(100, 250, data)
+            });
+
+            /**
+             *  When the 'present' instruction is received, it shows an image.
+             */
+            socket.on('present',function(data){
+                let image = "<img src='"+data+"' style='max-height:50%, width: auto;'>";
+                $("#subject-container").removeClass('d-none');
+                $("#subject-container").html(image);
+            });
+
+            /**
+             *  When the 'play' instruction is received, it reproduces a music file.
+             */
+            socket.on('play',function(data){
+                console.log("Mydata: ",data);
+
+                musc_list.forEach(function(element) {
                     console.log("TAG:",element.tag, "DESIRED:",data);
                     if(element.tag == data){
                         console.log(element);
@@ -474,159 +512,182 @@ document.addEventListener('DOMContentLoaded', function () {
                             element.music.play();
                         }, 10);
                     }
-                    
-                });
-            }
-            
-        });
-        /**
-         *  When the 'finish' instruction is received, the experiment is finished
-         */
-        socket.on('finish', function(){
-            if (role){
+
+                    });
+            });
+
+            /**
+             *  When the 'finish' instruction is received, the experiment is finished
+             */
+            socket.on('finish', function(){
+                
                 $("#subject-container").html("<h3>Waiting... Please, be patient</h3>");
                 setTimeout(function(){
                     $("#subject-container").html("");
                 }, 2000);
-            }
-        });
-        /**
-         *  When the 'error' instruction is received, it shows a message via alert
-         */
-        socket.on('error',function(){
-            alert('An error in server has occurred.');
-        });
-        /**
-         *  When the 'ball' instruction is received, it shows a ball, that has a different
-         * animation depending on its paramenters
-         */
-        socket.on('ball',function(data){
-            if (role){
-                $("#subject-container").html("<div class='d-none' id='ball-container'><span class='dot' id='ball'></span></div>");
-                if (data.orientation === 'random'){
-                    $("#subject-container").html('<canvas id="canvas" style="position: absolute; top: 0; left: 0;"></canvas>');
-                    $("#ball-container").removeClass('d-none');
-                    var canvas = document.getElementById('canvas');
+                
+            });
+                 /**
+                 *  When the 'ball' instruction is received, it shows a ball, that has a different
+                 * animation depending on its paramenters
+                 */
+                socket.on('ball',function(data){
+                    
+                        $("#subject-container").html("<div class='d-none' id='ball-container'><span class='dot' id='ball'></span></div>");
+                        if (data.orientation === 'random'){
+                            $("#subject-container").html('<canvas id="canvas" style="position: absolute; top: 0; left: 0;"></canvas>');
+                            $("#ball-container").removeClass('d-none');
+                            var canvas = document.getElementById('canvas');
 
-                    canvas.width = window.innerWidth;
-                    canvas.height = window.innerHeight;
+                            canvas.width = window.innerWidth;
+                            canvas.height = window.innerHeight;
 
-                    var x = canvas.width / 2; //initial position
-                    var y = canvas.height / 2;
+                            var x = canvas.width / 2; //initial position
+                            var y = canvas.height / 2;
 
-                    var cxt = canvas.getContext('2d');
-                    cxt.fillStyle = '#FF0000'; //color
-                    var radius = 10;
+                            var cxt = canvas.getContext('2d');
+                            cxt.fillStyle = '#FF0000'; //color
+                            var radius = 10;
 
-                    var dx = 0;
-                    var dy = 0;
-                    var delta = 5; // range (from 0) of possible dx or dy change
-                    var max = 15; // maximum dx or dy values
+                            var dx = 0;
+                            var dy = 0;
+                            var delta = 5; // range (from 0) of possible dx or dy change
+                            var max = 15; // maximum dx or dy values
 
 
-                    var interval = window.setInterval(random_animate, 1000 / 60);
+                            var interval = window.setInterval(random_animate, 1000 / 60);
 
-                    /**
-                     *  Controls the animation of the ball, it makes it move randomly
-                     *
-                     */
-                    function random_animate() {
-                        var d2x = (Math.random() * delta - delta / 2); //change dx and dy by random value
-                        var d2y = (Math.random() * delta - delta / 2);
+                            /**
+                             *  Controls the animation of the ball, it makes it move randomly
+                             *
+                             */
+                            function random_animate() {
+                                var d2x = (Math.random() * delta - delta / 2); //change dx and dy by random value
+                                var d2y = (Math.random() * delta - delta / 2);
 
-                        if (Math.abs(d2x + dx) > max) // start slowing down if going too fast
-                        d2x *= -1;
-                        if (Math.abs(d2y + dy) > max) d2y *= -1;
+                                if (Math.abs(d2x + dx) > max) // start slowing down if going too fast
+                                d2x *= -1;
+                                if (Math.abs(d2y + dy) > max) d2y *= -1;
 
-                        dx += d2x;
-                        dy += d2y;
+                                dx += d2x;
+                                dy += d2y;
 
-                        if ((x + dx) < 0 || (x + dx) > canvas.width) // bounce off walls
-                        dx *= -1;
-                        if ((y + dy) < 0 || (y + dy) > canvas.height) dy *= -1;
+                                if ((x + dx) < 0 || (x + dx) > canvas.width) // bounce off walls
+                                dx *= -1;
+                                if ((y + dy) < 0 || (y + dy) > canvas.height) dy *= -1;
 
-                        x += dx;
-                        y += dy;
+                                x += dx;
+                                y += dy;
 
-                        cxt.beginPath(); //drawing circle
-                        cxt.arc(x, y, radius, 0, 2 * Math.PI, false);
-                        cxt.clearRect(0, 0, canvas.width, canvas.height); // wiping canvas
-                        cxt.fill();
-                    }
-                    /**
-                     *  Stops the execution of the function running on intervals
-                     */
-                    setTimeout(function(){
-                        interval = clearInterval(interval);
-                        console.log('Interval was cleared.');
-                    },data.duration);
+                                cxt.beginPath(); //drawing circle
+                                cxt.arc(x, y, radius, 0, 2 * Math.PI, false);
+                                cxt.clearRect(0, 0, canvas.width, canvas.height); // wiping canvas
+                                cxt.fill();
+                            }
+                            /**
+                             *  Stops the execution of the function running on intervals
+                             */
+                            setTimeout(function(){
+                                interval = clearInterval(interval);
+                                console.log('Interval was cleared.');
+                            },data.duration);
 
-                }else if(data.orientation ==='controller'){
-                    $("#subject-container").html('<canvas id="canvas" style="position: absolute; top: 0; left: 0;"></canvas>');
-                    $("#ball-container").removeClass('d-none');
-                    var canvas = document.getElementById('canvas');
+                        }else if(data.orientation ==='controller'){
+                            $("#subject-container").html('<canvas id="canvas" style="position: absolute; top: 0; left: 0;"></canvas>');
+                            $("#ball-container").removeClass('d-none');
+                            var canvas = document.getElementById('canvas');
 
-                    canvas.width = window.innerWidth;
-                    canvas.height = window.innerHeight;
+                            canvas.width = window.innerWidth;
+                            canvas.height = window.innerHeight;
 
-                    var x = canvas.width / 2; //initial position
-                    var y = canvas.height / 2;
+                            var x = canvas.width / 2; //initial position
+                            var y = canvas.height / 2;
 
-                    var cxt = canvas.getContext('2d');
-                    cxt.fillStyle = '#FF0000'; //color
-                    var radius = 10;
+                            var cxt = canvas.getContext('2d');
+                            cxt.fillStyle = '#FF0000'; //color
+                            var radius = 10;
 
-                    var dx = 0;
-                    var dy = 0;
-                    var delta = 5; // range (from 0) of possible dx or dy change
-                    var max = 15; // maximum dx or dy values
+                            var dx = 0;
+                            var dy = 0;
+                            var delta = 5; // range (from 0) of possible dx or dy change
+                            var max = 15; // maximum dx or dy values
 
-                    var interval = window.setInterval(controller_animate, 1000 / 60);
-                    // controller animate
-                    /**
-                     *  Controls the animation by joystick input
-                     *
-                     */
-                    function controller_animate() {
-                        console.log("Hey i'm animating");
-                        updateStatus();
-                        var d2x = dir_command[0]*delta; //change dx and dy by random value
-                        var d2y = dir_command[1]*delta;
+                            var interval = window.setInterval(controller_animate, 1000 / 60);
+                            // controller animate
+                            /**
+                             *  Controls the animation by joystick input
+                             *
+                             */
+                            function controller_animate() {
+                                console.log("Hey i'm animating");
+                                updateStatus();
+                                var d2x = dir_command[0]*delta; //change dx and dy by random value
+                                var d2y = dir_command[1]*delta;
 
-                        x += d2x;
-                        y += d2y;
+                                x += d2x;
+                                y += d2y;
 
-                        if(x>canvas.width-radius){x=canvas.width-radius}
-                        if(x<0+radius){x=0+radius}
-                        if(y>canvas.height-radius){y=canvas.height-radius}
-                        if(y<0+radius){y=0+radius}
+                                if(x>canvas.width-radius){x=canvas.width-radius}
+                                if(x<0+radius){x=0+radius}
+                                if(y>canvas.height-radius){y=canvas.height-radius}
+                                if(y<0+radius){y=0+radius}
 
-                        cxt.beginPath(); //drawing circle
-                        cxt.arc(x, y, radius, 0, 2 * Math.PI, false);
-                        cxt.clearRect(0, 0, canvas.width, canvas.height); // wiping canvas
-                        cxt.fill();
-                    }
-                    // end
+                                cxt.beginPath(); //drawing circle
+                                cxt.arc(x, y, radius, 0, 2 * Math.PI, false);
+                                cxt.clearRect(0, 0, canvas.width, canvas.height); // wiping canvas
+                                cxt.fill();
+                            }
+                            // end
 
-                    setTimeout(
-                        
-                        function(){
-                            interval = clearInterval(interval);
-                            console.log('Interval was cleared.');
-                        }
-                        , data.duration);
+                            setTimeout(
+                                
+                                function(){
+                                    interval = clearInterval(interval);
+                                    console.log('Interval was cleared.');
+                                }
+                                , data.duration);
 
-                    }else if (data.orientation ==='bottom'){
-                        // ball goes down
+                            }else if (data.orientation ==='bottom'){
+                                // ball goes down
+                                $("#ball-container").removeClass('d-none');
+                                $("#ball").css('top', '1%');
+                                $("#ball").css('left','50%');
+                                /**
+                                *  Makes the ball appear on the bottom
+                                */
+                                setTimeout(function(){
+                                    $("#ball").animate({
+                                        top:'97%'
+                                    },
+                                    600,
+                                    function(){
+
+                                    }
+                                )
+                            },data.duration);
+                        }else if (data.orientation === 'top'){
+                            // ball goes up
+                            $("#ball-container").removeClass('d-none');
+                            $("#ball").css('top', '97%');
+                            $("#ball").css('left','50%');
+                            setTimeout(function(){
+                                $("#ball").animate({
+                                    top:'0px'
+                                },
+                                600,
+                                function(){
+
+                                }
+                            )
+                        },data.duration);
+                    }else if (data.orientation === 'left'){
+                        // ball goes left
                         $("#ball-container").removeClass('d-none');
-                        $("#ball").css('top', '1%');
-                        $("#ball").css('left','50%');
-                        /**
-                         *  Makes the ball appear on the bottom
-                         */
+                        $("#ball").css('top', '50%');
+                        $("#ball").css('left','97%');
                         setTimeout(function(){
                             $("#ball").animate({
-                                top:'97%'
+                                left:'1%'
                             },
                             600,
                             function(){
@@ -634,14 +695,14 @@ document.addEventListener('DOMContentLoaded', function () {
                             }
                         )
                     },data.duration);
-                }else if (data.orientation === 'top'){
-                    // ball goes up
+                }else if (data.orientation === 'right'){
+                    // ball goes right
                     $("#ball-container").removeClass('d-none');
-                    $("#ball").css('top', '97%');
-                    $("#ball").css('left','50%');
+                    $("#ball").css('top', '50%');
+                    $("#ball").css('left','1%');
                     setTimeout(function(){
                         $("#ball").animate({
-                            top:'0px'
+                            left:'97%'
                         },
                         600,
                         function(){
@@ -649,41 +710,30 @@ document.addEventListener('DOMContentLoaded', function () {
                         }
                     )
                 },data.duration);
-            }else if (data.orientation === 'left'){
-                // ball goes left
-                $("#ball-container").removeClass('d-none');
-                $("#ball").css('top', '50%');
-                $("#ball").css('left','97%');
-                setTimeout(function(){
-                    $("#ball").animate({
-                        left:'1%'
-                    },
-                    600,
-                    function(){
-
-                    }
-                )
-            },data.duration);
-        }else if (data.orientation === 'right'){
-            // ball goes right
-            $("#ball-container").removeClass('d-none');
-            $("#ball").css('top', '50%');
-            $("#ball").css('left','1%');
-            setTimeout(function(){
-                $("#ball").animate({
-                    left:'97%'
-                },
-                600,
-                function(){
-
-                }
-            )
-        },data.duration);
-    }else{
-        console.log('Unrecognized data');
-    }
-}
-});
+            }else{
+                console.log('Unrecognized data');
+            }
+        
+        });
+        }
+        
+        /**
+         * When the 'folder' instruction is received, the experiment is saved on a variable called experiment  
+         */
+        socket.on('folder', function(data){
+            experiment=data;  
+        });
+        
+       
+        
+        
+        /**
+         *  When the 'error' instruction is received, it shows a message via alert
+         */
+        socket.on('error',function(){
+            alert('An error in server has occurred.');
+        });
+   
 /**
  * When the 'clear' instruction is received, it deletes whatever is present on the screen
  */
@@ -782,109 +832,5 @@ socket.on('subject-html',function(data){
 });
 });
 
-// ************************ Drag and drop ***************** //
-let dropArea = document.getElementById("drop_zone")
-
-// Prevent default drag behaviors
-;['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-  dropArea.addEventListener(eventName, preventDefaults, false)   
-  document.body.addEventListener(eventName, preventDefaults, false)
-})
-
-// Highlight drop area when item is dragged over it
-;['dragenter', 'dragover'].forEach(eventName => {
-  dropArea.addEventListener(eventName, highlight, false)
-})
-
-;['dragleave', 'drop'].forEach(eventName => {
-  dropArea.addEventListener(eventName, unhighlight, false)
-})
-
-// Handle dropped files
-dropArea.addEventListener('drop', handleDrop, false)
-
-function preventDefaults (e) {
-  e.preventDefault()
-  e.stopPropagation()
-}
-
-function highlight(e) {
-  dropArea.classList.add('highlight')
-}
-
-function unhighlight(e) {
-  dropArea.classList.remove('active')
-}
-
-function handleDrop(e) {
-  var dt = e.dataTransfer
-  var files = dt.files
-
-  handleFiles(files)
-}
-
-let uploadProgress = []
-let progressBar = document.getElementById('progress-bar')
-
-function initializeProgress(numFiles) {
-  progressBar.value = 0
-  uploadProgress = []
-
-  for(let i = numFiles; i > 0; i--) {
-    uploadProgress.push(0)
-  }
-}
-
-function updateProgress(fileNumber, percent) {
-  uploadProgress[fileNumber] = percent
-  let total = uploadProgress.reduce((tot, curr) => tot + curr, 0) / uploadProgress.length
-  console.debug('update', fileNumber, percent, total)
-  progressBar.value = total
-}
-
-function handleFiles(files) {
-  files = [...files]
-  initializeProgress(files.length)
-  files.forEach(uploadFile)
-  files.forEach(previewFile)
-}
-
-function previewFile(file) {
-  let reader = new FileReader()
-  reader.readAsDataURL(file)
-  reader.onloadend = function() {
-    let img = document.createElement('img')
-    img.src = reader.result
-    document.getElementById('gallery').appendChild(img)
-  }
-}
-
-function uploadFile(file, i) {
-    console.log(typeof(file));
-    
-    var url = 'https://api.cloudinary.com/v1_1/joezimim007/image/upload'
-    var xhr = new XMLHttpRequest()
-    var formData = new FormData()
-    xhr.open('POST', url, true)
-    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest')
-
-  // Update progress (can be used to show progress indicator)
-    xhr.upload.addEventListener("progress", function(e) {
-    updateProgress(i, (e.loaded * 100.0 / e.total) || 100)
-  })
-
-  xhr.addEventListener('readystatechange', function(e) {
-    if (xhr.readyState == 4 && xhr.status == 200) {
-      updateProgress(i, 100) // <- Add this
-    }
-    else if (xhr.readyState == 4 && xhr.status != 200) {
-      // Error. Inform the user
-    }
-  })
-
-  formData.append('upload_preset', 'ujpu6gyk')
-  formData.append('file', file)
-  xhr.send(formData)
-}
 
 }, false);

@@ -7,7 +7,7 @@ const WebSocket = require('ws');
 const { convertArrayToCSV } = require('convert-array-to-csv');
 const converter = require('convert-array-to-csv');
 
-
+var dir_path="";
 var means_marker = [];
 const express = require ('express');
 const app = express();
@@ -984,10 +984,36 @@ io.on('connect', function(socket){
 
 
     /*
-    * When the instruction 'audio_files' is received , it broadcasts the info to the clients
+    * When the instruction 'audio_files' is received , it broadcasts the info to the clients, or sends a message
     */
-    socket.on('audio_files',(data)=>{
-        socket.broadcast.emit('audio_files',data);
+    socket.on('media_files',(data)=>{
+        /*
+            Reads the list of files in an specified path
+        */
+        let missing=[];
+        fs.readdir(dir_path, function(err, items) {
+            console.log("Look for this data",data);
+            data.forEach(element => {
+               console.log(element.name);
+               let found= items.find(dir_file => dir_file==element.name)
+               if(found == null)
+               {
+                   missing.push(element.name);
+                   console.log("Not Found: ", element.name);
+               }else{
+                   console.log("Found: ", element.name);
+               }
+            });
+            if (missing.length > 0){
+                console.log("List of missing files", missing);
+            }else{
+                console.log("Everything was found");
+                socket.broadcast.emit('media_files',data);
+            }
+            socket.emit('missing',missing);
+            
+        });
+        
     })
     /*
     * When the instruction 'folder' is received , it broadcasts the message to the clients
@@ -995,7 +1021,7 @@ io.on('connect', function(socket){
     socket.on('folder',(data)=>{
         socket.broadcast.emit('folder','./data/'+data);
         experiment = data; 
-        let dir_path='./public/data/'+experiment;
+        dir_path='./public/data/'+experiment;
 
         console.log("The experiment is:", experiment);
         fs.mkdir(dir_path,{recursive: true} ,function(err){
@@ -1008,15 +1034,7 @@ io.on('connect', function(socket){
         });
         uploader.options.uploadDir = dir_path;
         
-        /*
-            Reads the list of files in an specified path
-        */
-        fs.readdir(dir_path, function(err, items) {
-            console.log(items);
-            for (var i=0; i<items.length; i++) {
-                console.log(typeof(items[i]), "/", items[i]);
-            }
-        });
+        
     })
 
     /*

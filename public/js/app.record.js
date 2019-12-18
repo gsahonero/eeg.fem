@@ -178,22 +178,25 @@ document.addEventListener('DOMContentLoaded', function () {
      * 
      * @returns {Object} Object that contains the names of the files that need to be loaded.
      */
-    function findAudio() {
-        let audio_list=[]
+    function findMedia() {
+        let media_list=[]
         code = editor.getValue();
         // we should go until sentences.length-1 EYE WITH THIS
         sentences = code.replaceAll('\n','').split(';');
         for(var i=0; i<sentences.length-1;i++){
             var parameters=readLine(sentences[i]);
             if(parameters.command == "play"){
-                audio_list.push(parameters.args)
+                media_list.push({type:"music", name:parameters.args})
+            }
+            if(parameters.command == "present"){
+                media_list.push({type:"image", name:parameters.args})
             }
             if(parameters.command == "experiment"){
                 experiment=parameters.args
                 console.log("file",parameters.args);
             }    
         }
-        return audio_list
+        return media_list
     }
     /**
      * Extract information from a command line 
@@ -375,7 +378,6 @@ document.addEventListener('DOMContentLoaded', function () {
     */
    uploader.on('ready', function() {
     console.log('SocketIOFile ready to go!');
-    console.log(uploader);
     
     });
     uploader.on('loadstart', function() {
@@ -430,10 +432,11 @@ document.addEventListener('DOMContentLoaded', function () {
         * 
         */
         $("#compile_experiment").click(function(e){
-            let myAudio=findAudio();
-            console.log(myAudio);
+            let myMedia=findMedia();
+            console.log("Experiment: ",experiment);
             socket.emit('folder',experiment);
-            socket.emit('audio_files',myAudio);
+            console.log("Media: ",myMedia);
+            socket.emit('media_files',myMedia);
         });
         $("#run_experiment").off('click');
         execution_line = 0;
@@ -471,13 +474,13 @@ document.addEventListener('DOMContentLoaded', function () {
         {
             /**
             * 
-            * When the 'audio_files' instruction is received it imports music
+            * When the 'media_files' instruction is received it imports music
             *
             */
-            socket.on('audio_files', function(data){
+            socket.on('media_files', function(data){
                 console.log(data);
-                music_list= importMusic(data);   
-                console.log(music_list);
+                //music_list= importMusic(data);   
+                //console.log(music_list);
             });
 
             /**
@@ -717,6 +720,16 @@ document.addEventListener('DOMContentLoaded', function () {
         });
         }
         
+        socket.on('missing',(missing)=>{
+            if(missing.length>0){
+                alert("You need to upload the following files:\n"+ missing.join('\n'));
+                console.log(missing);
+                document.getElementById("run_experiment").disabled=true;
+                                
+            }else{
+                document.getElementById("run_experiment").disabled=false;
+            }
+        });
         /**
          * When the 'folder' instruction is received, the experiment is saved on a variable called experiment  
          */

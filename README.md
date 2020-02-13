@@ -24,7 +24,7 @@ To run the program you just need to type:
 ```bash
 node start
 ```
-Open your explorer, and type localhost:3000, this is the default client port, but it can be changed in the file: put name of file here
+Open your explorer, and type http://localhost:3000/, this is the default client port, but it can be changed in the file: put name of file here
 If the process is done correctly there should appear this page:
 Image.jpg
 The program has the following options:
@@ -36,10 +36,10 @@ You can check if your Emotiv Epoc+ headset is properly placed, and taking data c
 This option allows you to perform experiments. There are two roles in experiment:
 ##### Subject
 This screen corresponds to the experiment subject, and it's activated via websockets by the researcher
-##### Reasearchexr
+##### Researcher
 This screen allows you to set the experiment. You can customize it via commands, and run.
-
 #### List of Commands
+The list of commands is the following:
 - **experiment(arg)** - selects a main folder (arg) from images and audios are retrieved. These files should be in server.
 - **id(arg)** - selects a local folder (arg) where the data will be saved. This local folder is inside a main folder which name was declared by the experiment function. Data is saved by default in Desktop.
 - **beep(arg)** - produces a beep sound for arg milliseconds.
@@ -61,7 +61,6 @@ cd eeg.fem
 node start
 ```
 If the process started correctly you should receive the following message: *Server is running on port 3000!*.
-
 3. Open your favorite browser, then enter to the localhost. For default the program is running on port 3000, so you'll have to enter to: http://localhost:3000/
 4. Put on your Epoc+ headset.
 5. When you are in the menu click on *Check electrodes quality* button to check if the electrodes are receiving signal correctly. You'll be taken to a page that looks like this:

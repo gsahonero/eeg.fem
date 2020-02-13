@@ -7,7 +7,7 @@
     <script src="./js/epoch.js"></script>
     <link rel="stylesheet" type="text/css" href="./css/epoch.css">
 </head>
-<body>
+<body>  
     <style>
         img {
             height: 80vh;
@@ -55,11 +55,20 @@
           display: inline-block;
           position: absolute;
         }
+        #form{
+            padding: 20px;
+        }
+        
     </style>
     <div class="container" id="welcome-screen">
         Load view for
         <button type="button" class="btn btn-large btn-block btn-success" id="load-subject">Subject</button>
         <button type="button" class="btn btn-large btn-block btn-danger" id="load-researcher">Researcher</button>
+    </div>
+
+    <div class="container d-none" id="joystick-screen">
+        <h3>Press any Button</h3> 
+        <a id="skip-button" href="javascript:void(0)">Skip</a>
     </div>
 
     <div class="jumbotron vertical-center" style="background-color:white;">
@@ -84,20 +93,21 @@
                 <div id="editor">experiment(visual-imagery-1);
 id(123456);
 wait(1000,first_wait);
-ball(controller,7000);
+play(Mario1.mp3);
 finish();</div>
         </div>
         <div class="col-md-6" style="text-align: left;">
         Connection level: <a id="quality"> </a>
-            <a class="btn btn-primary btn-lg btn-block" href="#" role="button" id="run_experiment">Run experiment</a>
+            <button class="btn btn-primary btn-lg btn-block" href="#" role="button" id="run_experiment" disabled>Run experiment</button>
             <a class="btn btn-secondary btn-lg btn-block" href="#" role="button" id="load_experiment">Load experiment from file</a>
             <a class="btn btn-secondary btn-lg btn-block" href="#" role="button" id="save_experiment">Save experiment to file</a>
-            <div class="container">
-                Interaction region:
-                <a class="btn btn-danger btn-lg btn-block disabled" href="record_eeg.html" role="button" id="trigger_button">Trigger button</a>
+            <a class="btn btn-success btn-lg btn-block" href="#" role="button" id="compile_experiment">Compile</a>
+            
+            <form id="form">
+                <input type="file" id="file" multiple />
+                <input type="submit" value="Upload" />
+            </form>
 
-            </div>
-            <input type="file" id="file-upload" style="display:none;"/>
             <p>
                 A note on the allowed functions, remember that record of the session is permanent:
             </p>
@@ -116,11 +126,12 @@ finish();</div>
     </div>
 </div>
 
-<script src="./js/popper.min.js"></script>
-<script src="./js/bootstrap.min.js"></script>
-<script src="./js/socket.io.js"> </script>
-<script src="./js/smoothie.js"></script>
-<script src="./js/ace/ace.js"></script>
-<script src="./js/app.record.js"></script>
+    <script src="./js/popper.min.js"></script>
+    <script src="./js/bootstrap.min.js"></script>
+    <script src="./js/socket.io.js"> </script>
+    <script src="/socket.io-file-client.js"></script>
+    <script src="./js/smoothie.js"></script>
+    <script src="./js/ace/ace.js"></script>
+    <script src="./js/app.record.js"></script>
 </body>
 </html>

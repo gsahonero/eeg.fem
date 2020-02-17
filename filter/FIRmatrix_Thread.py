@@ -3,7 +3,7 @@
 Created on Thu Sep 12 09:41:43 2019
 @author: Anna Isabel Montevilla Shupikova
 """
-import xlrd 
+import xlrd
 import numpy as np
 import scipy.signal as signal
 from PIL import Image
@@ -11,7 +11,7 @@ from PIL import ImageDraw
 import matplotlib.pyplot as plt
 import time
 import cv2
-import threading    
+import threading
 
 def blue(resultsa,x1):
     r=20
@@ -54,8 +54,8 @@ def blue(resultsa,x1):
         #O1 O2
         draw.ellipse((177-r, 512-r, 177+r, 512+r), fill=blue[fb[10]])
         draw.ellipse((301-r, 512-r, 301+r, 512+r), fill=blue[fb[2]])
-        # Convert RGB to BGR 
-        open_cv_image = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR) 
+        # Convert RGB to BGR
+        open_cv_image = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)
         cv2.imshow('Alpha', open_cv_image)
         cv2.waitKey(1)
 def red(resultsb,x2):
@@ -99,13 +99,13 @@ def red(resultsb,x2):
         #O1 O2
         draw.ellipse((177-r, 512-r, 177+r, 512+r), fill=red[fb[10]])
         draw.ellipse((301-r, 512-r, 301+r, 512+r), fill=red[fb[2]])
-        # Convert RGB to BGR 
+        # Convert RGB to BGR
         open_cv_image1 = cv2.cvtColor(np.array(img1), cv2.COLOR_RGB2BGR)
         cv2.imshow('Beta', open_cv_image1)
         cv2.waitKey(1)
-#Import and open excel 
+#Import and open excel
 loc = ("C:/Users/HP/Downloads/left7.xlsx")
-wb = xlrd.open_workbook(loc) 
+wb = xlrd.open_workbook(loc)
 sheet = wb.sheet_by_index(0)
 
 #----------------Creating the filter-----------------
@@ -114,24 +114,41 @@ nyq_sample=sample_rate/2.0
 #filter order +1
 n = 2**6
 #alpha a filter
-fila = signal.firwin(n, cutoff = [8, 12], window = 'blackmanharris', pass_zero = False, nyq=nyq_sample)  
-    
+fila = signal.firwin(n, cutoff = [8, 12], window = 'blackmanharris', pass_zero = False, nyq=nyq_sample)
+
 #betha b filter
-filb = signal.firwin(n, cutoff = [12, 30], window = 'blackmanharris', pass_zero = False, nyq=nyq_sample)  
+filb = signal.firwin(n, cutoff = [12, 30], window = 'blackmanharris', pass_zero = False, nyq=nyq_sample)
 #-----------------------------------------------------
-#Initialization 
+#Initialization
 row=0
 data=np.zeros((n,15))
 #Saves the filtered data (size n)
 resultsa=np.zeros((n,14))
 resultsb=np.zeros((n,14))
 data_array_f=np.zeros(sheet.ncols)
-#Rounds to apply the filter  
+#Rounds to apply the filter
 rounds=sheet.nrows//n
 
 #Complete filtered data
 processeda=np.zeros((sheet.nrows,14))
 processedb=np.zeros((sheet.nrows,14))
+
+# variable to set up lower limit 1
+
+# variable to set up upper limit 1
+
+# for each band of interest
+
+# save data
+
+# variable to establish time window
+
+# power spectrum
+# x-axis: frequency
+# y-axis: energy, power (dB)
+
+#
+
 
 start=time.time()
 for i in range(rounds):

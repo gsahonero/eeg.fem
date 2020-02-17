@@ -723,10 +723,21 @@ class Cortex {
 
 // ---------------------------------------------------------
 let socketUrl = 'wss://localhost:6868'
+data = '';
+let client_id = '',
+    client_secret = '',
+    debit = 1000;
+
+let raw_file_data = fs.readFileSync('login.data');
+let license_data = JSON.parse(raw_file_data);
+
+client_id = license_data['clientId'];
+client_secret = license_data['clientSecret'];
+
 let user = {
     //"license":"your license",
-    "clientId":"c2soj6uK4DKsLbjrPnX1wcvjbZEUrTwugdIAsj4O",
-    "clientSecret":"eRdR1gu0pdGEL0Ig04gPhDqJKnJwhHg1zFnD4qT3GaPSQUeCJi8qPrRsvlglVMUtBWEcofiougHIZ5znFaG6924BTIDuqiS5Qe0eh9Eg3AnAHeltCGxxvoWPQSNMpN70",
+    "clientId": client_id,
+    "clientSecret": client_secret,
     "debit":100
 }
 

@@ -2,24 +2,35 @@ const WebSocket = require('ws');
 
 
 // Requires:
-var fs = require('fs');
+
 
 const { convertArrayToCSV } = require('convert-array-to-csv');
 const converter = require('convert-array-to-csv');
 
-
+var dir_path="";
 var means_marker = [];
 const express = require ('express');
 const app = express();
 var http = require('http').Server(app);
 const port = 3000;
 app.use(express.static('public'))
-const server = app.listen(port, () => {
+const server = http.listen(port, () => {
   console.log(`Server is running on port ${port}!`)
 });
 
-var io = require('socket.io')(server,{path:'/connection/eeg'});
+app.get('/socket.io-file-client.js', (req, res, next) => {
+    return res.sendFile(__dirname + '/node_modules/socket.io-file-client/socket.io-file-client.js');
+});
 
+var io = require('socket.io')(http,{path:'/connection/eeg'});
+var fs = require('fs');
+const SocketIOFile = require('socket.io-file');
+/**
+ * Looks for all the instances of a word, and replaces it
+ * @param {String} search       word that will be searched
+ * @param {String} replacement  Word that will be the replacement
+ * @returns Changes the document to a new version with the words replaced
+ */
 String.prototype.replaceAll = function(search, replacement) {
     var target = this;
     return target.replace(new RegExp(search, 'g'), replacement);
@@ -757,12 +768,65 @@ const header = [
 let streams = ['eeg','dev']
 c.sub(streams)
 
-//
+/*
+*   Instructions to be followed in case of receiving messages from the clients
+*/
 io.on('connect', function(socket){
+    
+    var uploader = new SocketIOFile(socket, {
+		// uploadDir: {			// multiple directories
+		// 	music: 'data/music',
+		// 	document: 'data/document'
+		// },
+		uploadDir: 'public/data/'+experiment,							// simple directory
+        
+        // accepts: ['audio/mpeg', 'audio/mp3'],		// chrome and some of browsers checking mp3 as 'audio/mp3', not 'audio/mpeg'
+		// maxFileSize: 4194304, 						// 4 MB. default is undefined(no limit)
+		chunkSize: 10240,							// default is 10240(1KB)
+		transmissionDelay: 0,						// delay of each transmission, higher value saves more cpu resources, lower upload speed. default is 0(no delay)
+		overwrite: false, 							// overwrite file if exists, default is true.
+		// rename: function(filename) {
+		// 	var split = filename.split('.');	// split filename by .(extension)
+		// 	var fname = split[0];	// filename without extension
+		// 	var ext = split[1];
+
+		// 	return `${fname}_${count++}.${ext}`;
+		// }
+    });
+    console.log(uploader.options.uploadDir);
+    
+    
+	uploader.on('start', (fileInfo) => {
+		console.log('Start uploading');
+		console.log("THIS IS THE UPLOADER",uploader);
+	});
+	uploader.on('stream', (fileInfo) => {
+		console.log(`${fileInfo.wrote} / ${fileInfo.size} byte(s)`);
+	});
+	uploader.on('complete', (fileInfo) => {
+		console.log('Upload Complete.');
+        console.log(fileInfo);
+        console.log(experiment," / ",id);
+        
+	});
+	uploader.on('error', (err) => {
+		console.log('Error!', err);
+	});
+	uploader.on('abort', (fileInfo) => {
+		console.log('Aborted: ', fileInfo);
+	});
+     
+    
+    /*
+    *   When it receives the 'command' instruction, it responds depending on the command read 
+    */
     socket.on('command',function(code){
         let func = code.command;
         let args = code.args;
-
+        /*
+        * If the command read is'experiment', it recognizes the experiment and
+        * starts recording data
+        */
         if (func === "experiment"){
             number_of_step = number_of_step + 1;
             finished = false;
@@ -774,17 +838,34 @@ io.on('connect', function(socket){
             to_record_data=[];
             console.log('Starting to record');
             record_index = 0;
-        }else if (func === "id"){
+        }
+        /*
+        * If the command read is'id', it saves the id of the subject, sends a confirmation message,
+        * and creates a folder with the experiment/id
+        */
+        else if (func === "id"){
             number_of_step = number_of_step + 1;
             console.log('Recognized ID '+id)
             id = args;
             io.emit('command','ready');
-            fs.mkdir('./public/data/'+experiment+'/'+id, function(err){
-                console.log('Error while creating folder for id:'+id+'. Error:'+err);
+            fs.mkdir('./public/data/'+experiment+'/'+id,{recursive: true} ,function(err){
+                if(err){
+                    console.log('Error while creating folder for id:'+id+'. Error:'+err);   
+                }
             });
-        }else if (func === "record"){
+        }
+        /*
+        * If the command read is'record', it doesnt do anything
+        */
+        else if (func === "record"){
             // deprecated
-        }else if (func === "beep"){
+        }
+        /*
+        * If the command read is 'beep', it increases the number of step, sends a confirmation message,
+        * and sends  a message of beep with args to generate beep
+        */
+
+        else if (func === "beep"){
             number_of_step = number_of_step + 1;
             means_marker = "beep";
             console.log('Recognized beep '+args)
@@ -793,7 +874,12 @@ io.on('connect', function(socket){
             setTimeout(function(){
                 io.emit('command','ready');
             }, parseInt(args, 10)+20);
-        }else if (func === "present"){
+        }
+        /*
+        * If the command read is 'present', it increases the number of step, sends a present instruction with 
+        * the folder direction of the image to be shown, and after that sends a confirmation message.
+        */
+        else if (func === "present"){
             number_of_step = number_of_step + 1;
             means_marker = "present";
             console.log('Recognized present '+args)
@@ -801,19 +887,32 @@ io.on('connect', function(socket){
             io.emit('present','./data/'+experiment+'/'+args);
             // send signal to present image
             io.emit('command','ready');
-        }else if (func === "clear"){
+        }
+        /*
+        * If the command read is 'clear', it increases the number of step, sends a clear instruction,
+        * and after that sends a confirmation message.
+        */
+        else if (func === "clear"){
             number_of_step = number_of_step + 1;
             means_marker = "cleared";
             console.log('Recognized clear '+args)
             io.emit('clear',args);
             io.emit('command','ready');
+        /*
+        * If the command read is 'play', it increases the number of step, sends a play instruction, and after that sends a confirmation message.
+        */
         }else if (func === "play"){
             number_of_step = number_of_step + 1;
             means_marker = "play";
             console.log('Recognized play '+args)
-            io.emit('play','./data/'+experiment+'/'+args);
+            io.emit('play',args);
             io.emit('command','ready');
-        }else if (func === "wait"){
+        }
+        /*
+        * If the command read is 'wait', it increases the number of step, and after that sends a
+        * confirmation message when the time shown in args elapsed.
+        */
+        else if (func === "wait"){
             number_of_step = number_of_step + 1;
             means_marker = "wait";
             console.log('Recognized wait '+args)
@@ -830,7 +929,12 @@ io.on('connect', function(socket){
             }else{
                 io.emit('command','ready');
             }
-        }else if (func === "ball"){
+        }
+        /*
+        * If the command read is 'ball', it increases the number of step, sends an instruction with 
+        * an object that contains the args , and after that sends a confirmation message.
+        */
+        else if (func === "ball"){
             number_of_step = number_of_step + 1;
             means_marker = "ball";
             console.log('Recognized ball ' + args)
@@ -842,7 +946,12 @@ io.on('connect', function(socket){
             setTimeout(function(){
                 io.emit('command','ready');
             }, arg.duration);
-        }else if (func === "finish"){
+        }
+        /*
+        * If the command read is 'finish', it restart the number of step, saves a .csv document on
+        * the experiment/id folder with the date information on its name.
+        */
+        else if (func === "finish"){
             number_of_step = 0;
             if (finished == false){
                 finished = true;
@@ -884,7 +993,64 @@ io.on('connect', function(socket){
         }
     });
 
-    //Raw data
+
+    /*
+    * When the instruction 'audio_files' is received , it broadcasts the info to the clients, or sends a message
+    */
+    socket.on('media_files',(data)=>{
+        /*
+            Reads the list of files in an specified path
+        */
+        let missing=[];
+        fs.readdir(dir_path, function(err, items) {
+            console.log("Look for this data",data);
+            data.forEach(element => {
+               console.log(element.name);
+               let found= items.find(dir_file => dir_file==element.name)
+               if(found == null)
+               {
+                   missing.push(element.name);
+                   console.log("Not Found: ", element.name);
+               }else{
+                   console.log("Found: ", element.name);
+               }
+            });
+            if (missing.length > 0){
+                console.log("List of missing files", missing);
+            }else{
+                console.log("Everything was found");
+                socket.broadcast.emit('media_files',data);
+            }
+            socket.emit('missing',missing);
+            
+        });
+        
+    })
+    /*
+    * When the instruction 'folder' is received , it broadcasts the message to the clients
+    */
+    socket.on('folder',(data)=>{
+        socket.broadcast.emit('folder','./data/'+data);
+        experiment = data; 
+        dir_path='./public/data/'+experiment;
+
+        console.log("The experiment is:", experiment);
+        fs.mkdir(dir_path,{recursive: true} ,function(err){
+            if(err){
+                console.log('Error while creating folder for id:'+id+'. Error:'+err);   
+            }
+            else{
+                console.log('Created folder: '+dir_path);
+            }
+        });
+        uploader.options.uploadDir = dir_path;
+        
+        
+    })
+
+    /*
+    * Actions of the joystick are saved on state
+    */
     socket.on('joystick:button',(data)=>{
         state[0]=data;
     });

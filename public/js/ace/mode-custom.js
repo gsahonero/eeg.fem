@@ -58,9 +58,8 @@ ace.define("ace/mode/doc_comment_highlight_rules",["require","exports","module",
   
   var JavaScriptHighlightRules = function(options) {
       var keywordMapper = this.createKeywordMapper({
-          
-          "keyword":
-              "experiment|id|beep|present|play|clear|wait|finish|ball"
+        "keyword":
+        "experiment|id|beep|present|play|clear|wait|finish|ball"
       }, "identifier");
       var kwBeforeRe = "case|do|else|finally|in|instanceof|return|throw|try|typeof|yield|void";
   

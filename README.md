@@ -36,9 +36,9 @@ You can check if your Emotiv Epoc+ headset is properly placed, and taking data c
 This option allows you to perform experiments. There are two roles in experiment:
 ##### Subject
 This screen corresponds to the experiment subject, and it's activated via websockets by the researcher
-##### Reasearcher
+##### Researcher
 This screen allows you to set the experiment. You can customize it via commands, and run.
-
+#### List of Commands
 The list of commands is the following:
 - **experiment(arg)** - selects a main folder (arg) from images and audios are retrieved. These files should be in server.
 - **id(arg)** - selects a local folder (arg) where the data will be saved. This local folder is inside a main folder which name was declared by the experiment function. Data is saved by default in Desktop.
@@ -61,5 +61,16 @@ cd eeg.fem
 node start
 ```
 If the process started correctly you should receive the following message: *Server is running on port 3000!*.
-3. Open your favorite browser, then enter to the localhost. In this case the program is running on port 3000, so you'll have to enter to: http://localhost:3000/
-
+3. Open your favorite browser, then enter to the localhost. For default the program is running on port 3000, so you'll have to enter to: http://localhost:3000/
+4. Put on your Epoc+ headset.
+5. When you are in the menu click on *Check electrodes quality* button to check if the electrodes are receiving signal correctly. You'll be taken to a page that looks like this:
+   
+   Where you can see the quality of signal from each electrode. If the quality of the modules is poor, try humidifying the feltpads and make sure that ground electrodes are placed correctly.
+6. After checking the quality, go back to the menu, and click the *Watch Raw EEG Data* to see the data retrieved from the headset in real time. You can try blinking to see some artifacts, this could be seen as peaks in the signal.
+7. Go back to the menu. Then click on the *record EEG* button.
+8. Click on the *Subject* button to access to the subject page. This should become a blank page
+9. Open another tab, and enter to http://localhost:3000/, then click the *Record EEG*
+10. Click on the *Researcher* button, to access to the experiment customization page. You can change the experiment instructions on the script using the commands shown on the List of Commands section.
+11. If you have some media files, you have to click on the *Import Audio resources* button before starting the experiment.
+12. To start the experiment just click on the *Start experiment* button. After doing this the experiment should start. In the *Subject* page the experiment will be running, and all the data will be stored in ...
+13. 

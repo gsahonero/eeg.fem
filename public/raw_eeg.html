@@ -5,7 +5,9 @@
         <script src="./js/jquery-1.10.1.min.js"></script>
         <script src="./js/d3.v3.js" charset="utf-8"></script>
         <script src="./js/epoch.js"></script>
-        <link rel="stylesheet" type="text/css" href="./css/epoch.css">
+        <!--link rel="stylesheet" type="text/css" href="./css/epoch.css"-->
+        <link rel="stylesheet" href="./css/bootstrap.min.css">
+        <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@800&display=swap" rel="stylesheet">
     </head>
     <body style="background-color:#F27649;">
         <style>
@@ -15,10 +17,14 @@
             .container{
                 text-align: center;
             }
+            .main-show{
+                margin-top: -1vh;
+                margin-left: 120vh;
+            }
         </style>
         <div class="container">
-            <div class="test">
-                <h2>Stream</h2>
+            <div class="test text-white">
+                <h1>Stream</h1>
                 <p>Adquiriendo datos de sockets. <!--a href="./">Click here to return to Dashboard</a--></p>
             </div>
         </div>
@@ -27,12 +33,13 @@
             <div class="row">
                 <div class="col-9" style="text-align: left;">
                     <canvas id="mycanvas" width="820px" height="550px"></canvas>
-                    <a class="btn btn-x1 btn-default text-white" style="background-color:#4F4F58;" href="check_connection.html" role="button"><h1>ELECTRODOS</h1></a>
+                    
+                    <a class="btn btn-sm btn-default text-white" style="background-color:#4F4F58;" href="check_connection.html" role="button"><h1>ELECTRODOS</h1></a>
                     Connection level: <a id="quality"> </a>
                 </div>
                 
-                <div class="col-3" style="text-align: left;">
-                    <h3>Seleccione el canal de su preferencia:</h3>
+                <div class="col-3 text-white" style="text-align: left;">
+                    <h1>Seleccione el canal de su preferencia:</h1>
                     <div class="form-check">
                         <input type="checkbox" class="form-check-input" id="channel1_check">
                         <label class="form-check-label" for="channel1_check">Canal 12 - AF3</label>
@@ -89,7 +96,9 @@
                         <input type="checkbox" class="form-check-input" id="channel14_check">
                         <label class="form-check-label" for="channel14_check">Canal 6 - AF4</label>
                     </div>
-                    <a class="btn btn-x1 btn-default text-white" style="background-color:#4F4F58;" href="" role="button"><h1>SIGUIENTE</h1></a>
+                </div>
+                <div class = "container main-show">
+                    <a class="btn btn-sm btn-default text-white" style="background-color:#4F4F58;" href="" role="button"><h1>SIGUIENTE</h1></a>
                 </div>
             </div>
         </div>

@@ -19,76 +19,77 @@
         <div class="container">
             <div class="test">
                 <h2>Stream</h2>
-                <p>Acquiring data from sockets. <a href="./">Click here to return to Dashboard</a></p>
+                <p>Adquiriendo datos de sockets. <!--a href="./">Click here to return to Dashboard</a--></p>
             </div>
-        </div>
-        <div class="container">
-            <canvas id="mycanvas" width="1200px" height="800px"></canvas>
         </div>
 
         <div class="container">
-            <h3>Select a channel of your preference:</h3>
             <div class="row">
-                <div class="col-md-6">
-                    <img class="img-fluid max-size" src="./img/emotiv.jpg" alt="">
+                <div class="col-9" style="text-align: left;">
+                    <canvas id="mycanvas" width="820px" height="550px"></canvas>
+                    <a class="btn btn-x1 btn-default text-white" style="background-color:#4F4F58;" href="check_connection.html" role="button"><h1>ELECTRODOS</h1></a>
+                    Connection level: <a id="quality"> </a>
                 </div>
-                <div class="col-md-6" style="text-align: left;">
+                
+                <div class="col-3" style="text-align: left;">
+                    <h3>Seleccione el canal de su preferencia:</h3>
                     <div class="form-check">
                         <input type="checkbox" class="form-check-input" id="channel1_check">
-                        <label class="form-check-label" for="channel1_check">Channel 1 - AF3</label>
+                        <label class="form-check-label" for="channel1_check">Canal 12 - AF3</label>
                     </div>
                     <div class="form-check">
                         <input type="checkbox" class="form-check-input" id="channel2_check">
-                        <label class="form-check-label" for="channel2_check">Channel 2 - F7</label>
+                        <label class="form-check-label" for="channel2_check">Canal 2 - F7</label>
                     </div>
                     <div class="form-check">
                         <input type="checkbox" class="form-check-input" id="channel3_check">
-                        <label class="form-check-label" for="channel3_check">Channel 3 - F3</label>
+                        <label class="form-check-label" for="channel3_check">Canal 14 - F3</label>
                     </div>
                     <div class="form-check">
                         <input type="checkbox" class="form-check-input" id="channel4_check">
-                        <label class="form-check-label" for="channel4_check">Channel 4 - FC5</label>
+                        <label class="form-check-label" for="channel4_check">Canal 7 - FC5</label>
                     </div>
                     <div class="form-check">
                         <input type="checkbox" class="form-check-input" id="channel5_check">
-                        <label class="form-check-label" for="channel5_check">Channel 5 - T7</label>
+                        <label class="form-check-label" for="channel5_check">Canal 13 - T7</label>
                     </div>
                     <div class="form-check">
                         <input type="checkbox" class="form-check-input" id="channel6_check">
-                        <label class="form-check-label" for="channel6_check">Channel 6 - P7</label>
+                        <label class="form-check-label" for="channel6_check">Canal 4 - P7</label>
                     </div>
                     <div class="form-check">
                         <input type="checkbox" class="form-check-input" id="channel7_check">
-                        <label class="form-check-label" for="channel7_check">Channel 7 - O1</label>
+                        <label class="form-check-label" for="channel7_check">Canal 11 - O1</label>
                     </div>
                     <div class="form-check">
                         <input type="checkbox" class="form-check-input" id="channel8_check">
-                        <label class="form-check-label" for="channel8_check">Channel 8 - O2</label>
+                        <label class="form-check-label" for="channel8_check">Canal 3 - O2</label>
                     </div>
                     <div class="form-check">
                         <input type="checkbox" class="form-check-input" id="channel9_check">
-                        <label class="form-check-label" for="channel9_check">Channel 9 - P8</label>
+                        <label class="form-check-label" for="channel9_check">Canal 9 - P8</label>
                     </div>
                     <div class="form-check">
                         <input type="checkbox" class="form-check-input" id="channel10_check">
-                        <label class="form-check-label" for="channel10_check">Channel 10 - T8</label>
+                        <label class="form-check-label" for="channel10_check">Canal 5 - T8</label>
                     </div>
                     <div class="form-check">
                         <input type="checkbox" class="form-check-input" id="channel11_check">
-                        <label class="form-check-label" for="channel11_check">Channel 11 - FC6</label>
+                        <label class="form-check-label" for="channel11_check">Canal 1 - FC6</label>
                     </div>
                     <div class="form-check">
                         <input type="checkbox" class="form-check-input" id="channel12_check">
-                        <label class="form-check-label" for="channel12_check">Channel 12 - F4</label>
+                        <label class="form-check-label" for="channel12_check">Canal 10 - F4</label>
                     </div>
                     <div class="form-check">
                         <input type="checkbox" class="form-check-input" id="channel13_check">
-                        <label class="form-check-label" for="channel13_check">Channel 13 - F8</label>
+                        <label class="form-check-label" for="channel13_check">Canal 8 - F8</label>
                     </div>
                     <div class="form-check">
                         <input type="checkbox" class="form-check-input" id="channel14_check">
-                        <label class="form-check-label" for="channel14_check">Channel 14 - AF4</label>
+                        <label class="form-check-label" for="channel14_check">Canal 6 - AF4</label>
                     </div>
+                    <a class="btn btn-x1 btn-default text-white" style="background-color:#4F4F58;" href="" role="button"><h1>SIGUIENTE</h1></a>
                 </div>
             </div>
         </div>

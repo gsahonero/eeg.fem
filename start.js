@@ -742,14 +742,15 @@ let client_id = '',
 let raw_file_data = fs.readFileSync('login.data');
 let license_data = JSON.parse(raw_file_data);
 
+license = license_data['license']
 client_id = license_data['clientId'];
 client_secret = license_data['clientSecret'];
 
 let user = {
-    //"license":"your license",
+    "license": license,
     "clientId": client_id,
     "clientSecret": client_secret,
-    "debit":100
+    "debit":10000
 }
 
 let c = new Cortex(user, socketUrl)

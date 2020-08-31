@@ -1,26 +1,43 @@
 <html>
    <head>
-        <title>EEG-fEM: EEG Emotiv Web Suite</title>
+        <title>BCI Musical</title>
         <link rel="stylesheet" href="./css/bootstrap.min.css">
         <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@900&display=swap" rel="stylesheet">
     </head>
     <body style="background-color:#9B45BF;">
-        <div class="container main-show">
-            <div class="content">
+        <style>
+            .title{
+            margin-top: 5vh;
+        }
+
+            .parrafo{
+                margin-top: 20vh;
+            }
+
+            .sig{
+                margin-top: 15vh;
+            }
+            
+        </style>
+        <div class="container">
+            <div class="title">
                 <div class="col-md-8 offset-md-0 text-left">
-                    <h1 class="text-white">INSTRUCCIONES GENERALES</h1>                                        
-                </div>
-                <div class="w-100"></div>
-                <div class="col-md-4 offset-md-4">
-                    <input type="text" class="form-control" placeholder="Ingrese su CI">
-                </div>
-                <div class="w-100"></div>
-            </br>
-                <div class="col-md-1 offset-md-4">
-                    <button class="btn btn-x2 btn-default text-white" style="background-color:#4F4F58;" href="video_eeg.html" role="button"><h1>EMPEZAR</h1>
-                </div>
+                    <a class="h4 text-white"><h1>INSTRUCCIONES GENERALES</h1></a>                                        
+                </div>                
+            </div>
+            <div class="parrafo">
+                <a class="h6 text-white"><h1>1. Verificar la calidad de coneccion de los electrodos</h1></a>
+                <a class="h6 text-white"><h1>2. Recordar no mover ningun musculo del cuerpo mientras se realiza el experimento</h1></a>
+                <a class="h6 text-white"><h1>3. Descansar entre experimentos minimamente 10 minutos</h1></a>
+                <a class="h6 text-white"><h1>4. Para cada experimento humedecer los pads</h1></a>
+                <a class="h6 text-white"><h1>5. Para cada experimento se tendra instrucciones especificas</h1></a>
+            </div>
+            <div class="sig row">
+                <a class="offset-md-0 btn btn-x2 btn-default text-white" style="background-color:#4F4F58;" href="check_connection.html" role="button"><h1>ELECTRODOS</h1></a>
+                <a class="offset-md-5 btn btn-x2 btn-default text-white" style="background-color:#4F4F58;" href="experiments_eeg.html" role="button"><h1>SIGUIENTE</h1></a>
             </div>
         </div>
+
     
         <script src="./js/jquery-3.3.1.min.js"></script>
         <script src="./js/popper.min.js"></script>

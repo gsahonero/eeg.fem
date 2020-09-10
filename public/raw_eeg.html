@@ -5,7 +5,6 @@
         <script src="./js/jquery-1.10.1.min.js"></script>
         <script src="./js/d3.v3.js" charset="utf-8"></script>
         <script src="./js/epoch.js"></script>
-        <!--link rel="stylesheet" type="text/css" href="./css/epoch.css"-->
         <link rel="stylesheet" href="./css/bootstrap.min.css">
         <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@800&display=swap" rel="stylesheet">
     </head>
@@ -15,91 +14,91 @@
                 max-height: 50vh;
             }
             .container{
-                text-align: center;
+                text-align: left;
             }
             .main-show{
                 margin-top: -1vh;
                 margin-left: 120vh;
             }
+            .title{
+                margin-top: 5vh;
+            }
         </style>
-        <div class="container">
+        <div class="container title">
             <div class="test text-white">
-                <h1>Stream</h1>
-                <p>Adquiriendo datos de sockets. <!--a href="./">Click here to return to Dashboard</a--></p>
+                <h1>SEÑALES EEG</h1>
             </div>
         </div>
 
         <div class="container">
             <div class="row">
                 <div class="col-9" style="text-align: left;">
-                    <canvas id="mycanvas" width="820px" height="550px"></canvas>
-                    
-                    <a class="btn btn-x2 btn-default text-white" style="background-color:#4F4F58;" href="check_connection.html" role="button"><h1>ELECTRODOS</h1></a>
-                    Connection level: <a id="quality"> </a>
+                    <canvas id="mycanvas" width="820px" height="550px"></canvas>                    
                 </div>
-                
                 <div class="col-3 text-white" style="text-align: left;">
-                    <h1>Seleccione el canal de su preferencia:</h1>
+                    <h1 class="h4">Seleccione el canal:</h1>
                     <div class="form-check">
-                        <input type="checkbox" class="form-check-input" id="channel1_check" checked>
-                        <label class="h6 form-check-label" for="channel1_check">AF3</label>
+                        <input type="checkbox" class="form-check-input" id="channel1_check">
+                        <label class="form-check-label" for="channel1_check"><h1 class="h5">AF3</h1></label>
                     </div>
                     <div class="form-check">
-                        <input type="checkbox" class="form-check-input" id="channel2_check" checked>
-                        <label class="h6 form-check-label" for="channel2_check">F7</label>
+                        <input type="checkbox" class="form-check-input" id="channel2_check">
+                        <label class="form-check-label" for="channel2_check"><h1 class="h5">F7</h1></label>
                     </div>
                     <div class="form-check">
-                        <input type="checkbox" class="form-check-input" id="channel3_check" checked>
-                        <label class="form-check-label" for="channel3_check">F3</label>
+                        <input type="checkbox" class="form-check-input" id="channel3_check">
+                        <label class="form-check-label" for="channel3_check"><h1 class="h5">F3</h1></label>
                     </div>
                     <div class="form-check">
-                        <input type="checkbox" class="form-check-input" id="channel4_check" checked>
-                        <label class="form-check-label" for="channel4_check">FC5</label>
+                        <input type="checkbox" class="form-check-input" id="channel4_check">
+                        <label class="form-check-label" for="channel4_check"><h1 class="h5">FC5</h1></label>
                     </div>
                     <div class="form-check">
-                        <input type="checkbox" class="form-check-input" id="channel5_check" checked>
-                        <label class="form-check-label" for="channel5_check">T7</label>
+                        <input type="checkbox" class="form-check-input" id="channel5_check">
+                        <label class="form-check-label" for="channel5_check"><h1 class="h5">T7</h1></label>
                     </div>
                     <div class="form-check">
-                        <input type="checkbox" class="form-check-input" id="channel6_check" checked>
-                        <label class="form-check-label" for="channel6_check">P7</label>
+                        <input type="checkbox" class="form-check-input" id="channel6_check">
+                        <label class="form-check-label" for="channel6_check"><h1 class="h5">P7</h1></label>
                     </div>
                     <div class="form-check">
-                        <input type="checkbox" class="form-check-input" id="channel7_check" checked>
-                        <label class="form-check-label" for="channel7_check">O1</label>
+                        <input type="checkbox" class="form-check-input" id="channel7_check">
+                        <label class="form-check-label" for="channel7_check"><h1 class="h5">O1</h1></label>
                     </div>
                     <div class="form-check">
-                        <input type="checkbox" class="form-check-input" id="channel8_check" checked>
-                        <label class="form-check-label" for="channel8_check">O2</label>
+                        <input type="checkbox" class="form-check-input" id="channel8_check">
+                        <label class="form-check-label" for="channel8_check"><h1 class="h5">O2</h1></label>
                     </div>
                     <div class="form-check">
-                        <input type="checkbox" class="form-check-input" id="channel9_check" checked>
-                        <label class="form-check-label" for="channel9_check">P8</label>
+                        <input type="checkbox" class="form-check-input" id="channel9_check">
+                        <label class="form-check-label" for="channel9_check"><h1 class="h5">P8</h1></label>
                     </div>
                     <div class="form-check">
-                        <input type="checkbox" class="form-check-input" id="channel10_check" checked>
-                        <label class="form-check-label" for="channel10_check">T8</label>
+                        <input type="checkbox" class="form-check-input" id="channel10_check">
+                        <label class="form-check-label" for="channel10_check"><h1 class="h5">T8</h1></label>
                     </div>
                     <div class="form-check">
-                        <input type="checkbox" class="form-check-input" id="channel11_check" checked>
-                        <label class="form-check-label" for="channel11_check">FC6</label>
+                        <input type="checkbox" class="form-check-input" id="channel11_check">
+                        <label class="form-check-label" for="channel11_check"><h1 class="h5">FC6</h1></label>
                     </div>
                     <div class="form-check">
-                        <input type="checkbox" class="form-check-input" id="channel12_check" checked>
-                        <label class="form-check-label" for="channel12_check">F4</label>
+                        <input type="checkbox" class="form-check-input" id="channel12_check">
+                        <label class="form-check-label" for="channel12_check"><h1 class="h5">F4</h1></label>
                     </div>
                     <div class="form-check">
-                        <input type="checkbox" class="form-check-input" id="channel13_check" checked>
-                        <label class="form-check-label" for="channel13_check">F8</label>
+                        <input type="checkbox" class="form-check-input" id="channel13_check">
+                        <label class="form-check-label" for="channel13_check"><h1 class="h5">F8</h1></label>
                     </div>
                     <div class="form-check">
-                        <input type="checkbox" class="form-check-input" id="channel14_check" checked>
-                        <label class="form-check-label" for="channel14_check">AF4</label>
+                        <input type="checkbox" class="form-check-input" id="channel14_check">
+                        <label class="form-check-label" for="channel14_check"><h1 class="h5">AF4</h1></label>
                     </div>
                 </div>
-                <div class = "container main-show">
-                    <a class="btn btn-x2 btn-default text-white" style="background-color:#4F4F58;" href="InstG_eeg.html" role="button"><h1>SIGUIENTE</h1></a>
-                </div>
+            </div>
+            <div class="sig row">
+                <a class="offset-md-0 btn btn-x2 btn-default text-white" style="background-color:#4F4F58;" href="check_connection.html" role="button"><h1>ELECTRODOS</h1></a>
+                Connection level: <a id="quality"> </a>
+                <a class="offset-md-5 btn btn-x2 btn-default text-white" style="background-color:#4F4F58;" href="InstG_eeg.html" role="button"><h1>SIGUIENTE</h1></a>
             </div>
         </div>
 
@@ -107,6 +106,8 @@
         <script src="./js/bootstrap.min.js"></script>
         <script src="./js/socket.io.js"> </script>
         <script src="./js/smoothie.js"></script>
+        <script src="./js/ace/ace.js"></script>
         <script src="./js/app.js"></script>
+        <script src="./js/app.record.js"></script>
     </body>
 </html>

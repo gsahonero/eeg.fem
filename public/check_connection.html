@@ -1,79 +1,93 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <title>Control electrodos</title>
         <link rel="stylesheet" href="./css/bootstrap.min.css">
         <script src="./js/jquery-1.10.1.min.js"></script>
         <script src="./js/d3.v3.js" charset="utf-8"></script>
         <script src="./js/epoch.js"></script>
         <link rel="stylesheet" type="text/css" href="./css/epoch.css">
+        <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@800&display=swap" rel="stylesheet">
     </head>
-    <body>
+    <body style="background-color:#1A1B26;">
         <style>
             .max-size{
-                max-height: 50vh;
-                position: fixed;
+                max-height: 65vh;
                 left: 10%;
                 top: 35%;
             }
             .container{
                 text-align: center;
             }
+
+            .title{
+                margin-top: 5vh;
+            }
+
+            .content{
+                margin-top: 10vh;
+            }
+
         </style>
-        <div class="container">
-            <div class="test">
-                <h2>Check Headset Connection</h2>
-                <p>Acquiring data from sockets. <a href="./">Click here to return to Dashboard</a></p>
+        <div class="container title">
+            <div class="test text-white">
+                <h1 class="text-left">Compruebe la conexión del Headset</h1>
             </div>
         </div>
-        <div class="container">
-            <h3>Select a channel of your preference:</h3>
+    </p>
+        <div class="container content text-white">
             <div class="row">
-                <div class="col-md-6">
-                    <img class="img-fluid max-size" src="./img/emotiv.jpg" alt="">
-                </div>
-                <div class="col-md-6" style="text-align: left;">
-                    <div class="alert" role="alert" id="FC6">
-                        Channel 1 - FC6
+                <div class="col-md-3" style="text-align: left;">
+                    <div class="alert" role="alert" id="AF3">
+                        <h1 class="h5 text-left">AF3</h1>
                     </div>
                     <div class="alert" role="alert" id="F7">
-                        Channel 2 - F7
-                    </div>
-                    <div class="alert" role="alert" id="O2">
-                        Channel 3 - O2
-                    </div>
-                    <div class="alert" role="alert" id="P7">
-                        Channel 4 - P7
-                    </div>
-                    <div class="alert" role="alert" id="T8">
-                        Channel 5 - T8
-                    </div>
-                    <div class="alert" role="alert" id="AF4">
-                        Channel 6 - AF4
-                    </div>
-                    <div class="alert" role="alert" id="FC5">
-                        Channel 7 - FC5
-                    </div>
-                    <div class="alert" role="alert" id="F8">
-                        Channel 8 - F8
-                    </div>
-                    <div class="alert" role="alert" id="P8">
-                        Channel 9 - P8
-                    </div>
-                    <div class="alert" role="alert" id="F4">
-                        Channel 10 - F4
-                    </div>
-                    <div class="alert" role="alert" id="O1">
-                        Channel 11 - O1
-                    </div>
-                    <div class="alert" role="alert" id="AF3">
-                        Channel 12 - AF3
-                    </div>
-                    <div class="alert" role="alert" id="T7">
-                        Channel 13 - T7
+                        <h1 class="h5 text-left">F7</h1>
                     </div>
                     <div class="alert" role="alert" id="F3">
-                        Channel 14 - F3
+                        <h1 class="h5 text-left">F3</h1>
                     </div>
+                    <div class="alert" role="alert" id="FC5">
+                        <h1 class="h5 text-left">FC5</h1>
+                    </div>
+                    <div class="alert" role="alert" id="T7">
+                        <h1 class="h5 text-left">T7</h1>
+                    </div>
+                    <div class="alert" role="alert" id="P7">
+                        <h1 class="h5 text-left">P7</h1>
+                    </div>
+                    <div class="alert" role="alert" id="O1">
+                        <h1 class="h5 text-left">O1</h1>
+                    </div>
+                </div>
+                <div class="col-md-6" style="text-align: center;">
+                    <img class="img-fluid max-size" src="./img/emotiv.png" alt="">
+                </div>
+                <div class="col-md-3" style="text-align: left;">
+                    <div class="alert" role="alert" id="AF4">
+                        <h1 class="h5 text-right">AF4</h1>
+                    </div>
+                    <div class="alert" role="alert" id="F8">
+                        <h1 class="h5 text-right">F8</h1>
+                    </div>
+                    <div class="alert" role="alert" id="F4">
+                        <h1 class="h5 text-right">F4</h1>
+                    </div>
+                    <div class="alert" role="alert" id="FC6">
+                        <h1 class="h5 text-right">FC6</h1>
+                    </div>
+                    <div class="alert" role="alert" id="T8">
+                        <h1 class="h5 text-right">T8</h1>
+                    </div>
+                    <div class="alert" role="alert" id="P8">
+                        <h1 class="h5 text-right">P8</h1>
+                    </div>
+                    <div class="alert" role="alert" id="O2">
+                        <h1 class="h5 text-right">O2</h1>
+                    </div>
+                </div>
+                <div class="col-md-3 offset-md-9">
+                    <a class="btn btn-x2 btn-default text-white" style="background-color:#4F4F58;" href="raw_eeg.html" role="button"><h1>SIGUIENTE</h1></a>
                 </div>
             </div>
         </div>

@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoadedOM', function(){
     var socket = new io.connect('http://localhost:3000', {path: '/connection/eeg',reconnect: true});
     socket.on('connect', function () {
         socket.on('dev', function(data){
+            console.log('All: ',data);
             let connection_information = data[2];
             let total = 0;
             for (let index = 0; index<=13; index=index+1){

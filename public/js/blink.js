@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoadedOM', function(){
                 total = total + connection_information[index];
             }
             let avg = total/14/4*100;
+            console.log('Percent: ',avg);
             if (avg == 100){
                 document.body.style.background = "#038C33";
             } else if ((avg < 100) && (avg >=75)){

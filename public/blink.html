@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
+<html>
+    <head>
+        <title>Document</title>
+        <link rel="stylesheet" href="./css/bootstrap.min.css">
+        <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@800&display=swap" rel="stylesheet">
+    </head>
 <body style="background-color:#1A1B26;">
     <style>
         html{
@@ -16,11 +16,13 @@
     </style>
     <div class="main-show">
         <div class='row'>
-            <div class='offset-md-10'>
-                <img src="./img/closeEye.png" class="img-fluid" alt="Responsive image" width="500" height="250">
+            <div class='offset-md-4'>
+                <!-- <img src="./img/openEye.png" class="img-fluid" alt="Responsive image" width="500" height="250"> -->
+                <h1 class="h3-responsive text-white" id='blink_action'>WAITING</h1>
             </div>    
         </div>
     </div>
+    <script src="./js/bootstrap.min.js"></script>
     <script src="./js/socket.io.js"> </script>
     <script src="./js/blink.js"></script>
 </body>

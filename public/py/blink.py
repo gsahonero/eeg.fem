@@ -3,7 +3,7 @@ import numpy as np
 
 blink_OC = 'blink_OC'
 sio = socketio.Client()
-eeg_prom = np.zeros((1,14))
+eeg_prom = np.zeros((1,64))
 p_eeg = 0
 
 @sio.event

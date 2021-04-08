@@ -114,7 +114,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
         document.body.removeChild(element);
     }
-    function findAudio() {
+    
+    /* function findAudio() {
         let audio_list=[]
         code = editor.getValue();
         // we should go until sentences.length-1 EYE WITH THIS
@@ -126,8 +127,9 @@ document.addEventListener('DOMContentLoaded', function () {
             }  
         }
         return audio_list
-    }
-    function readLine(line){
+    } */
+    
+    /* function readLine(line){
         let commands = line.split('(');
         let func = commands[0];
         let args = commands[1].split(')')[0];
@@ -136,7 +138,7 @@ document.addEventListener('DOMContentLoaded', function () {
             'args': args
         };
         return data;
-    }
+    } */
 
     $("#load-subject").click(function(){
         $("#welcome-screen").attr('class','d-none');
@@ -172,7 +174,8 @@ document.addEventListener('DOMContentLoaded', function () {
         $("#title").attr('class','container');
         $("#content").attr('class','container');
         role = 0;
-    })
+    });
+
     $("#load_experiment").click(function(e){
         e.preventDefault();
         $("#file-upload").on('change', function(){
@@ -189,17 +192,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }).click();
     });
-
-    /* $("#load-subjectwj").click(function(){
-       $("#welcome-screen").attr('class','d-none');   
-       $("#subjectwj-container").attr('class','container');
-       $("#subjectwj-container").html("<h3>Waiting, please be patient ...</h3>");
-       
-       role = 1;
-        console.log('Si');
-    }); */
- 
-    
+     
     $("#save_experiment").click(function(e){
         download('script.txt', editor.getValue());
     });
@@ -223,6 +216,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var beep_sound = new Audio('./data/beep.mp3');
 
     a=new AudioContext()
+
     function beep(vol, freq, duration){
         v=a.createOscillator()
         u=a.createGain()
@@ -247,13 +241,15 @@ document.addEventListener('DOMContentLoaded', function () {
         });
         console.log('Connected to server');
 
-        $("#import_audio").click(function(e){
+        /* $("#import_audio").click(function(e){
             let myAudio=findAudio();
             console.log(myAudio);
+        }); */
 
-        });
         $("#run_experiment").off('click');
+
         execution_line = 0;
+        
         $("#run_experiment").click(function(e){
             e.preventDefault();
             $("#run_experiment").addClass('disabled');
@@ -268,10 +264,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 'args': args
             };
             if (func === "experiment"){
-                console.log('Recognizing Experiment')
+                //console.log('Recognizing Experiment')
                 experiment = args;
             }
-            console.log('Sending initial command')
+            console.log('Sending 1');
             socket.emit('command', data);
         });
 
@@ -287,6 +283,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (role)
             $("#subject-container").html(image);
         });
+
         socket.on('play',function(data){
             audio_sound.src=data;
             if (role)
@@ -295,6 +292,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 audio_sound.play();
             }, 10);
         });
+
         socket.on('finish', function(){
             if (role){
                 $("#subject-container").html("<h3>Waiting... Please, be patient</h3>");
@@ -303,9 +301,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 }, 2000);
             }
         });
+        
         socket.on('error',function(){
             alert('An error in server has occurred.');
         });
+
         socket.on('ball',function(data){
             if (role){
                 $("#subject-container").html("<div class='d-none' id='ball-container'><span class='dot' id='ball'></span></div>");
@@ -475,123 +475,128 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log('Unrecognized data');
     }
 }
-});
-socket.on('clear',function(data){
-    if (data === "screen"){
-        console.log('Recognizing Clear Screen')
-        let emptyness = "";
-        $("#subject-container").html(emptyness);
-    }else if (data === "audio"){
-        console.log('Recognizing Clear Sound')
-        audio_sound.pause();
-        audio_sound.currentTime=0;
-    }
-})
-socket.on('command',function(data){
-    console.log(data);
-    if (data === "ready" && !role){
-        beep_sound.pause();
-        execution_line = execution_line + 1;
-        console.log(sentences[execution_line]);
-        let commands = sentences[execution_line].split('(');
-        console.log(commands);
-        let func = commands[0];
-        let args = commands[1].split(')')[0];
-        let data = {
-            'command': func,
-            'args': args
-        };
-        if (func === "experiment"){
-            console.log('Recognizing Experiment')
-            experiment = args;
-        }
-        else if (func === "beep"){
-            console.log('Recognizing Beep')
-        }else if (func === "present"){
-            console.log('Recognizing Presentation')
+        });
 
-        }else if (func === "play"){
-            console.log('Recognizing Play')
-
-        }else if (func === "clear"){
-            console.log('Recognizing Clear');
-        }else if (func === "ball"){
-            console.log("Recognizing ball");
-        }else if (func === "wait"){
-            if (args>0 || args.length>0){
-                console.log('waiting server response');
-            }else{
-                console.log('Recognizing Wait')
-                $("#trigger_button").removeClass('disabled');
-                waiting_for_trigger = true;
-                $("#trigger_button").off('click');
-                $("#trigger_button").click(function(e){
-                    e.preventDefault();
-                    socket.emit('command',{
-                        "command": 'wait'
-                    });
-                    $("#trigger_button").addClass('disabled');
-                    waiting_for_trigger = false;
-                });
+        socket.on('clear',function(data){
+            if (data === "screen"){
+                console.log('Recognizing Clear Screen')
+                let emptyness = "";
+                $("#subject-container").html(emptyness);
+            }else if (data === "audio"){
+                console.log('Recognizing Clear Sound')
+                audio_sound.pause();
+                audio_sound.currentTime=0;
             }
-        }else if (func === "imagine"){
+        })
+
+
+        socket.on('command',function(data){
+            console.log(data);
+            if (data === "ready" && !role){
+                beep_sound.pause();
+                execution_line = execution_line + 1;
+                console.log(sentences[execution_line]);
+                let commands = sentences[execution_line].split('(');
+                console.log(commands);
+                let func = commands[0];
+                let args = commands[1].split(')')[0];
+                let data = {
+                    'command': func,
+                    'args': args
+                };
+                if (func === "experiment"){
+                    console.log('Recognizing Experiment')
+                    experiment = args;
+                }
+                else if (func === "beep"){
+                    console.log('Recognizing Beep')
+                }else if (func === "present"){
+                    console.log('Recognizing Presentation')
+
+                }else if (func === "play"){
+                    console.log('Recognizing Play')
+
+                }else if (func === "clear"){
+                    console.log('Recognizing Clear');
+                }else if (func === "ball"){
+                    console.log("Recognizing ball");
+                }else if (func === "wait"){
+                    if (args>0 || args.length>0){
+                        console.log('waiting server response');
+                    }else{
+                        console.log('Recognizing Wait')
+                        $("#trigger_button").removeClass('disabled');
+                        waiting_for_trigger = true;
+                        $("#trigger_button").off('click');
+                        $("#trigger_button").click(function(e){
+                            e.preventDefault();
+                            console.log('Sending 2');
+                            socket.emit('command',{
+                                "command": 'wait'
+                            });
+                            $("#trigger_button").addClass('disabled');
+                            waiting_for_trigger = false;
+                        });
+                    }
+                }/* else if (func === "imagine"){
+                        //if (args>0 || args.length>0){
+                        //    console.log('waiting server response');
+                        //}else{
+                        console.log('Recognizing Imagine')
+                        $("#trigger_button").removeClass('disabled');
+                        waiting_for_trigger = true;
+                        $("#trigger_button").off('click');
+                        $("#trigger_button").click(function(e){
+                            e.preventDefault();
+                            socket.emit('command',{
+                                "command": 'wait'
+                            });
+                            $("#trigger_button").addClass('disabled');
+                            waiting_for_trigger = false;
+                        });
+                }else if (func === "blick"){
                 //if (args>0 || args.length>0){
                 //    console.log('waiting server response');
                 //}else{
-                console.log('Recognizing Imagine')
-                $("#trigger_button").removeClass('disabled');
-                waiting_for_trigger = true;
-                $("#trigger_button").off('click');
-                $("#trigger_button").click(function(e){
-                    e.preventDefault();
-                    socket.emit('command',{
-                        "command": 'wait'
+                    console.log('Recognizing Blink')
+                    $("#trigger_button").removeClass('disabled');
+                    waiting_for_trigger = true;
+                    $("#trigger_button").off('click');
+                    $("#trigger_button").click(function(e){
+                        e.preventDefault();
+                        socket.emit('command',{
+                            "command": 'wait'
+                        });
+                        $("#trigger_button").addClass('disabled');
+                        waiting_for_trigger = false;
                     });
+                } */else if (func === "finish"){
+                    console.log('finished');
+                    $("#run_experiment").removeClass("disabled");
                     $("#trigger_button").addClass('disabled');
-                    waiting_for_trigger = false;
-                });
-        }else if (func === "blick"){
-        //if (args>0 || args.length>0){
-        //    console.log('waiting server response');
-        //}else{
-            console.log('Recognizing Blink')
-            $("#trigger_button").removeClass('disabled');
-            waiting_for_trigger = true;
-            $("#trigger_button").off('click');
-            $("#trigger_button").click(function(e){
-                e.preventDefault();
-                socket.emit('command',{
-                    "command": 'wait'
-                });
-                $("#trigger_button").addClass('disabled');
-                waiting_for_trigger = false;
-            });
-        }else if (func === "finish"){
-            console.log('finished');
-            $("#run_experiment").removeClass("disabled");
-            $("#trigger_button").addClass('disabled');
-            console.log('this way');
-            socket.emit('command',{
-                "command":'finish'
-            });
-            execution_line = 0;
-        }
-        if (!waiting_for_trigger){
-            socket.emit('command', data);
-        }
-    }else{
-        console.log('Either user has no right role or an error has occured while receiving command from server');
-    }
-});
+                    console.log('Sending 3');
+                    socket.emit('command',{
+                        "command":'finish'
+                    });
+                    execution_line = 0;
+                }
+                if (!waiting_for_trigger){
+                    console.log('Sending 4');
+                    socket.emit('command', data);
+                }
+            }else{
+                console.log('Either user has no right role or an error has occured while receiving command from server');
+            }
+        });
 
-socket.on('dev', function(data){
+        socket.on('dev', function(data){
 
-});
-socket.on('data',function(data){
+        });
+        socket.on('data',function(data){
 
-});
-socket.on('subject-html',function(data){
-    $("#subject-container").html(data);
-});
+        });
+        socket.on('subject-html',function(data){
+            $("#subject-container").html(data);
+        });
 });
 }, false);

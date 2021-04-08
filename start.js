@@ -771,12 +771,26 @@ const header = [
 let streams = ['eeg','dev']
 c.sub(streams)
 
+//read JSON
+const userData = require('./public/json/users.json');
+const experiments = require('./public/json/experiments.json');
+//const { SSL_OP_COOKIE_EXCHANGE } = require('constants');
+
+////Find in JSON file
+function userIden(userData, data){
+    return userData.find(userIden => userIden.CI === data.CI);
+}
+
+var result = {};
+var exp = {};
+var exp_ ={};
+
 /*
 *   Instructions to be followed in case of receiving messages from the clients
 */
 io.on('connect', function(socket){
     
-    var uploader = new SocketIOFile(socket, {
+    /* var uploader = new SocketIOFile(socket, {
 		// uploadDir: {			// multiple directories
 		// 	music: 'data/music',
 		// 	document: 'data/document'
@@ -796,34 +810,67 @@ io.on('connect', function(socket){
 		// 	return `${fname}_${count++}.${ext}`;
 		// }
     });
-    console.log(uploader.options.uploadDir);
+    console.log(uploader.options.uploadDir); */
     
-    
-	uploader.on('start', (fileInfo) => {
+    io.sockets.emit('userId', result);          //Envia de antemano a todos los sockets
+    io.sockets.emit('exp', exp);
+    io.sockets.emit('experiment', exp_);
+
+    socket.on('userCI', (data) => {
+        result = userIden(userData, data);
+        console.log(result);
+        if(result){                             //Si no hay el usuario en JSON, no envia nada
+            io.sockets.emit('userId', result);  //Emite la informacion del usuario.
+        }else{
+            result = {};                        //Si el usuario ingresa el CI y no esta envia undefined
+            io.sockets.emit('userId', result);  //Emite la informacion del usuario.
+        }
+    });
+
+    socket.on('button_exp', (data) =>{
+        //console.log(data);
+        exp = data.experiment;
+        io.sockets.emit('exp', exp);
+        exp_ = experiments[data.experiment-1];
+        //console.log(exp_);
+        io.sockets.emit('experiment', exp_);
+    });
+
+    socket.on('sub_experiment', (data) => {
+        console.log(data);
+        io.sockets.emit('sub_experiment', data);
+    });
+
+    //
+	/* uploader.on('start', (fileInfo) => {
 		console.log('Start uploading');
 		console.log("THIS IS THE UPLOADER",uploader);
-	});
-	uploader.on('stream', (fileInfo) => {
+	}); */
+
+	/* uploader.on('stream', (fileInfo) => {
 		console.log(`${fileInfo.wrote} / ${fileInfo.size} byte(s)`);
-	});
-	uploader.on('complete', (fileInfo) => {
+	}); */
+
+	/* uploader.on('complete', (fileInfo) => {
 		console.log('Upload Complete.');
         console.log(fileInfo);
         console.log(experiment," / ",id);
-        
-	});
-	uploader.on('error', (err) => {
+	}); */
+
+	/* uploader.on('error', (err) => {
 		console.log('Error!', err);
-	});
-	uploader.on('abort', (fileInfo) => {
+	}); */
+
+	/* uploader.on('abort', (fileInfo) => {
 		console.log('Aborted: ', fileInfo);
-	});
+	}); */
      
     
     /*
     *   When it receives the 'command' instruction, it responds depending on the command read 
     */
-    socket.on('command',function(code){
+    socket.on('command', function(code){
+        console.log('Recive: ',code);
         let func = code.command;
         let args = code.args;
         /*
@@ -852,9 +899,9 @@ io.on('connect', function(socket){
             id = args;
             io.emit('command','ready');
             fs.mkdir('./public/data/'+experiment+'/'+id,{recursive: true} ,function(err){
-                if(err){
-                    console.log('Error while creating folder for id:'+id+'. Error:'+err);   
-                }
+                //if(err){
+                console.log('Error while creating folder for id:'+id+'. Error:'+err);   
+                //}
             });
         }
         /*
@@ -908,7 +955,7 @@ io.on('connect', function(socket){
             number_of_step = number_of_step + 1;
             means_marker = "play";
             console.log('Recognized play '+args)
-            io.emit('play',args);
+            io.emit('play','./data/'+experiment+'/'+args);
             io.emit('command','ready');
         }
         /*
@@ -1000,11 +1047,11 @@ io.on('connect', function(socket){
     /*
     * When the instruction 'audio_files' is received , it broadcasts the info to the clients, or sends a message
     */
-    socket.on('media_files',(data)=>{
+    //socket.on('media_files',(data)=>{
         /*
             Reads the list of files in an specified path
         */
-        let missing=[];
+        /* let missing=[];
         fs.readdir(dir_path, function(err, items) {
             console.log("Look for this data",data);
             data.forEach(element => {
@@ -1028,11 +1075,11 @@ io.on('connect', function(socket){
             
         });
         
-    })
+    }) */
     /*
     * When the instruction 'folder' is received , it broadcasts the message to the clients
     */
-    socket.on('folder',(data)=>{
+    /* socket.on('folder',(data)=>{
         socket.broadcast.emit('folder','./data/'+data);
         experiment = data; 
         dir_path='./public/data/'+experiment;
@@ -1046,10 +1093,8 @@ io.on('connect', function(socket){
                 console.log('Created folder: '+dir_path);
             }
         });
-        uploader.options.uploadDir = dir_path;
-        
-        
-    })
+        uploader.options.uploadDir = dir_path; 
+    }) */
 
     /*
     * Actions of the joystick are saved on state

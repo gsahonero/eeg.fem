@@ -22,21 +22,33 @@
                 margin-left: 70vh;
             }
             </style>
+        <div id ='btn-container'>
         <div class="container main-show">
-            <a class="btn btn-primary" style="background-color:#D94E41;" href="#" role="button"><h1>Exp. 1</h1></a>
-            <a class="btn btn-primary" style="background-color:#F2C53D;" href="#" role="button"><h1>Exp. 2</h1></a>
-            <a class="btn btn-primary" style="background-color:#1A1B26;" href="#" role="button"><h1>Exp. 3</h1></a>
-            <a class="btn btn-primary" style="background-color:#6796CD;" href="#" role="button"><h1>Exp. 4</h1></a>
+            <a class="btn btn-primary" style="background-color:#D94E41;" href="experiment_run.html" role="button" id='ex1'><h1>Exp. 1</h1></a>
+            <a class="btn btn-primary" style="background-color:#F2C53D;" href="experiment_run.html" role="button" id='ex2'><h1>Exp. 2</h1></a>
+            <a class="btn btn-primary" style="background-color:#1A1B26;" href="experiment_run.html" role="button" id='ex3'><h1>Exp. 3</h1></a>
+            <a class="btn btn-primary" style="background-color:#6796CD;" href="experiment_run.html" role="button" id='ex4'><h1>Exp. 4</h1></a>
         </div>
-        <div class="container main-show1">
-            <a class="btn btn-primary" style="background-color:#0442BF;" href="#" role="button"><h1>Exp. 5</h1></a>
-            <a class="btn btn-primary" style="background-color:#F27649;" href="#" role="button"><h1>Exp. 6</h1></a>
-            <a class="btn btn-primary" style="background-color:#038C33;" href="#" role="button"><h1>Exp. 7</h1></a>
-            <a class="btn btn-primary" style="background-color:#9B45BF;" href="#" role="button"><h1>Exp. 8</h1></a>
+        <div class="container main-show1" >
+            <a class="btn btn-primary" style="background-color:#0442BF;" href="experiment_run.html" role="button" id='ex5'><h1>Exp. 5</h1></a>
+            <a class="btn btn-primary" style="background-color:#F27649;" href="experiment_run.html" role="button" id='ex6'><h1>Exp. 6</h1></a>
+            <a class="btn btn-primary" style="background-color:#9B45BF;" href="experiment_run.html" role="button" id='ex8'><h1>Exp. 8</h1></a>
+            <a class="btn btn-primary" style="background-color:#038C33;" href="experiment_run.html" role="button" id='ex7'><h1>Exp. 7</h1></a>
         </div>
-    
+        <div>
+            <div class="col-md-4 offset-md-4">
+                <h1 class="text-white" id='id'>BIENVENIDO</h1>
+            </div>
+            <div class="col-md-4 offset-md-4">
+                <h1 class="text-white" id='quality'></h1>
+            </div>
+        </div>
+    </div>
         <script src="./js/jquery-3.3.1.min.js"></script>
         <script src="./js/popper.min.js"></script>
         <script src="./js/bootstrap.min.js"></script>
+        <script src="./js/socket.io.js"> </script>
+        <script src="./js/socket.io-file-client.js"></script>
+        <script src="./js/experiment_menu.js"></script>
     </body>
 </html>

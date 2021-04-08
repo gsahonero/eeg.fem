@@ -1,0 +1,70 @@
+<html>
+   <head>
+        <title>BCI Musical</title>
+        <link rel="stylesheet" href="./css/bootstrap.min.css">
+        <script src="./js/jquery-1.10.1.min.js"></script>
+        <script src="./js/d3.v3.js" charset="utf-8"></script>
+        <script src="./js/epoch.js"></script>
+        <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@900&display=swap" rel="stylesheet">
+    </head>
+    <body style="background-color:#D94E41;">
+        <style>
+            .custom {
+                width: 230px !important;
+                height: 57px !important;
+            }
+            .icons_exp{
+                max-width: 50%;
+                height: auto;
+            }
+        </style>
+
+        <div class="container">
+            <div class='row justify-content-center'>
+                <h1 class="h8 text-white" id='nro_exp'>EXPERIMENTO</h1>
+            </div>
+            <div class='row justify-content-center'>
+                <a class="h6 text-white" id='iys'><h1>INSTRUCCIONES Y SECUENCIA</h1></a>
+            </div>
+            <div class='row justify-content-center' id="instrucciones">
+                <div class="col">
+                    <a class="h7 text-white" id='experiment'><h1>1. Las acciones que se realizaran en este experimento seran: Escuchar e imaginarse la cancion a interpretar, parpadeo y solamente imaginarse interpretando la canción.</h1></a>
+                    <br>
+                    <a class="h7 text-white" id='experiment'><h1>2. Se hara cada una de las acciones segun la secuencia dada, estas estaran separadas por un sonido caracteristico ¨BEEP¨.</h1></a>
+                    <br>
+                    <a class="h7 text-white" id='experiment'><h1>3. El experimento conluira cuando se escuche un ¨BEEP¨ largo.</h1></a>
+                </div>
+                <div class='col'>
+                    <img src="./img/1.png">
+                    <br>
+                    <img src="./img/5.png">
+                    <br>
+                    <img src="./img/1.png">
+                    <br>
+                    <img src="./img/5.png">
+                    <br>
+                    <img src="./img/2.png">
+                    <br>
+                    <img src="./img/5.png">
+                    <br>
+                    <img src="./img/1.png">
+                </div>
+            </div>
+            <br>
+            <div class="row justify-content-center align-items-end">
+                <div class="col align-self-start">
+                    <a class="btn btn-x2 btn-default text-white disabled h1" style="background-color:#4F4F58;" href="check_connection.html" role="button" id='quality'><h8></h8></a>
+                </div>
+                <div class="col align-self-end">
+                    <a class="btn btn-x2 btn-default text-white h1" style="background-color:#4F4F58;" href="experiments_eeg.html" role="button"><h2>ATRAS</h2></a>
+                    <a class="btn btn-x2 btn-default text-white h1" style="background-color:#4F4F58;" href="#" role="button" id="run"><h2>EMPEZAR</h2></a>
+                </div>
+            </div>
+        </div>
+
+        <script src="./js/popper.min.js"></script>
+        <script src="./js/bootstrap.min.js"></script>
+        <script src="./js/socket.io.js"> </script>
+        <script src="./js/experiment_run.js"></script>
+    </body>
+</html>

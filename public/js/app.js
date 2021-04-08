@@ -80,7 +80,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 total = total + connection_information[index];
             }
             let avg = (total/14/4*100).toFixed(2);
-            $("#quality").text(avg);
+            $("#quality").text('ELECTRODOS | '+avg);
         });
         /*
         * When the instruction 'data' is received , it changes the graph according to the data received

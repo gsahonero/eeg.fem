@@ -24,19 +24,13 @@
                 </div>
                 <div class="w-100"></div>
                 <div class="col-md-4 offset-md-4">
-                    <input type="text" class="form-control" placeholder="Ingrese su CI">
+                    <h1>
+                        <input type="text" class="form-control" placeholder="Ingrese su CI" id='CI'>
+                    </h1>
                 </div>
                 <div class="w-100"></div>
-                <div class="col-md-4 offset-md-4 text-left">
-                    <h1 class="text-white">INGRESE EL CODIGO</h1>
-                </div>
-                <div class="col-md-4 offset-md-4">
-                    <input type="text" class="form-control" placeholder="Codigo del experimento">
-                </div>
-                <div class="w-100"></div>
-            </br>
-            <div class="col-md-1 offset-md-4">
-                    <a class="btn btn-x2 btn-default text-white" style="background-color:#4F4F58;" href="video_eeg.html" role="button"><h1>EMPEZAR</h1></a>
+                <div class="col-md-1 offset-md-4">
+                    <a class="btn btn-x2 btn-default text-white" style="background-color:#4F4F58;" href="video_eeg.html" role="button" id="check"><h1>EMPEZAR</h1></a>
                 </div>
             </div>
         </div>
@@ -44,5 +38,8 @@
         <script src="./js/jquery-3.3.1.min.js"></script>
         <script src="./js/popper.min.js"></script>
         <script src="./js/bootstrap.min.js"></script>
+        <script src="./js/socket.io.js"> </script>
+        <script src="/socket.io-file-client.js"></script>
+        <script src="./js/CI_input.js"></script>
     </body>
 </html>

@@ -1,6 +1,4 @@
 document.addEventListener('DOMContentLoaded', function () {
-
-    
     /**
      *  Changes the style according to the params
      *

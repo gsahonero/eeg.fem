@@ -1070,4 +1070,9 @@ io.on('connect', function(socket){
         state[2]=data;
         console.log(state);
     });
+
+    socket.on('blink', (data) => {
+        io.sockets.emit('blink', data);
+        /* console.log(data); */
+    });
 });

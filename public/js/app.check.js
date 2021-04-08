@@ -32,6 +32,7 @@ document.addEventListener('DOMContentLoaded', function () {
         */
         socket.on('dev', function(data){
             let connection_information = data[2];
+            
             $("#AF3").attr('class', defineClass(connection_information[0]));
             $("#F7").attr('class', defineClass(connection_information[1]));
             $("#F3").attr('class', defineClass(connection_information[2]));

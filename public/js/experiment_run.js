@@ -1,5 +1,11 @@
 document.addEventListener('DOMContentLoaded', function () {
     var socket = new io.connect('http://localhost:3000', {path: '/connection/eeg',reconnect: true});
+
+    let img_1 = document.getElementById("line_1"); 
+    let img_2 = document.getElementById("line_2"); 
+    let img_3 = document.getElementById("line_3");
+    let img_4 = document.getElementById("line_4");
+
     var counter = 0;
     var execution_line = 0;
     var col = ['#D94E41','#F2C53D','#1A1B26','#6796CD','#0442BF','#F27649','#038C33','#9B45BF'];
@@ -14,6 +20,51 @@ document.addEventListener('DOMContentLoaded', function () {
     var waiting_for_trigger = false;
 
 
+    function line(exp){
+        var line = [5,5,5,5];
+        if (exp == 1){
+            line[0] = './img/1.png';
+            line[1] = './img/1.png';
+            line[2] = './img/2.png';
+            line[3] = './img/1.png';
+        }else if(exp == 2){
+            line[0] = './img/2.png';
+            line[1] = './img/2.png';
+            line[2] = './img/1.png';
+            line[3] = './img/2.png';
+        }else if(exp == 3){
+            line[0] = './img/3.png';
+            line[1] = './img/3.png';
+            line[2] = './img/4.png';
+            line[3] = './img/3.png';
+        }else if(exp == 4){
+            line[0] = './img/4.png';
+            line[1] = './img/4.png';
+            line[2] = './img/3.png';
+            line[3] = './img/4.png';
+        }else if(exp == 5){
+            line[0] = './img/1.png';
+            line[1] = './img/2.png';
+            line[2] = './img/3.png';
+            line[3] = './img/4.png';
+        }else if(exp == 6){
+            line[0] = './img/3.png';
+            line[1] = './img/4.png';
+            line[2] = './img/1.png';
+            line[3] = './img/2.png';
+        }else if(exp == 7){
+            line[0] = './img/4.png';
+            line[1] = './img/2.png';
+            line[2] = './img/4.png';
+            line[3] = './img/2.png';
+        }else if(exp == 8){
+            line[0] = './img/2.png';
+            line[1] = './img/4.png';
+            line[2] = './img/2.png';
+            line[3] = './img/4.png';
+        }
+        return line;
+    }
 
     function beep(vol, freq, duration){
         v=a.createOscillator()
@@ -63,7 +114,11 @@ document.addEventListener('DOMContentLoaded', function () {
         socket.on('exp', (exp) => {
             $("#nro_exp").text("EXPERIMENTO "+exp);
             document.body.style.backgroundColor = col[exp-1];
-        })
+            img_1.src = line(exp)[0];
+            img_2.src = line(exp)[1];
+            img_3.src = line(exp)[2];
+            img_4.src = line(exp)[3];
+        });
         
         socket.on('userId', function(result){
             new_words[0] = 'id('+result.CI+')';

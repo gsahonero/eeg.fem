@@ -97,7 +97,7 @@ document.addEventListener('DOMContentLoaded', function () {
         return sentences;
     }
 
-    socket.on('connect', function () {        
+    socket.on('connect', function () {
         
         execution_line = 0;
         
@@ -108,7 +108,16 @@ document.addEventListener('DOMContentLoaded', function () {
                 total = total + connection_information[index];
             }
             let avg = (total/14/4*100).toFixed(2);
-            $("#quality").text("ELECTRODES | "+avg);
+            if(avg < 100){
+                $('#quality').removeClass('disabled');
+                $('#quality').css("background-color", "red");
+                $('#run').addClass('disabled');
+            }else{
+                $('#quality').addClass('disabled');
+                $('#quality').css("background-color", "#4F4F58");
+                $('#run').removeClass('disabled');
+            }
+            $("#quality").text("ELECTRODOS | "+avg);
         });  
 
         socket.on('exp', (exp) => {
@@ -132,9 +141,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
         $("#run").click(function(e){
             e.preventDefault();
-            $("#instrucciones").html("");
-            $("#iys").html("");
-            $("#run").addClass('disabled');
+            document.body.style.backgroundColor = "#A0D9C9";
+            $("#instrucciones").addClass("d-none");
+            $("#iys").addClass("d-none");
+            $("#run").addClass('d-none');
+            $("#atras").addClass('d-none');
+            $("#low-btn").removeClass('low_btn');
+            $("#low-btn").addClass('low_btn1');
             let commands = sentences[execution_line].split('(');
             let func = commands[0];
             let args = commands[1].split(')')[0];
@@ -145,7 +158,6 @@ document.addEventListener('DOMContentLoaded', function () {
             if (func === "experiment"){
                 experiment = args;
             }
-            console.log('Sending 1');
             socket.emit('command', data);
         });
         
@@ -193,9 +205,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (data === "ready"){
                 beep_sound.pause();
                 execution_line = execution_line + 1;
-                console.log(sentences[execution_line]);
                 let commands = sentences[execution_line].split('(');
-                console.log(commands);
                 let func = commands[0];
                 let args = commands[1].split(')')[0];
                 let data = {
@@ -223,31 +233,22 @@ document.addEventListener('DOMContentLoaded', function () {
                         console.log('waiting server response');
                     }else{
                         console.log('Recognizing Wait')
-                        $("#trigger_button").removeClass('disabled');
                         waiting_for_trigger = true;
-                        $("#trigger_button").off('click');
-                        $("#trigger_button").click(function(e){
-                            e.preventDefault();
-                            console.log('Sending 2');
-                            socket.emit('command',{
-                                "command": 'wait'
-                            });
-                            $("#trigger_button").addClass('disabled');
-                            waiting_for_trigger = false;
-                        });
                     }
                 }else if (func === "finish"){
                     console.log('finished');
-                    $("#run_experiment").removeClass("disabled");
-                    $("#trigger_button").addClass('disabled');
-                    console.log('Sending 3');
+                    $("#iys").removeClass('d-none');
+                    $("#instrucciones").removeClass("d-none");
+                    $("#run").removeClass('d-none');
+                    $("#atras").removeClass('d-none');
+                    $("#low-btn").removeClass('low_btn1');
+                    $("#low-btn").addClass('low_btn');
                     socket.emit('command',{
                         "command":'finish'
                     });
                     execution_line = 0;
                 }
                 if(!waiting_for_trigger){
-                    console.log('Sending 4');
                     socket.emit('command', data);
                 }
             }else{

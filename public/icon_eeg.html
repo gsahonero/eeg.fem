@@ -1,41 +1,61 @@
+<!DOCTYPE html>
 <html>
-   <head>
-        <title>EEG-fEM: EEG Emotiv Web Suite</title>
+    <head>
         <link rel="stylesheet" href="./css/bootstrap.min.css">
-        <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@900&display=swap" rel="stylesheet">
+        <script src="./js/jquery-1.10.1.min.js"></script>
+        <script src="./js/d3.v3.js" charset="utf-8"></script>
+        <script src="./js/epoch.js"></script>
+        <link rel="stylesheet" href="./css/bootstrap.min.css">
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@100;200;300;400;500;600;700;900&display=swap" rel="stylesheet">
     </head>
-    <body style="background-color:#056CF2;">
+    <body style="background-color:#F27649;">
         <style>
-        .content{
-            align-items: center;
-            text-align: center;
-        }
-        html{
-            height:100%;
-        }
-        .main-show{
-            margin-top: 30vh;
-        }
+            .html{
+                height:100%;
+            }
+            .low_btn{
+                margin-top: 7.5vh;
+            }
+            .btn-x2{
+                align-items: center;
+            }
+            .btn-elec{
+                font-size: 35px;
+                padding: 0px 10px;
+                font-weight: 900;
+            }
+            .sig{
+                margin-left: 35vh;
+                font-weight: 900;
+                font-size: 35px;
+            }
+            .title{
+                font-weight: 900;
+            }
+            .row_title{
+                margin-top: 5vh;
+            }
         </style>
-        <div class="container main-show">
-            <div class="content">
-                <div class="col-md-4 offset-md-4 text-left">
-                    <h1 class="text-white">INGRESE SU CI</h1>
-                </div>
-                <div class="w-100"></div>
-                <div class="col-md-4 offset-md-4">
-                    <input type="text" class="form-control" placeholder="Ingrese su CI">
-                </div>
-                <div class="w-100"></div>
-            </br>
-                <div class="col-md-1 offset-md-4">
-                    <button class="btn btn-x2 btn-default text-white" style="background-color:#4F4F58;" href="video_eeg.html" role="button"><h1>EMPEZAR</h1>
+        <div class="container">
+            <div class='row justify-content-start row_title'>
+                <h1 class="h8 text-white title">ML MODEL</h1>
+            </div>
+            <div>
+                <h1 class="text-white h8 welcome" id='pred'>BIENVENIDO</h1>
+            </div>
+            <div class="row low_btn">
+                <div class="col align-self-start">
+                    <a class="btn btn-x2 btn-default text-white h1 btn-elec" style="background-color:#4F4F58;" href="" role="button" id='quality'></a>
                 </div>
             </div>
         </div>
-    
-        <script src="./js/jquery-3.3.1.min.js"></script>
+
         <script src="./js/popper.min.js"></script>
         <script src="./js/bootstrap.min.js"></script>
+        <script src="./js/socket.io.js"> </script>
+        <script src="./js/smoothie.js"></script>
+        <script src="./js/ace/ace.js"></script>
+        <script src="./js/icon_musical.js"></script>
     </body>
 </html>

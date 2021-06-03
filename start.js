@@ -1,8 +1,6 @@
 const WebSocket = require('ws');
 
-
 // Requires:
-
 
 const { convertArrayToCSV } = require('convert-array-to-csv');
 const converter = require('convert-array-to-csv');
@@ -781,10 +779,16 @@ function userIden(userData, data){
     return userData.find(userIden => userIden.CI === data.CI);
 }
 
-var result = {};
+var result = {'CI': 0};
 var exp = {};
 var exp_ ={};
-
+var y_array = [0, 0, 0, 0, 0];
+var y_class = [0, 0, 0, 0];
+var mod = {'btn_ML': 0};
+var py_server = 0;
+var empezar = {'empezar': 0};
+var y = 0;
+var y_vol = 0.0;
 /*
 *   Instructions to be followed in case of receiving messages from the clients
 */
@@ -812,10 +816,64 @@ io.on('connect', function(socket){
     });
     console.log(uploader.options.uploadDir); */
     
+    io.sockets.emit('py_server', {'py_server': py_server});
     io.sockets.emit('userId', result);          //Envia de antemano a todos los sockets
+    io.sockets.emit('model_ML', mod);
+    io.sockets.emit('pred', {'pred': y, 'pred_vol': y_vol})
+    io.sockets.emit('start', empezar);
     io.sockets.emit('exp', exp);
     io.sockets.emit('experiment', exp_);
+    
 
+    /* socket.on('filter', (data) => {
+        io.sockets.emit('filter', data);
+        console.log(data.theta)
+    }); */
+    socket.on('start', (data) =>{
+        empezar = data;
+        console.log(empezar);
+        io.sockets.emit('start', empezar);
+    });
+
+    //Recibe y_predict de python
+    socket.on('y_predict', (data) => {
+        //console.log(data)
+        if (data.first == 1){
+            y_array[0] = data.y_predict
+            y_array[1] = data.y_predict
+            y_array[2] = data.y_predict
+            y_array[3] = data.y_predict
+            y_array[4] = data.y_predict
+        }else if(data.first == 0){
+            if (data.y_predict != 5){ 
+                y_array[0] = y_array[1];
+                y_array[1] = y_array[2];
+                y_array[2] = y_array[3];
+                y_array[3] = y_array[4];
+                y_array[4] = data.y_predict;
+                for (i=0; i < y_array.length; i++){
+                    if (y_array[i] == 1){
+                        y_class[0] += 1; 
+                    }else if (y_array[i] == 2){
+                        y_class[1] += 1;
+                    }else if (y_array[i] == 3){
+                        y_class[2] += 1;
+                    }else if (y_array[i] == 4){
+                        y_class[3] += 1;
+                    }
+                }
+                var max = Math.max(...y_class);
+                var y = y_class.indexOf(max) + 1;
+                var y_vol = 1/(1-Math.exp(-(5-y_class[max])));
+                //console.log('y: ',y,'y_vol: ',y_vol);
+                io.sockets.emit('pred', {'pred': y, 'pred_vol': y_vol});
+            }else if(data.y_predict == 5){
+                y = 5;
+                io.sockets.emit('pred', {'pred': y});
+            };
+        };
+    });
+    
     socket.on('userCI', (data) => {
         result = userIden(userData, data);
         console.log(result);
@@ -828,12 +886,20 @@ io.on('connect', function(socket){
     });
 
     socket.on('button_exp', (data) =>{
-        //console.log(data);
         exp = data.experiment;
         io.sockets.emit('exp', exp);
         exp_ = experiments[data.experiment-1];
-        //console.log(exp_);
         io.sockets.emit('experiment', exp_);
+    });
+
+    socket.on('button_ML', (data) =>{
+        mod = data;
+        io.sockets.emit('model_ML', mod);
+    });
+
+    socket.on('song_ML', (data) =>{
+        song_ml = data;
+        io.sockets.emit('song_ML', song_ml);
     });
 
     socket.on('sub_experiment', (data) => {
@@ -841,6 +907,13 @@ io.on('connect', function(socket){
         io.sockets.emit('sub_experiment', data);
     });
 
+    //Terminate the process
+    socket.on('finish', (data) => {
+        if(data == 'true'){
+            io.sockets.emit('py_server', {'py_server': 1});
+            process.exit();
+        }
+    });
     //
 	/* uploader.on('start', (fileInfo) => {
 		console.log('Start uploading');
@@ -1043,7 +1116,6 @@ io.on('connect', function(socket){
         }
     });
 
-
     /*
     * When the instruction 'audio_files' is received , it broadcasts the info to the clients, or sends a message
     */
@@ -1105,7 +1177,6 @@ io.on('connect', function(socket){
     socket.on('joystick:axes',(data)=>{
         //console.log(data);
     });
-
     //Command Data
     socket.on('commands:x',(data)=>{
         state[1]=data;

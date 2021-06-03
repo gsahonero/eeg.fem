@@ -3,6 +3,8 @@ var socket = new io.connect('http://localhost:3000', {path: '/connection/eeg',re
 var ex = 0;
 
 let id = document.getElementById('id');
+let song = document.getElementById('song');
+let inst = document.getElementById('instrument');
 let btn1 = document.getElementById('ex1');
 let btn2 = document.getElementById('ex2');
 let btn3 = document.getElementById('ex3');
@@ -11,6 +13,9 @@ let btn5 = document.getElementById('ex5');
 let btn6 = document.getElementById('ex6');
 let btn7 = document.getElementById('ex7');
 let btn8 = document.getElementById('ex8');
+
+var audio = document.getElementById('audio');
+var user_audio = document.getElementById('user_audio');
 
 function Habilitar(value){
     disabled = document.createAttribute('class');
@@ -24,6 +29,11 @@ function Habilitar(value){
 
 socket.on('userId', function(data){
     id.innerHTML = 'Bienvenido '+data.user;
+    song.innerHTML = 'Canción: '+data.song;
+    inst.innerHTML = 'Instrumento: '+data.instrument;
+    user_audio.src = 'data/Musical/'+data.song+'.mp3';
+    audio.load(); //call this to just preload the audio without playing
+    //audio.play(); //call this to play the song right away
     experiment = data.experiments;
     btn1.setAttributeNode(Habilitar(experiment[0]));
     btn2.setAttributeNode(Habilitar(experiment[1]));
@@ -42,8 +52,17 @@ socket.on('connect', function () {
         for (let index = 0; index<=13; index=index+1){
             total = total + connection_information[index];
         }
-        let avg = total/14/4*100;
-        $("#quality").text(avg);
+        let avg = (total/14/4*100).toFixed(2);
+        console.log(avg);
+        if(avg < 100){
+            $('#quality').removeClass('disabled');
+            $('#quality').css("background-color", "red");
+            $("#quality").text('Electrodos | '+avg);
+        }else{
+            $('#quality').addClass('disabled');
+            $('#quality').css("background-color", "#4F4F58");
+            $("#quality").text('Electrodos | 100');
+        }
     });
     console.log('Connected to server');        
 });

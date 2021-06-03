@@ -5,7 +5,8 @@
         <script src="./js/jquery-1.10.1.min.js"></script>
         <script src="./js/d3.v3.js" charset="utf-8"></script>
         <script src="./js/epoch.js"></script>
-        <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@900&display=swap" rel="stylesheet">
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@100;200;300;400;500;600;700;900&display=swap" rel="stylesheet">
     </head>
     <body style="background-color:#D94E41;">
         <style>
@@ -17,22 +18,52 @@
                 max-width: 50%;
                 height: auto;
             }
+            .instrucciones{
+                margin-top: 10vh;
+                font-weight: 900;
+            }
+            .low_btn{
+                margin-top: 10vh;
+            }
+            .inst{
+                font-weight: 400;
+            }
+            .title{
+                font-weight: 900;
+            }
+            .sem_title{
+                font-weight: 600;
+            }
+            .nav_btn{
+                font-weight: 700;
+                font-size: 35px;
+            }
+            .btn-elec{
+                font-weight: 700;
+                font-size: 25px;
+            }
+            .title_or{
+                margin-top: 5vh;
+            }
+            .low_btn1{
+                margin-top: 77.25vh;
+            }
         </style>
 
         <div class="container">
-            <div class='row justify-content-center'>
-                <h1 class="h8 text-white" id='nro_exp'>EXPERIMENTO</h1>
+            <div class='row title_or justify-content-center'>
+                <h1 class="h8 text-white title" id='nro_exp'>EXPERIMENTO</h1>
             </div>
             <div class='row justify-content-center'>
-                <a class="h6 text-white" id='iys'><h1>INSTRUCCIONES Y SECUENCIA</h1></a>
+                <a class="h6 text-white" id='iys'><h1 class="sem_title">INSTRUCCIONES Y SECUENCIA</h1></a>
             </div>
-            <div class='row justify-content-center' id="instrucciones">
+            <div class='row justify-content-center instrucciones' id='instrucciones'>
                 <div class="col">
-                    <a class="h7 text-white" id='experiment'><h1>1. Las acciones que se realizaran en este experimento seran: Escuchar e imaginarse la cancion a interpretar, parpadeo y solamente imaginarse interpretando la canción.</h1></a>
+                    <a class="h7 text-white" id='experiment'><h1 class='inst'>1. Las acciones que se realizaran en este experimento seran: Escuchar e imaginarse la cancion a interpretar, parpadeo y solamente imaginarse interpretando la canción.</h1></a>
                     <br>
-                    <a class="h7 text-white" id='experiment'><h1>2. Se hara cada una de las acciones segun la secuencia dada, estas estaran separadas por un sonido caracteristico ¨BEEP¨.</h1></a>
+                    <a class="h7 text-white" id='experiment'><h1 class='inst'>2. Se hara cada una de las acciones segun la secuencia dada, estas estaran separadas por un sonido caracteristico ¨BEEP¨.</h1></a>
                     <br>
-                    <a class="h7 text-white" id='experiment'><h1>3. El experimento conluira cuando se escuche un ¨BEEP¨ largo.</h1></a>
+                    <a class="h7 text-white" id='experiment'><h1 class='inst'>3. El experimento conluira cuando se escuche un ¨BEEP¨ largo.</h1></a>
                 </div>
                 <div class='col'>
                     <img src="" id='line_1' height="63px">
@@ -51,13 +82,13 @@
                 </div>
             </div>
             <br>
-            <div class="row justify-content-center align-items-end">
+            <div class="low_btn row justify-content-center align-items-end" id='low-btn'>
                 <div class="col align-self-start">
-                    <a class="btn btn-x2 btn-default text-white disabled h1" style="background-color:#4F4F58;" href="check_connection.html" role="button" id='quality'><h8></h8></a>
+                    <a class="btn btn-x2 text-white h1 btn-elec disabled" style="background-color:#4F4F58;" href="check_connection.html" role="button" id='quality'></a>
                 </div>
                 <div class="col align-self-end">
-                    <a class="btn btn-x2 btn-default text-white h1" style="background-color:#4F4F58;" href="experiments_eeg.html" role="button"><h2>ATRAS</h2></a>
-                    <a class="btn btn-x2 btn-default text-white h1" style="background-color:#4F4F58;" href="#" role="button" id="run"><h2>EMPEZAR</h2></a>
+                    <a class="btn btn-x2 btn-default text-white h1 nav_btn" style="background-color:#4F4F58;" href="experiments_eeg.html" role="button" id="atras">ATRAS</a>
+                    <a class="btn btn-x2 btn-default text-white h1 nav_btn" style="background-color:#4F4F58;" href="#" role="button" id="run">EMPEZAR</a>
                 </div>
             </div>
         </div>

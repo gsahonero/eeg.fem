@@ -1,5 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
     var socket = new io.connect('http://localhost:3000', {path: '/connection/eeg',reconnect: true});
+    //let img_1 = document.getElementById("predict"); 
+    let id = document.getElementById('pred');
     var counter = 0;
     socket.on('connect', function () {        
         socket.on('dev', function(data){
@@ -19,6 +21,17 @@ document.addEventListener('DOMContentLoaded', function () {
                 $("#quality").text('Electrodos | 100');
             }
         });
+        socket.on('pred', function(data){
+            if(data.pred == 1 || data.pred == 2){
+                id.innerHTML = 'MUSICAL';
+            } else if(data.pred == 3 || data.pred == 4){
+                id.innerHTML = 'AUROSAL';
+            } else if (data.pred == 5){
+                id.innerHTML = 'BLINK';
+            }
+            console.log(data);
+            //img_1.src = img_pred(data.)[0];
+        })
         console.log('Connected to server');        
     });
 }, false);

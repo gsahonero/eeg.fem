@@ -21,7 +21,7 @@ a_al, b_al, z_al = param(N=N, Wn=[8, 12], fs=fs)
 a_be, b_be, z_be = param(N=N, Wn=[12, 30], fs=fs)
 
 x = np.zeros((1, 2689))
-jump = 16
+jump = 0
 
 sio = socketio.Client()
 #reconnection=True, reconnection_attempts=2, reconnection_delay=0, reconnection_delay_max=0,
@@ -91,11 +91,13 @@ def action(data):
             x[0, 2660:2674] = e_al[:, 0]
             x[0, 2646:2660] = e_th[:, 0]
 
-            if x[0, 0] != 0:
+            if x[0, 0] != 0 and jump >= 16:                #Cuando la matriz ya este llena #Jump toma en cuenta 16 datos
                 x[0, x.shape[1]-1] = yPred
-                y = mod.predict(x)
-                #print('y: ',y)
+                y = mod.predict(x)              
                 sio.emit('y_predict', {'y_predict': y.tolist(), 'first': 0})
+                jump = 0
+            else:
+                jump += 1
 
 @sio.event
 def disconnect():

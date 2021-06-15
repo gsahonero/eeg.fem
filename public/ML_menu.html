@@ -6,7 +6,7 @@
         <link rel="preconnect" href="https://fonts.gstatic.com">
         <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@100;200;300;400;500;600;700;900&display=swap" rel="stylesheet">
     </head>
-    <body style="background-color:#614BF2;">
+    <body style="background-color:#1A1B26;">
         <style>
             html{
                 height:100%;
@@ -20,9 +20,7 @@
                 margin-top: 5vh;
             }
             .low_btn{
-                margin-top: 25vh;
-                width: 50vh;
-                margin-left: 68vh;
+                margin-top: 17vh;
             }
             .btn-x2{
                 font-size: 30px;
@@ -40,15 +38,11 @@
             .btn_elec{
                 font-weight: 900;
             }
-            
-            .check_pos{
-                margin-left: 5vh;
-            }
             </style>
         <div id ='btn-container'>
-            <div class="container main-show  col-md-5 border">
-                <a class="btn btn-primary" style="background-color:#D94E41;" href="ML_run.html" role="button" id='ML_1'><h1 class="btn_exp">MODELO 1</h1></a>
-                <a class="btn btn-primary" style="background-color:#F2C53D;" href="ML_run.html" role="button" id='ML_2'><h1 class="btn_exp">MODELO 2</h1></a>
+            <div class="container main-show col-md-5 d-flex justify-content-between">
+                <a class="btn btn-primary" style="background-color:#038C33;" href="ML_run.html" role="button" id='ML_1'><h1 class="btn_exp">MODELO 1</h1></a>
+                <a class="btn btn-primary" style="background-color:#F27649;" href="ML_run.html" role="button" id='ML_2'><h1 class="btn_exp">MODELO 2</h1></a>
             </div>
         <div>
             <div class="name col-md-6 offset-md-3 text-center border">
@@ -58,7 +52,21 @@
                 <h1 class="text-white h8 information" id='song'>SONG</h1>
                 <h1 class="text-white h8 information" id='instrument'>Instrument</h1>
             </div>
-            <div class="low_btn">
+            <div class='col-md-6 offset-md-3 d-flex justify-content-between'>
+                <div>
+                    <h1 class="text-white h8 information" id="song_t">SONG</h1>
+                    <audio class="audio_1" id="audio" controls="controls">
+                        <source id="user_audio" src=""></source>
+                    </audio>    
+                </div>
+                <div>
+                    <h1 class="text-white h8 information">Aurosal</h1>
+                    <audio class="audio_1" id="aurosal_audio" controls="controls">
+                        <source src="data/Musical/Aurosal.mp3"></source>
+                    </audio>
+                </div>
+            </div>
+            <div class="col-md-6 offset-md-3 d-flex justify-content-center low_btn">
                 <a class="btn btn-x2 text-white h1 btn_elec disabled" style="background-color:#4F4F58;" href="check_connection_1.html" role="button" id='quality'></a>
             </div>
         </div>

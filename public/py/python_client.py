@@ -8,6 +8,7 @@ from filter import param, filtro_zero
 empezar = False
 disc = 0
 yPred = 0
+y_save = 0
 
 electrodes = np.zeros((40, 14))
 e_th = np.zeros((14, 1))
@@ -63,16 +64,17 @@ def run_ML(data):
 
 @sio.on('pred')
 def yprediction(data):
-    global yPred
+    global yPred, y_save
     yPred = data['pred']
-    #print('yPred: ',yPred)
+    y_save = data['first']
+    print('yPred: ',yPred)
 
 @sio.on('data')
 def action(data):
-    global empezar, electrodes, a_th, b_th, a_al, b_al, a_be, b_be, e_th, e_al, e_be, x, jump, yPred, disc
+    global empezar, electrodes, a_th, b_th, a_al, b_al, a_be, b_be, e_th, e_al, e_be, x, jump, yPred, disc, y_save
     if disc == 1:
         disconnect()
-    if empezar == 1:
+    if empezar == 1 and y_save == 0:
         if((data is not None) == True):
             for i in range(electrodes.shape[0] - 1):
                 electrodes[i, :] = electrodes[i + 1, :]
@@ -98,6 +100,8 @@ def action(data):
                 jump = 0
             else:
                 jump += 1
+    elif y_save == 3:
+        empezar = 0 
 
 @sio.event
 def disconnect():

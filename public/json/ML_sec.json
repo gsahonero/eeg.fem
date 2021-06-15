@@ -1,0 +1,34 @@
+[
+    {
+        "1":    "start()",
+        "2":    "wait(5000)",
+        "3":    "beep(250,beep1)",
+        "4":    "wait(20000,music)",
+        "5":    "beep(250,beep2)",
+        "6":    "wait(20000,aurosal)",
+        "7":    "beep(250,beep3)",
+        "8":    "wait(20000,music)",
+        "9":    "beep(250,beep4)",
+        "10":   "wait(20000,aurosal)",
+        "11":   "beep(250,beep8)",
+        "12":   "beep(250,beep9)",
+        "13":   "finish()",
+        "14":   ""
+    },
+    {
+        "1":    "start()",
+        "2":    "wait(5000)",
+        "3":    "beep(250,beep1)",
+        "4":    "wait(20000,music)",
+        "5":    "beep(250,beep2)",
+        "6":    "wait(20000,aurosal)",
+        "7":    "beep(250,beep3)",
+        "8":    "wait(20000,music)",
+        "9":    "beep(250,beep4)",
+        "10":   "wait(20000,aurosal)",
+        "11":   "beep(250,beep8)",
+        "12":   "beep(250,beep9)",
+        "13":   "finish()",
+        "14":   ""
+    }
+]

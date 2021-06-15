@@ -2,14 +2,20 @@ var socket = new io.connect('http://localhost:3000', {path: '/connection/eeg',re
 
 let id = document.getElementById('id');
 let song = document.getElementById('song');
+let song_t = document.getElementById('song_t');
 let inst = document.getElementById('instrument');
 let btn1 = document.getElementById('ML_1');
 let btn2 = document.getElementById('ML_2');
+var audio = document.getElementById('audio');
+var user_audio = document.getElementById('user_audio');
 
 socket.on('userId', function(data){
     id.innerHTML = 'Bienvenido '+data.user;
     song.innerHTML = 'Canción: '+data.song;
     inst.innerHTML = 'Instrumento: '+data.instrument;
+    user_audio.src = 'data/Musical/'+data.song+'.mp3';
+    song_t.innerHTML = data.song; 
+    audio.load(); //call this to just preload the audio without playing
 });
 
 socket.on('connect', function () {        

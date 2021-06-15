@@ -6,7 +6,6 @@ document.addEventListener('DOMContentLoaded', function () {
     let img_3 = document.getElementById("line_3");
     let img_4 = document.getElementById("line_4");
 
-    var counter = 0;
     var execution_line = 0;
     var col = ['#D94E41','#F2C53D','#1A1B26','#6796CD','#0442BF','#F27649','#038C33','#9B45BF'];
     var sentences = [];
@@ -16,9 +15,8 @@ document.addEventListener('DOMContentLoaded', function () {
     var audio_sound = new Audio();
     var beep_sound = new Audio('./data/beep.mp3');
     var experiment = "";
-    a=new AudioContext()
+    a = new AudioContext()
     var waiting_for_trigger = false;
-
 
     function line(exp){
         var line = [5,5,5,5];
@@ -111,11 +109,11 @@ document.addEventListener('DOMContentLoaded', function () {
             if(avg < 100){
                 $('#quality').removeClass('disabled');
                 $('#quality').css("background-color", "red");
-                $('#run').addClass('disabled');
+                //$('#run').addClass('disabled');
             }else{
                 $('#quality').addClass('disabled');
                 $('#quality').css("background-color", "#4F4F58");
-                $('#run').removeClass('disabled');
+                //$('#run').removeClass('disabled');
             }
             $("#quality").text("ELECTRODOS | "+avg);
         });  
@@ -132,10 +130,10 @@ document.addEventListener('DOMContentLoaded', function () {
         socket.on('userId', function(result){
             new_words[0] = 'id('+result.CI+')';
             new_words[1] = 'play('+result.song+'.mp3)';
-        })
+        });
 
         socket.on('experiment', function(exp_){
-            sentences=Object.values(exp_);
+            sentences = Object.values(exp_);
             sentences = replace(sentences);
         });
 
@@ -161,7 +159,6 @@ document.addEventListener('DOMContentLoaded', function () {
             socket.emit('command', data);
         });
         
-
         socket.on('beep', function(data){
             // browsers limit the number of concurrent audio contexts, so you better re-use'em
             beep(100, 250, data)
@@ -220,10 +217,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     console.log('Recognizing Beep')
                 }else if (func === "present"){
                     console.log('Recognizing Presentation')
-
                 }else if (func === "play"){
                     console.log('Recognizing Play')
-
                 }else if (func === "clear"){
                     console.log('Recognizing Clear');
                 }else if (func === "ball"){
@@ -256,4 +251,5 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     });
+    
 }, false);

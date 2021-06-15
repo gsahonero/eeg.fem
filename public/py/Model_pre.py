@@ -60,7 +60,8 @@ jump = 16
 fs = 256
 N = 6
 path = 'D:/Github/eeg.fem/public/data/Musical'
-CI = 5956733
+CI = 6080072
+X = np.empty((0,2690))
 
 a_th, b_th = param(N=N, Wn=[4, 7], fs=fs)
 a_al, b_al = param(N=N, Wn=[8, 12], fs=fs)
@@ -71,4 +72,25 @@ for i in range(1, 9):
         df = np.genfromtxt(str(path)+'/'+str(CI)+'/Class/'+'Type_'+str(i)+'_'+str(j)+'.csv',dtype=float,delimiter=',',skip_header=1)
         x_th, x_al, x_be = filt(df=df, a_th=a_th, b_th=b_th, a_al=a_al, b_al=b_al, a_be=a_be, b_be=b_be, path=path, CI=CI, tp=i, num=j)
         dat_prep(x_th=x_th, x_al=x_al, x_be=x_be, df=df, base_l1=base_l1, base_l2=base_l2, win=win, jump=jump, fs=fs, tp=j, num=i, path=path, CI=CI)
-        
+
+for i in range(1, 9):
+  for j in range(1, 8):
+    df = np.genfromtxt(str(path)+'/'+str(CI)+'/All_Data/Type_'+str(i)+'_'+str(j)+'.csv',delimiter=',')
+    X = np.append(X, df, axis=0)
+np.savetxt(str(path)+'/'+str(CI)+'/All_Data/ALL.csv', X, delimiter=",")
+
+df = np.genfromtxt(str(path)+'/'+str(CI)+'/All_Data/ALL.csv',delimiter=',')
+# 6728, 2690
+y_new = np.empty((df.shape[0],2))
+y_new = df[:,2688:]
+print(y_new[:,0:5])
+y_new = np.where(y_new==2, int(1), y_new)
+y_new = np.where(y_new==4, int(3), y_new)
+y_new = np.where(y_new==3, int(2), y_new)
+y_new = np.where(y_new==5, int(3), y_new)
+
+df[:,2688:] = y_new
+print(df[:,2688:])
+np.savetxt(str(path)+'ALL_3C.csv',df ,delimiter=',')
+
+#Guarda el nuevo csv con la lectura de los 14 electrodos quitando las columnas y filas que no nos interasan

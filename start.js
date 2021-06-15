@@ -235,8 +235,6 @@ class Cortex {
         })
     }
 
-
-
     injectMarkerRequest(authToken, sessionId, label, value, port, time){
         let socket = this.socket
         const INJECT_MARKER_REQUEST_ID = 13
@@ -267,8 +265,6 @@ class Cortex {
             })
         })
     }
-
-
 
     stopRecord(authToken, sessionId, recordName){
         let socket = this.socket
@@ -461,7 +457,6 @@ class Cortex {
         }
     }
 
-
     /**
      *
      * - check login and grant access
@@ -490,7 +485,6 @@ class Cortex {
             })
         })
     }
-
 
     setupProfile(authToken, headsetId, profileName, status){
         const SETUP_PROFILE_ID = 7
@@ -559,7 +553,6 @@ class Cortex {
             })
         })
     }
-
 
     /**
      *  - handle send training request
@@ -772,6 +765,7 @@ c.sub(streams)
 //read JSON
 const userData = require('./public/json/users.json');
 const experiments = require('./public/json/experiments.json');
+const ML_exp = require('./public/json/ML_sec.json');
 //const { SSL_OP_COOKIE_EXCHANGE } = require('constants');
 
 ////Find in JSON file
@@ -782,13 +776,14 @@ function userIden(userData, data){
 var result = {'CI': 0};
 var exp = {};
 var exp_ ={};
-var y_array = [0, 0, 0, 0, 0];
-var y_class = [0, 0, 0, 0];
+var y_array = [0, 0, 0];
+var y_class = [0, 0];
 var mod = {'btn_ML': 0};
 var py_server = 0;
 var empezar = {'empezar': 0};
 var y = 0;
 var y_vol = 0.0;
+var exp_ML = {}
 /*
 *   Instructions to be followed in case of receiving messages from the clients
 */
@@ -819,16 +814,17 @@ io.on('connect', function(socket){
     io.sockets.emit('py_server', {'py_server': py_server});
     io.sockets.emit('userId', result);          //Envia de antemano a todos los sockets
     io.sockets.emit('model_ML', mod);
-    io.sockets.emit('pred', {'pred': y, 'pred_vol': y_vol})
+    io.sockets.emit('pred', {'pred': y, 'pred_vol': y_vol, 'first': 0})
     io.sockets.emit('start', empezar);
     io.sockets.emit('exp', exp);
     io.sockets.emit('experiment', exp_);
+    io.sockets.emit('exp_ML', exp_ML);
     
-
     /* socket.on('filter', (data) => {
         io.sockets.emit('filter', data);
         console.log(data.theta)
     }); */
+
     socket.on('start', (data) =>{
         empezar = data;
         console.log(empezar);
@@ -836,49 +832,60 @@ io.on('connect', function(socket){
     });
 
     //Recibe y_predict de python
-    socket.on('y_predict', (data) => {
+    socket.on('y_predict', function(data){
         //console.log(data)
         if (data.first == 1){
             y_array[0] = data.y_predict
             y_array[1] = data.y_predict
             y_array[2] = data.y_predict
-            y_array[3] = data.y_predict
-            y_array[4] = data.y_predict
+            if (data.y_predict == 1){
+                means_marker = "music_1";
+            }else if (data.y_predict == 2){
+                means_marker = "aurosal_1"
+            }         
         }else if(data.first == 0){
-            if (data.y_predict != 5){ 
+            if (data.y_predict != 5){
+                //number_of_step = number_of_step + 1; 
                 y_array[0] = y_array[1];
                 y_array[1] = y_array[2];
-                y_array[2] = y_array[3];
-                y_array[3] = y_array[4];
-                y_array[4] = data.y_predict;
+                y_array[2] = data.y_predict[0];
+                y_class = [0, 0];
                 for (i=0; i < y_array.length; i++){
                     if (y_array[i] == 1){
                         y_class[0] += 1; 
                     }else if (y_array[i] == 2){
                         y_class[1] += 1;
-                    }else if (y_array[i] == 3){
-                        y_class[2] += 1;
-                    }else if (y_array[i] == 4){
-                        y_class[3] += 1;
                     }
                 }
                 var max = Math.max(...y_class);
                 var y = y_class.indexOf(max) + 1;
-                var y_vol = 1/(1-Math.exp(-(5-y_class[max])));
-                //console.log('y: ',y,'y_vol: ',y_vol);
-                io.sockets.emit('pred', {'pred': y, 'pred_vol': y_vol});
+                if (max == 3){
+                    var y_vol = 1;
+                }else if(max == 2){
+                    var y_vol = 0.5;
+                }
+                if (y == 1){
+                    means_marker = "music";
+                }else if (y == 2){
+                    means_marker = "aurosal"
+                }
+                io.sockets.emit('pred', {'pred': y, 'pred_vol': y_vol, 'first': 0});
             }else if(data.y_predict == 5){
                 y = 5;
-                io.sockets.emit('pred', {'pred': y});
+                means_marker = "blink"
+                io.sockets.emit('pred', {'pred': y, 'first': 0});
             };
         };
     });
     
-    socket.on('userCI', (data) => {
+    socket.on('userCI', function(data) {
         result = userIden(userData, data);
         console.log(result);
         if(result){                             //Si no hay el usuario en JSON, no envia nada
             io.sockets.emit('userId', result);  //Emite la informacion del usuario.
+            exp_ML = ML_exp[result.ML_start[0]-1];
+            io.sockets.emit('exp_ML', exp_ML);
+            user_CI = result.CI;
         }else{
             result = {};                        //Si el usuario ingresa el CI y no esta envia undefined
             io.sockets.emit('userId', result);  //Emite la informacion del usuario.
@@ -892,9 +899,11 @@ io.on('connect', function(socket){
         io.sockets.emit('experiment', exp_);
     });
 
-    socket.on('button_ML', (data) =>{
+    socket.on('button_ML', function(data) {
         mod = data;
+        console.log(mod);
         io.sockets.emit('model_ML', mod);
+        model_num = mod.btn_ML;
     });
 
     socket.on('song_ML', (data) =>{
@@ -906,7 +915,112 @@ io.on('connect', function(socket){
         console.log(data);
         io.sockets.emit('sub_experiment', data);
     });
-
+    //Command sec
+    socket.on('ML_sec', function(code){
+        console.log('Recive: ',code);
+        let func = code.command;
+        let args = code.args;
+        /*
+        * If the command read is'experiment', it recognizes the experiment and
+        * starts recording data
+        */
+        if (func === "start"){
+                //number_of_step = number_of_step + 1;
+                number_of_step = 'start';
+                finished = false;
+                console.log('Recognized experiment');
+                experiment = args;
+                io.emit('ML_sec','ready');
+                // we record as soon as we have the experiment defined
+                on_record = true;
+                to_record_data=[];
+                console.log('Starting to record');
+                record_index = 0;
+        }
+        /*
+        * If the command read is 'beep', it increases the number of step, sends a confirmation message,
+        * and sends  a message of beep with args to generate beep
+        */
+        else if (func === "beep"){
+            number_of_step = 'beep';
+            console.log('Recognized beep '+args)
+            // send signal to beep
+            let first_arg = args.split(',')[0];
+            let second_arg = args.split(',')[1];
+            if (second_arg !== undefined){
+                number_of_step = second_arg;
+            }
+            io.emit('beep',parseInt(args,10))
+            setTimeout(function(){
+                io.emit('ML_sec','ready');
+            }, parseInt(args, 10)+20);
+        }
+        /*
+        * If the command read is 'wait', it increases the number of step, and after that sends a
+        * confirmation message when the time shown in args elapsed.
+        */
+        else if (func === "wait"){
+                number_of_step = 'wait';
+                console.log('Recognized wait '+args)
+                if (args!== undefined){
+                    let first_arg = args.split(',')[0];
+                    let second_arg = args.split(',')[1];
+                    if (second_arg !== undefined){
+                        //means_marker = second_arg
+                        number_of_step = second_arg;
+                    }
+                    console.log('Waiting more than zero with '+first_arg+" and "+second_arg);
+                    setTimeout(function(){
+                        io.emit('ML_sec','ready');
+                    },first_arg);
+                }else{
+                    io.emit('ML_sec','ready');
+                }
+        }
+        /*
+        * If the command read is 'finish', it restart the number of step, saves a .csv document on
+        * the experiment/id folder with the date information on its name.
+        */
+        else if (func === "finish"){
+                number_of_step = 'finish';
+                if (finished == false){
+                    finished = true;
+                    means_marker = "finish";
+                    on_record = false;
+                    //io.emit('command','ready');
+                    console.log(to_record_data.length);
+                    let csvData = convertArrayToCSV(to_record_data, {
+                      header,
+                      separator: ','
+                    });
+                    var currentDate = new Date();
+                    var date = currentDate.getDate();
+                    var month = currentDate.getMonth() + 1;
+                    var year = currentDate.getFullYear();
+                    var hour = currentDate.getHours();
+                    var minute = currentDate.getMinutes();
+                    var dateString = year + "_" + month + "_" + date + "_" + hour + "_" + minute;
+                    fs.writeFile('./public/data/Musical/'+user_CI+'/data predict/'+model_num+'/'+dateString+'.csv', csvData, {
+                        "encoding": 'utf8',
+                        "flag": 'a+'
+                        }, function (err) {
+                          if (err) {
+                            console.log('Some error occured - file either not saved or corrupted file saved.');
+                            io.emit('error');
+                          } else{
+                            console.log('Data was saved correctly.');
+                          }
+                        }
+                    );
+                    console.log('Finished recording.');
+                }else{
+                    console.log('Recording was already finished.');
+                }
+        }else{
+            number_of_step = -10;
+            console.log('command not recognized.');
+        }
+    });
     //Terminate the process
     socket.on('finish', (data) => {
         if(data == 'true'){
@@ -987,7 +1101,6 @@ io.on('connect', function(socket){
         * If the command read is 'beep', it increases the number of step, sends a confirmation message,
         * and sends  a message of beep with args to generate beep
         */
-
         else if (func === "beep"){
             number_of_step = number_of_step + 1;
             means_marker = "beep";

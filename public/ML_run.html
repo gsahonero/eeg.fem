@@ -19,11 +19,11 @@
                 height: auto;
             }
             .instrucciones{
-                margin-top: 10vh;
+                margin-top: 2vh;
                 font-weight: 900;
             }
             .low_btn{
-                margin-top: 10vh;
+                margin-top: 2.5vh;
             }
             .inst{
                 font-weight: 400;
@@ -46,13 +46,21 @@
                 margin-top: 5vh;
             }
             .low_btn1{
-                margin-top: 77.25vh;
+                margin-top: 66vh;
             }
-            .big-checkbox {
-                width: 30px; height: 30px;
+            .sec{
+                border-right: 2.5px solid rgb(255, 255, 255);
             }
-            .audio_1{
-                margin-left: 2vh;
+            .img_sep{
+                margin-top: 2vh;
+                margin-left: 7vh;
+            }
+            .img_sep1{
+                margin-top: 3vh;
+                margin-left: 7vh;
+            }
+            .img_sep2{
+                margin-left: 7vh;
             }
         </style>
 
@@ -61,23 +69,38 @@
                 <h1 class="h8 text-white title" id='nro_ML'>MODELO ML</h1>
             </div>
             <div class='row justify-content-center'>
-                <a class="h6 text-white" id='iys'><h1 class="sem_title">INSTRUCCIONES</h1></a>
-                <a class="h6 text-white d-none" id='blink'><h1 class="sem_title">BLINK</h1></a>
+                <!-- <a class="h6 text-white" id='iys'><h1 class="sem_title">INSTRUCCIONES</h1></a> -->
+                <a class="h6 text-white d-none" id='blink'><h1 class="sem_title">----</h1></a>
             </div>
             <div class='row justify-content-center instrucciones' id='instrucciones'>
-                <div class="col">
-                    <a class="h7 text-white" id='experiment'><h1 class='inst'>1. Revisar que los electrodos estén bien conectados, si llega a ver una mala conexión el experimento se para.</h1></a>
+                <div class="col sec">
+                    <a class="h6 text-white"><h1 class="sem_title">INSTRUCCIONES ESPECIFICAS: </h1></a>
                     <br>
-                    <a class="h7 text-white" id='experiment'><h1 class='inst'>2. Al presionar EMPEZAR, se darán 5 segundos para que se acomode correctamente.</h1></a>
+                    <a class="h7 text-white" id='experiment'><h1 class='inst'>1. Revisar que los electrodos estén bien conectados, si llega a ver una mala conexión el experimento tendra que hacerse de nuevo.</h1></a>
                     <br>
-                    <a class="h7 text-white" id='experiment'><h1 class='inst'>3. En el periodo de los 5 segundos se escuchara la canción o sonido que se seleccione.</h1></a>
+                    <a class="h7 text-white" id='experiment'><h1 class='inst'>2. Al presionar EMPEZAR, comenzara cada una de las acciones segun la secuencia dada, estas estaran separadas por un sonido caracteristico ¨BEEP¨.</h1></a>
                     <br>
-                    <a class="h7 text-white" id='experiment'><h1 class='inst'>4. Para salir primero presione FINALIZAR y luego cierre esta ventana.</h1></a>
+                    <a class="h7 text-white" id='experiment'><h1 class='inst'>3. El experimento concluira cuando se escuche un ¨BEEP¨ largo.</h1></a>
+                    <br>
+                    <a class="h7 text-white" id='experiment'><h1 class='inst'>4. Para salir de la aplicacion primero presione FINALIZAR y luego cierre esta ventana.</h1></a>
                     <br>
                     <a class="btn btn-x2 btn-default text-white h1 nav_btn" style="background-color:#4F4F58;" href="#" role="button" id="finish">FINALIZAR</a>
                 </div>
                 <div class="col">
-                    <h1>Hola</h1>
+                    <a class="h6 text-white"><h1 class="sem_title">SECUENCIA: </h1></a>
+                    <img class = 'img_sep2' src="./img/5.png"  height="55px">
+                    <br>
+                    <img class = 'img_sep' src="" id='line_1' height="55px">
+                    <br>
+                    <img class = 'img_sep1' src="" id='line_2' height="55px">
+                    <br>
+                    <img class = 'img_sep' src="./img/5.png"  height="55px">
+                    <br>
+                    <img class = 'img_sep' src="" id='line_3' height="55px">
+                    <br>
+                    <img class = 'img_sep1' src="" id='line_4' height="55px">
+                    <br>
+                    <img class = 'img_sep' src="./img/5.png"  height="55px">
                 </div>
             </div>
             <br>
@@ -87,8 +110,8 @@
                 </div>
                 <div class="col align-self-end">
                     <a class="btn btn-x2 btn-default text-white h1 nav_btn" style="background-color:#4F4F58;" href="ML_menu.html" role="button" id="atras">MENU</a>
-                    <a class="btn btn-x2 btn-default text-white h1 nav_btn disabled" style="background-color:#4F4F58;" href="#" role="button" id="run">EMPEZAR</a>
-                    <a class="btn btn-x2 btn-default text-white h1 nav_btn d-none" style="background-color:#4F4F58;" href="#" role="button" id="atras_run">ATRAS</a>
+                    <a class="btn btn-x2 btn-default text-white h1 nav_btn" style="background-color:#4F4F58;" href="#" role="button" id="run">EMPEZAR</a>
+                    <!-- <a class="btn btn-x2 btn-default text-white h1 nav_btn d-none" style="background-color:#4F4F58;" href="#" role="button" id="atras_run">ATRAS</a> -->
                 </div>
             </div>
         </div>

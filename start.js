@@ -46,6 +46,8 @@ var writer;
 var to_record_data = [];
 var finished = true;
 var number_of_step = 0;
+var r_lat = false;
+var lat = 0;
 
 var state = ["","", ""];
 
@@ -474,7 +476,11 @@ class Cortex {
                 if (json_data.eeg !== undefined){
                   if (on_record){
                       json_data.eeg[18] = means_marker + "." + number_of_step;
-                      json_data.eeg[19] = number_of_step;
+                      if (r_lat){
+                          json_data.eeg[19] = lat;
+                        }else{
+                          json_data.eeg[19] = number_of_step;
+                      }
                       to_record_data[record_index] = json_data.eeg;
                       record_index = record_index + 1;
                   }
@@ -783,7 +789,8 @@ var py_server = 0;
 var empezar = {'empezar': 0};
 var y = 0;
 var y_vol = 0.0;
-var exp_ML = {}
+var exp_ML = {};
+
 /*
 *   Instructions to be followed in case of receiving messages from the clients
 */
@@ -819,7 +826,6 @@ io.on('connect', function(socket){
     io.sockets.emit('exp', exp);
     io.sockets.emit('experiment', exp_);
     io.sockets.emit('exp_ML', exp_ML);
-    
     /* socket.on('filter', (data) => {
         io.sockets.emit('filter', data);
         console.log(data.theta)
@@ -830,11 +836,10 @@ io.on('connect', function(socket){
         console.log(empezar);
         io.sockets.emit('start', empezar);
     });
-
     //Recibe y_predict de python
     socket.on('y_predict', function(data){
-        //console.log(data)
         if (data.first == 1){
+            console.log(data.y_predict)
             y_array[0] = data.y_predict
             y_array[1] = data.y_predict
             y_array[2] = data.y_predict
@@ -844,8 +849,7 @@ io.on('connect', function(socket){
                 means_marker = "aurosal_1"
             }         
         }else if(data.first == 0){
-            if (data.y_predict != 5){
-                //number_of_step = number_of_step + 1; 
+            if (data.y_predict[0] != 3){
                 y_array[0] = y_array[1];
                 y_array[1] = y_array[2];
                 y_array[2] = data.y_predict[0];
@@ -870,11 +874,13 @@ io.on('connect', function(socket){
                     means_marker = "aurosal"
                 }
                 io.sockets.emit('pred', {'pred': y, 'pred_vol': y_vol, 'first': 0});
-            }else if(data.y_predict == 5){
-                y = 5;
+            }else if(data.y_predict == 3){
+                y = 3;
                 means_marker = "blink"
                 io.sockets.emit('pred', {'pred': y, 'first': 0});
             };
+            lat = Date.now()-data.lat;
+            //console.log(Date.now()-data.lat);
         };
     });
     
@@ -917,7 +923,7 @@ io.on('connect', function(socket){
     });
     //Command sec
     socket.on('ML_sec', function(code){
-        console.log('Recive: ',code);
+        //console.log('Recive: ',code);
         let func = code.command;
         let args = code.args;
         /*
@@ -925,7 +931,6 @@ io.on('connect', function(socket){
         * starts recording data
         */
         if (func === "start"){
-                //number_of_step = number_of_step + 1;
                 number_of_step = 'start';
                 finished = false;
                 console.log('Recognized experiment');
@@ -936,6 +941,8 @@ io.on('connect', function(socket){
                 to_record_data=[];
                 console.log('Starting to record');
                 record_index = 0;
+                r_lat = true
+                io.emit('start', {'empezar': 1}); // Emite start el python
         }
         /*
         * If the command read is 'beep', it increases the number of step, sends a confirmation message,
@@ -943,7 +950,7 @@ io.on('connect', function(socket){
         */
         else if (func === "beep"){
             number_of_step = 'beep';
-            console.log('Recognized beep '+args)
+            //console.log('Recognized beep '+args)
             // send signal to beep
             let first_arg = args.split(',')[0];
             let second_arg = args.split(',')[1];
@@ -955,21 +962,28 @@ io.on('connect', function(socket){
                 io.emit('ML_sec','ready');
             }, parseInt(args, 10)+20);
         }
+        
+        else if (func === "play"){
+            number_of_step = number_of_step + 1;
+            means_marker = "play";
+            //console.log('Recognized play '+args)
+            io.emit('play','./data/Musical/'+args);
+            io.emit('ML_sec','ready');
+        }
         /*
         * If the command read is 'wait', it increases the number of step, and after that sends a
         * confirmation message when the time shown in args elapsed.
         */
         else if (func === "wait"){
                 number_of_step = 'wait';
-                console.log('Recognized wait '+args)
+                //console.log('Recognized wait '+args)
                 if (args!== undefined){
                     let first_arg = args.split(',')[0];
                     let second_arg = args.split(',')[1];
                     if (second_arg !== undefined){
-                        //means_marker = second_arg
                         number_of_step = second_arg;
                     }
-                    console.log('Waiting more than zero with '+first_arg+" and "+second_arg);
+                    //console.log('Waiting more than zero with '+first_arg+" and "+second_arg);
                     setTimeout(function(){
                         io.emit('ML_sec','ready');
                     },first_arg);
@@ -983,6 +997,7 @@ io.on('connect', function(socket){
         */
         else if (func === "finish"){
                 number_of_step = 'finish';
+                io.emit('start', {'empezar': 0});
                 if (finished == false){
                     finished = true;
                     means_marker = "finish";
@@ -1021,14 +1036,14 @@ io.on('connect', function(socket){
             console.log('command not recognized.');
         }
     });
-    //Terminate the process
+    //Terminate the process in NodeJS and Python
     socket.on('finish', (data) => {
         if(data == 'true'){
             io.sockets.emit('py_server', {'py_server': 1});
             process.exit();
         }
     });
-    //
+
 	/* uploader.on('start', (fileInfo) => {
 		console.log('Start uploading');
 		console.log("THIS IS THE UPLOADER",uploader);
@@ -1050,8 +1065,7 @@ io.on('connect', function(socket){
 
 	/* uploader.on('abort', (fileInfo) => {
 		console.log('Aborted: ', fileInfo);
-	}); */
-     
+	}); */ 
     
     /*
     *   When it receives the 'command' instruction, it responds depending on the command read 
@@ -1137,7 +1151,9 @@ io.on('connect', function(socket){
         /*
         * If the command read is 'play', it increases the number of step, sends a play instruction, and after that sends a confirmation message.
         */
-        }else if (func === "play"){
+        }
+        
+        else if (func === "play"){
             number_of_step = number_of_step + 1;
             means_marker = "play";
             console.log('Recognized play '+args)

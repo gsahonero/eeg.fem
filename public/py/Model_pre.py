@@ -91,6 +91,6 @@ y_new = np.where(y_new==5, int(3), y_new)
 
 df[:,2688:] = y_new
 print(df[:,2688:])
-np.savetxt(str(path)+'ALL_3C.csv',df ,delimiter=',')
+np.savetxt(str(path)+'/'+str(CI)+'/All_Data/ALL_3C.csv',df ,delimiter=',')
 
 #Guarda el nuevo csv con la lectura de los 14 electrodos quitando las columnas y filas que no nos interasan

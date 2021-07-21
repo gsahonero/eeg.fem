@@ -3,6 +3,7 @@ from numpy.lib.npyio import loads
 import socketio
 import numpy as np
 import joblib as jb
+import time
 from filter import param, filtro_zero
 
 empezar = False
@@ -23,6 +24,15 @@ a_be, b_be, z_be = param(N=N, Wn=[12, 30], fs=fs)
 
 x = np.zeros((1, 2689))
 jump = 0
+
+lat = 0
+
+prev_tim1 = 0
+prev_tim2 = 0
+prev_tim3 = 0
+prev_tim4 = 0
+prev_tim5 = 0
+prev_tim6 = 0
 
 sio = socketio.Client()
 #reconnection=True, reconnection_attempts=2, reconnection_delay=0, reconnection_delay_max=0,
@@ -67,11 +77,12 @@ def yprediction(data):
     global yPred, y_save
     yPred = data['pred']
     y_save = data['first']
-    print('yPred: ',yPred)
+    ##print('yPred: ',yPred)
 
 @sio.on('data')
 def action(data):
-    global empezar, electrodes, a_th, b_th, a_al, b_al, a_be, b_be, e_th, e_al, e_be, x, jump, yPred, disc, y_save
+    global empezar, electrodes, a_th, b_th, a_al, b_al, a_be, b_be, e_th, e_al, e_be, x, jump, yPred, disc, y_save, prev_tim1, prev_tim2, prev_tim3, prev_tim4, prev_tim5, prev_tim6
+    prev_tim1 = int(time.time()*1000)
     if disc == 1:
         disconnect()
     if empezar == 1 and y_save == 0:
@@ -79,12 +90,14 @@ def action(data):
             for i in range(electrodes.shape[0] - 1):
                 electrodes[i, :] = electrodes[i + 1, :]
             electrodes[electrodes.shape[0] - 1, :] = data[2:16]
+            prev_tim2 = int(time.time()*1000)
             if np.mean(electrodes[0, :]) != 0:
                 theta, alpha, beta = filtro_zero(x_1=electrodes, a_th=a_th, b_th=b_th,
                                                 a_al=a_al, b_al=b_al, a_be=a_be, b_be=b_be)
                 e_th[:, 0] = theta[theta.shape[1] - 1, :]
                 e_al[:, 0] = alpha[alpha.shape[1] - 1, :]
                 e_be[:, 0] = beta[beta.shape[1] - 1, :]
+            prev_tim3 = int(time.time()*1000)
             ##    sio.emit('filter', {'theta': e_th.tolist(), 'alpha': e_al.tolist(), 'beta': e_be.tolist()})
             for j in range(x.shape[1]-42):
                 x[:, j] = x[:, j+42]
@@ -92,17 +105,19 @@ def action(data):
             x[0, 2674:2688] = e_be[:, 0]
             x[0, 2660:2674] = e_al[:, 0]
             x[0, 2646:2660] = e_th[:, 0]
-
+            prev_tim4 = int(time.time()*1000)
             if x[0, 0] != 0 and jump >= 16:                #Cuando la matriz ya este llena #Jump toma en cuenta 16 datos
+                prev_tim5 = int(time.time()*1000)
                 x[0, x.shape[1]-1] = yPred
                 y = mod.predict(x)              
-                sio.emit('y_predict', {'y_predict': y.tolist(), 'first': 0})
+                sio.emit('y_predict', {'y_predict': y.tolist(), 'first': 0, 'lat': prev_tim1})
                 jump = 0
+                prev_tim6 = int(time.time()*1000)
             else:
                 jump += 1
     elif y_save == 3:
         empezar = 0 
-
+ 
 @sio.event
 def disconnect():
     global disc

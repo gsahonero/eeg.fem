@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="./css/bootstrap.min.css">
+        <script src="./js/jquery-1.10.1.min.js"></script>
+        <script src="./js/d3.v3.js" charset="utf-8"></script>
+        <script src="./js/epoch.js"></script>
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@100;200;300;400;500;600;700;900&display=swap" rel="stylesheet">
+    </head>
+    <body style="background-color:#0FA67B;">
+        <style>
+            .title{
+                font-weight: 900;
+                font-size: 2.5em;
+            }
+            .body-text{
+                font-weight: 600;
+                font-size: 2.5em;
+            }
+            .img_sep{
+                margin-top: 2vh;
+                margin-left: 7vh;
+            }
+            .img_sep1{
+                margin-top: 3vh;
+                margin-left: 7vh;
+            }
+            .img_sep2{
+                margin-left: 7vh;
+                /* background-color: #4F4F59; */
+                /* background-color: none; */    
+            }
+            .back-ac{
+                background-color: #A0D9C9;
+            }
+        </style>
+        <div class="container-fluid border">
+            <div class="row border">
+                <div class="col d-flex justify-content-center border">
+                    <a class="h1 text-white title">PANEL DE REVISOR</a>
+                </div>
+            </div>
+            <div class="row border">
+                <div class="col border">
+                    <a class="h1 text-white body-text">SUJETO: </a><br>
+                    <a class="h1 text-white body-text">5956146</a><br>
+                    <a class="h1 text-white body-text">CANCION: </a><br>
+                    <a class="h1 text-white body-text">Toxicity</a><br>
+                    <a class="h1 text-white body-text">MODELO: </a><br>
+                    <a class="h1 text-white body-text">Model_Linear</a><br>
+                    <a class="h1 text-white body-text">ELECTRODOS: </a><br>
+                    <a class="h1 text-white body-text">100</a>
+                </div>
+                <div class="col-6 border">
+                    <div class="col border">
+                        <a class="h1 text-white title">LATENCIA</a>
+                        <canvas id="mycanvas" width="700px" height="250px"></canvas>
+                    </div>
+                    <div class="w-100"></div>
+                    <div class="col border">
+                        <a class="h1 text-white title">ACIERTOS</a>
+                        <canvas class="back-ac" id="mycanvas2" width="700px" height="250px"></canvas>
+                    </div>
+                </div>
+                <div class="col border">
+                    <a class="h1 text-white body-text">SECUENCIA: </a><br>
+                    <img class = 'img_sep2' src="./img/5.png"   height="55px"><br>
+                    <img class = 'img_sep'  src="./img/1.png"   height="55px"><br>
+                    <img class = 'img_sep1' src="./img/2.png"   height="55px"><br>
+                    <img class = 'img_sep'  src="./img/5.png"   height="55px"><br>
+                    <img class = 'img_sep'  src="./img/3.png"   height="55px"><br>
+                    <img class = 'img_sep1' src="./img/4.png"   height="55px"><br>
+                    <img class = 'img_sep'  src="./img/5.png"   height="55px">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col border">
+                    <a class="h1 text-white title">TRUE: </a>    
+                </div>
+                <div class="col border">
+                    <a class="h1 text-white title">PRED: </a>
+                </div>
+            </div>
+        </div>
+        <script src="./js/popper.min.js"></script>
+        <script src="./js/bootstrap.min.js"></script>
+        <script src="./js/socket.io.js"> </script>
+        <script src="./js/smoothie.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.5.0/chart.js"></script>
+        <script src="./js/inst_panel.js"></script>
+    </body>
+</html>
+
+<script src="path/to/chartjs/dist/chart.js"></script>

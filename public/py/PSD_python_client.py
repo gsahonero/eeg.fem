@@ -11,7 +11,7 @@ disc = 0
 yPred = 0
 first = 0
 
-electrodes = np.zeros((40, 14))
+electrodes = np.zeros((64, 14))
 e_th = np.zeros((14, 1))
 e_al = np.ones((14, 1))
 e_be = np.ones((14, 1))
@@ -22,7 +22,8 @@ a_th, b_th, z_th = param(N=N, Wn=[4, 7], fs=fs)
 a_al, b_al, z_al = param(N=N, Wn=[8, 12], fs=fs)
 a_be, b_be, z_be = param(N=N, Wn=[12, 30], fs=fs)
 
-x = np.zeros((1, (14*3*128)+1)) ## (14 canales * 3 filtros * 64 datos) + 1 y_prev
+x_prev = np.zeros((14*3, 64)) ##
+x = np.zeros((1, (14*3*6)+1)) ## (14 canales * 3 filtros * 6 propiedades de la señal) + 1 y_prev
 jump = 0
 
 lat = 0
@@ -58,7 +59,7 @@ def md_ML(data):
     global model, mod, CI
     if data['btn_ML'] != 0:
         model = data['btn_ML']
-        mod = jb.load('D:/Github/eeg.fem/public/data/Musical/'+str(CI)+'/ML model/'+str(model))
+        """ mod = jb.load('D:/Github/eeg.fem/public/data/Musical/'+str(CI)+'/ML model/'+str(model)) """
         print('model: ', model)
 
 @sio.on('start')
@@ -90,13 +91,23 @@ def action(data):
                 e_th[:, 0] = theta[theta.shape[1] - 1, :]
                 e_al[:, 0] = alpha[alpha.shape[1] - 1, :]
                 e_be[:, 0] = beta[beta.shape[1] - 1, :]
-                ##sio.emit('filter', {'theta': e_th.tolist(), 'alpha': e_al.tolist(), 'beta': e_be.tolist()})
-                for j in range(x.shape[1]-42):  #42 corresponde al numero de electrodos 14*3 
-                    x[:, j] = x[:, j+42]
+                
+                for j in range(x_prev.shape[1]-1):  #42 corresponde al numero de electrodos 14 canales *3 filtros 
+                    x_prev[:, j] = x_prev[:, j+1]
 
-                x[0, x.shape[1]-15:x.shape[1]-1]    = e_be[:, 0]
-                x[0, x.shape[1]-29:x.shape[1]-15]   = e_al[:, 0]
-                x[0, x.shape[1]-43:x.shape[1]-29]   = e_th[:, 0]
+                x_prev[0:  14, :]   = e_be[:, 0]
+                x_prev[14: 28, :]   = e_al[:, 0]
+                x_prev[28: , :]   = e_th[:, 0]
+
+                l = 0
+                for k in range(14*3):
+                    x[0, l] = np.amax   (x_prev[:, k]) #Maximo valor en x
+                    x[0, l+1] = np.amin (x_prev[:, k])
+                    x[0, l+2] = np.amax (x_prev[:, k])-np.amin(x_prev[:, k])
+                    x[0, l+3] = np.mean (x_prev[:, k])
+                    x[0, l+4] = np.sum  (np.power(x_prev[:, k], 2))/((64*1000)/256)
+                    x[0, l+5] = np.sum  (np.power(x_prev[:, k], 2))
+                    l += 6
 
                 if np.mean(x[0, :]) != 0 and jump >= 16:   #Cuando la matriz ya este llena #Jump toma en cuenta 16 datos
                     x[0, x.shape[1]-1] = yPred

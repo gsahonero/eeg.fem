@@ -1,4 +1,5 @@
 const WebSocket = require('ws');
+const path = require('path');
 
 // Requires:
 
@@ -772,6 +773,10 @@ c.sub(streams)
 const userData = require('./public/json/users.json');
 const experiments = require('./public/json/experiments.json');
 const ML_exp = require('./public/json/ML_sec.json');
+
+//define the directory path
+const directoryPath = path.join(__dirname, 'Documents');
+
 //const { SSL_OP_COOKIE_EXCHANGE } = require('constants');
 
 ////Find in JSON file
@@ -788,7 +793,6 @@ var mod = {'btn_ML': 0};
 var py_server = 0;
 var empezar = {'empezar': 0};
 var y = 0;
-var y_vol = 0.0;
 var exp_ML = {};
 
 /*
@@ -821,7 +825,7 @@ io.on('connect', function(socket){
     io.sockets.emit('py_server', {'py_server': py_server});
     io.sockets.emit('userId', result);          //Envia de antemano a todos los sockets
     io.sockets.emit('model_ML', mod);
-    io.sockets.emit('pred', {'pred': y, 'pred_vol': y_vol, 'first': 0})
+    io.sockets.emit('pred', {'pred': y, 'first': 0})
     io.sockets.emit('start', empezar);
     io.sockets.emit('exp', exp);
     io.sockets.emit('experiment', exp_);
@@ -847,7 +851,8 @@ io.on('connect', function(socket){
                 means_marker = "music_1";
             }else if (data.y_predict == 2){
                 means_marker = "aurosal_1"
-            }         
+            }
+            io.sockets.emit('pred', {'marker': means_marker});        
         }else if(data.first == 0){
             if (data.y_predict[0] != 3){
                 y_array[0] = y_array[1];
@@ -863,24 +868,19 @@ io.on('connect', function(socket){
                 }
                 var max = Math.max(...y_class);
                 var y = y_class.indexOf(max) + 1;
-                if (max == 3){
-                    var y_vol = 1;
-                }else if(max == 2){
-                    var y_vol = 0.5;
-                }
                 if (y == 1){
                     means_marker = "music";
                 }else if (y == 2){
                     means_marker = "aurosal"
                 }
-                io.sockets.emit('pred', {'pred': y, 'pred_vol': y_vol, 'first': 0});
+                lat = Date.now()-data.lat;
+                io.sockets.emit('pred', {'pred': y, 'first': 0, 'lat': lat, 'marker': means_marker});
             }else if(data.y_predict == 3){
                 y = 3;
                 means_marker = "blink"
-                io.sockets.emit('pred', {'pred': y, 'first': 0});
+                lat = Date.now()-data.lat;
+                io.sockets.emit('pred', {'pred': y, 'first': 0, 'lat': lat, 'marker': means_marker});
             };
-            lat = Date.now()-data.lat;
-            //console.log(Date.now()-data.lat);
         };
     });
     
@@ -954,6 +954,7 @@ io.on('connect', function(socket){
             // send signal to beep
             let first_arg = args.split(',')[0];
             let second_arg = args.split(',')[1];
+            io.emit('beep_next', {'step': second_arg});
             if (second_arg !== undefined){
                 number_of_step = second_arg;
             }
@@ -1035,6 +1036,7 @@ io.on('connect', function(socket){
             number_of_step = -10;
             console.log('command not recognized.');
         }
+        io.sockets.emit('number_of', {'number_of': number_of_step});
     });
     //Terminate the process in NodeJS and Python
     socket.on('finish', (data) => {
@@ -1044,6 +1046,9 @@ io.on('connect', function(socket){
         }
     });
 
+    socket.on('file_reader_ci', function(data){
+        
+    })
 	/* uploader.on('start', (fileInfo) => {
 		console.log('Start uploading');
 		console.log("THIS IS THE UPLOADER",uploader);

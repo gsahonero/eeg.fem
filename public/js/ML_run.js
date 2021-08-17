@@ -261,23 +261,36 @@ document.addEventListener('DOMContentLoaded', function () {
             if(ltm == 1){
                 if(data.pred == 1){
                     user_audio.play();
-                    user_audio.volume = data.pred_vol
+                    au_volume -= 0.1;
+                    user_volume += 0.1;
+                    user_audio.volume = user_volume;
                     au_audio.pause();
-                    au_audio.currentTime = 0;
                     au_audio.volume = 0;
-                    $("#blink").text("Musical");
                 } else if(data.pred == 2){
                     au_audio.play();
-                    au_audio.volume = data.pred_vol
+                    au_volume += 0.1;
+                    user_volume -= 0.1;
+                    au_audio.volume = au_volume;
                     user_audio.pause();
-                    user_audio.currentTime = 0;
                     user_audio.volume = 0;
-                    $("#blink").text("Aurosal");
                 } else if (data.pred == 3){
-                    $("#blink").text("BLINK");
+                    /* $("#blink").text("BLINK"); */
                 };
+                //Regulate the volume if goes under 0 or above 1
+                if(au_volume < 0 || user_volume < 0){
+                    au_volume = 0;
+                    user_volume = 0;
+                }else if(au_volume > 1 || user_volume > 1){
+                    au_volume = 1;
+                    user_volume = 1;
+                }
+            }else{
+                //Sets the volume in 0 to start over and the song time as well
+                au_volume = 0;
+                user_volume = 0;
+                user_audio.currentTime = 0;
+                au_audio.currentTime = 0;
             };
         });
     });
-
 }, false);

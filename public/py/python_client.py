@@ -2,19 +2,18 @@ from pickle import dumps
 from numpy.lib.npyio import loads
 import socketio
 import numpy as np
+from sklearn.decomposition import PCA
 import joblib as jb
 import time
 from filter import param, filtro_zero
 
 empezar = False
+
 disc = 0
 yPred = 0
 first = 0
 
-electrodes = np.zeros((40, 14))
-e_th = np.zeros((14, 1))
-e_al = np.ones((14, 1))
-e_be = np.ones((14, 1))
+model = ''
 
 N = 6
 fs = 256
@@ -22,7 +21,6 @@ a_th, b_th, z_th = param(N=N, Wn=[4, 7], fs=fs)
 a_al, b_al, z_al = param(N=N, Wn=[8, 12], fs=fs)
 a_be, b_be, z_be = param(N=N, Wn=[12, 30], fs=fs)
 
-x = np.zeros((1, (14*3*128)+1)) ## (14 canales * 3 filtros * 64 datos) + 1 y_prev
 jump = 0
 
 lat = 0
@@ -30,9 +28,7 @@ lat = 0
 prev_tim1 = 0
 
 sio = socketio.Client()
-#reconnection=True, reconnection_attempts=2, reconnection_delay=0, reconnection_delay_max=0,
-#                        randomization_factor=0.1, logger=True
-#logger=True, engineio_logger=True, ssl_verify=False
+pca = PCA(n_components=10, svd_solver='randomized', random_state=21)
 
 @sio.event
 def connect():
@@ -48,18 +44,33 @@ def server_py(data):
 
 @sio.on('userId')
 def user_id(data):
-    global CI
+    global CI, x_scaled
     if data['CI'] != 0:
         CI = data['CI']
+        x_scaled = np.genfromtxt('D:/Github/eeg.fem/public/data/Musical/'+str(CI)+'/data_for_train/ALL_3C_64_scaled.csv',dtype=float,delimiter=',')
         print('CI: ', CI)
 
 @sio.on('model_ML')
 def md_ML(data):
-    global model, mod, CI
+    global model, mod, CI, electrodes, x, pca, fil_max_min, x_scaled
     if data['btn_ML'] != 0:
         model = data['btn_ML']
-        mod = jb.load('D:/Github/eeg.fem/public/data/Musical/'+str(CI)+'/ML model/'+str(model))
-        print('model: ', model)
+        mod = jb.load('D:/Github/eeg.fem/public/data/Musical/'+str(CI)+'/ML_models/'+str(model))
+        if model == 'Model_Linear_64' or model == 'Model_RBF_64':
+            x = np.zeros((1, (14*3*64)+1)) ## (14 canales * 3 filtros * 64 datos) + 1 y_prev
+            electrodes = np.zeros((64, 14))
+        elif model == 'Model_Linear_128' or model == 'Model_RBF_128':
+            x = np.zeros((1, (14*3*128)+1)) ## (14 canales * 3 filtros * 128 datos) + 1 y_prev
+            electrodes = np.zeros((128, 14))
+        elif model == 'Model_Linear_PSD_64' or model == 'Model_RBF_PSD_64':
+            x = np.zeros((1, (14*3*6)+1)) ## (14 canales * 3 filtros * 6 propiedades) + 1 y_prev
+            electrodes = np.zeros((64, 14))
+        elif model == 'Model_Linear_PCA_64' or model == 'Model_RBF_PCA_64':
+            x = np.zeros((1,11)) ## ((14 canales * 3 filtros * 64 datos)/ 3 por PCA) + 1 y_prev
+            electrodes = np.zeros((64, 14))
+            fil_max_min = np.genfromtxt('D:/Github/eeg.fem/public/data/Musical/'+str(CI)+'/ML_models/fil_max_min.csv',dtype=float,delimiter=',')
+            pca.fit(x_scaled)
+    print(model)
 
 @sio.on('start')
 def run_ML(data):
@@ -75,10 +86,8 @@ def yprediction(data):
 
 @sio.on('data')
 def action(data):
-    global empezar, electrodes, a_th, b_th, a_al, b_al, a_be, b_be, e_th, e_al, e_be, x, jump, yPred, disc, y_save, prev_tim1, prev_tim2, prev_tim3, prev_tim4, prev_tim5, prev_tim6
+    global empezar, electrodes, a_th, b_th, a_al, b_al, a_be, b_be, e_th, e_al, e_be, x, jump, yPred, disc, prev_tim1, model, x, pca, fil_max_min
     prev_tim1 = int(time.time()*1000)
-    if disc == 1:
-        disconnect()
     if empezar == 1 and first == 0:
         if((data is not None) == True):
             for i in range(electrodes.shape[0] - 1):
@@ -87,27 +96,43 @@ def action(data):
             if np.mean(electrodes[0, :]) != 0:
                 theta, alpha, beta = filtro_zero(x_1=electrodes, a_th=a_th, b_th=b_th,
                                                 a_al=a_al, b_al=b_al, a_be=a_be, b_be=b_be)
-                e_th[:, 0] = theta[theta.shape[1] - 1, :]
-                e_al[:, 0] = alpha[alpha.shape[1] - 1, :]
-                e_be[:, 0] = beta[beta.shape[1] - 1, :]
-                ##sio.emit('filter', {'theta': e_th.tolist(), 'alpha': e_al.tolist(), 'beta': e_be.tolist()})
-                for j in range(x.shape[1]-42):  #42 corresponde al numero de electrodos 14*3 
-                    x[:, j] = x[:, j+42]
+                x_prev = np.insert(theta, theta.shape[1], alpha.T, axis=1)
+                x_prev = np.insert(x_prev, x_prev.shape[1], beta.T, axis=1)
+                if model == 'Model_Linear_64' or model == 'Model_RBF_64' or model == 'Model_Linear_128' or model == 'Model_RBF_128':
+                    x[0, :-1] = x_prev.flatten()
+                elif model == 'Model_Linear_PSD_64' or model == 'Model_RBF_PSD_64':
+                    idx = 0
+                    for feat in range (x_prev.shape[1]):
+                        x[0, idx] = np.amax(x_prev[:, feat])
+                        x[0, idx+1] = np.amin(x_prev[:, feat])
+                        x[0, idx+2] = np.amax(x_prev[:, feat])-np.amin(x_prev[:, feat])
+                        x[0, idx+3] = np.mean(x_prev[:, feat])
+                        x[0, idx+4] = np.sum(np.power(x_prev[:, feat], 2)/((64*1000)/256))
+                        x[0, idx+5] = np.sum(np.power(x_prev[:, feat], 2))
+                        idx += 6
+                elif model == 'Model_Linear_PCA_64' or model == 'Model_RBF_PCA_64':
+                    x_prev = np.insert(theta, theta.shape[1], alpha.T, axis=1)
+                    x_prev = np.insert(x_prev, x_prev.shape[1], beta.T, axis=1)
+                    k = 0
+                    max_min = 0
+                    for i in range(3):
+                        for j in range(14):
+                            x_prev[:, k] = (x_prev[:, k] - fil_max_min[j, max_min+1])/(fil_max_min[j, max_min] - fil_max_min[j, max_min+1])
+                            k += 1
+                        max_min += 2
+                    x_prev_pca = x_prev.flatten().reshape(1, -1)
+                    x[0, :-1] = pca.transform(x_prev_pca)
 
-                x[0, x.shape[1]-15:x.shape[1]-1]    = e_be[:, 0]
-                x[0, x.shape[1]-29:x.shape[1]-15]   = e_al[:, 0]
-                x[0, x.shape[1]-43:x.shape[1]-29]   = e_th[:, 0]
-
-                if np.mean(x[0, :]) != 0 and jump >= 16:   #Cuando la matriz ya este llena #Jump toma en cuenta 16 datos
-                    x[0, x.shape[1]-1] = yPred
-                    y = mod.predict(x)              
+                x[0, x.shape[1]-1] = yPred
+                if jump >= 16:   ## Jump toma en cuenta 16 datos
+                    y = mod.predict(x)             
                     sio.emit('y_predict', {'y_predict': y.tolist(), 'first': 0, 'lat': prev_tim1})
                     jump = 0
                 else:
                     jump += 1
     elif first == 3:
         empezar = 0
- 
+
 @sio.event
 def disconnect():
     global disc

@@ -6,6 +6,12 @@ let song_t = document.getElementById('song_t');
 let inst = document.getElementById('instrument');
 let btn1 = document.getElementById('ML_1');
 let btn2 = document.getElementById('ML_2');
+let btn3 = document.getElementById('ML_3');
+let btn4 = document.getElementById('ML_4');
+let btn5 = document.getElementById('ML_5');
+let btn6 = document.getElementById('ML_6');
+let btn7 = document.getElementById('ML_7');
+let btn8 = document.getElementById('ML_8');
 var audio = document.getElementById('audio');
 var user_audio = document.getElementById('user_audio');
 
@@ -41,9 +47,33 @@ socket.on('connect', function () {
 });
 
 btn1.addEventListener('click', function(){
-    socket.emit('button_ML', {btn_ML: 'Model_Linear'});
+    socket.emit('button_ML', {btn_ML: 'Model_Linear_64'});
 });
 
 btn2.addEventListener('click', function(){
-    socket.emit('button_ML', {btn_ML: 'Model_RBF'});
+    socket.emit('button_ML', {btn_ML: 'Model_RBF_64'});
+});
+
+btn3.addEventListener('click', function(){
+    socket.emit('button_ML', {btn_ML: 'Model_Linear_128'});
+});
+
+btn4.addEventListener('click', function(){
+    socket.emit('button_ML', {btn_ML: 'Model_RBF_128'});
+});
+
+btn5.addEventListener('click', function(){
+    socket.emit('button_ML', {btn_ML: 'Model_Linear_PSD_64'});
+});
+
+btn6.addEventListener('click', function(){
+    socket.emit('button_ML', {btn_ML: 'Model_RBF_PSD_64'});
+});
+
+btn7.addEventListener('click', function(){
+    socket.emit('button_ML', {btn_ML: 'Model_Linear_PCA_64'});
+});
+
+btn8.addEventListener('click', function(){
+    socket.emit('button_ML', {btn_ML: 'Model_RBF_PCA_64'});
 });

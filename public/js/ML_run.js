@@ -182,9 +182,9 @@ document.addEventListener('DOMContentLoaded', function () {
         socket.on('model_ML', function(mod) {
             $("#nro_ML").text(mod.btn_ML);
             if (exp_run == false){
-                if (mod.btn_ML == 'Model_Linear'){
+                if ((mod.btn_ML == 'Model_Linear_64') || (mod.btn_ML == 'Model_Linear_128') || (mod.btn_ML == 'Model_Linear_PSD_64') || (mod.btn_ML == 'Model_Linear_PCA_64')){
                     back_col = bk_colors[0];
-                }else if(mod.btn_ML == 'Model_RBF'){
+                }else if((mod.btn_ML == 'Model_RBF_64') || (mod.btn_ML == 'Model_RBF_128') || (mod.btn_ML == 'Model_RBF_PSD_64') || (mod.btn_ML == 'Model_RBF_PCA_64')){
                     back_col = bk_colors[1];
                 }
             }

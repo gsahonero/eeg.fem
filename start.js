@@ -1016,7 +1016,7 @@ io.on('connect', function(socket){
                     var hour = currentDate.getHours();
                     var minute = currentDate.getMinutes();
                     var dateString = year + "_" + month + "_" + date + "_" + hour + "_" + minute;
-                    fs.writeFile('./public/data/Musical/'+user_CI+'/data predict/'+model_num+'/'+dateString+'.csv', csvData, {
+                    fs.writeFile('./public/data/Musical/'+user_CI+'/data_ML_predict/'+model_num+'/'+dateString+'.csv', csvData, {
                         "encoding": 'utf8',
                         "flag": 'a+'
                         }, function (err) {

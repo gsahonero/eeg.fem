@@ -100,14 +100,15 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
     //Listen pred
-    socket.on('pred', function(data){
+    socket.on('y_predict', function(data){
         /* console.log('marker: ',data.marker); */
+        console.log(data.lat)
         setTimeout(function(){
-            latency.append(new Date().getTime(), data.lat);
+            latency.append(new Date().getTime(), Date.now()-data.lat);
         }, 5);
-        if(y_real == 'music' || y_real == 'aurosal' || y_real == 'blink'){
+        if(y_real == 'music' || y_real == 'aurosal'){
             total +=1;
-            if((data.marker == y_real) || (data.marker == 'blink')){
+            if(((y_real == 'music') && (data.y == 1)) || ((y_real == 'aurosal') && (data.y == 2))){
                 right += 1;
             }else{
                 fail +=1;

@@ -45,6 +45,7 @@ var on_wait = false;
 var ready = false;
 var writer;
 var to_record_data = [];
+var to_record_data_ML = [];
 var finished = true;
 var number_of_step = 0;
 var r_lat = false;
@@ -789,7 +790,7 @@ var exp = {};
 var exp_ ={};
 var y_array = [0, 0, 0];
 var y_class = [0, 0];
-var mod = {'btn_ML': 0};
+var mod = {'btn_ML': ''};
 var py_server = 0;
 var empezar = {'empezar': 0};
 var y = 0;
@@ -840,48 +841,26 @@ io.on('connect', function(socket){
         console.log(empezar);
         io.sockets.emit('start', empezar);
     });
+    //Recibe los datos iniciales
+    socket.on('y_init', function(data){
+        io.sockets.emit('y_init', data);
+    });
     //Recibe y_predict de python
     socket.on('y_predict', function(data){
-        if (data.first == 1){
-            console.log(data.y_predict)
-            y_array[0] = data.y_predict
-            y_array[1] = data.y_predict
-            y_array[2] = data.y_predict
-            if (data.y_predict == 1){
-                means_marker = "music_1";
-            }else if (data.y_predict == 2){
-                means_marker = "aurosal_1"
+        io.sockets.emit('y_predict', data);
+        if (on_record){
+            if (r_lat){
+                save_dat = data.data
+                save_dat[save_dat.length] = data.y_prev     
+                save_dat[save_dat.length] = data.y
+                save_dat[save_dat.length] = number_of_step
+                save_dat[save_dat.length] = data.id_num     
+                save_dat[save_dat.length] = data.id_prev     
+                save_dat[save_dat.length] = Date.now()-data.lat;     
             }
-            io.sockets.emit('pred', {'marker': means_marker});        
-        }else if(data.first == 0){
-            if (data.y_predict[0] != 3){
-                y_array[0] = y_array[1];
-                y_array[1] = y_array[2];
-                y_array[2] = data.y_predict[0];
-                y_class = [0, 0];
-                for (i=0; i < y_array.length; i++){
-                    if (y_array[i] == 1){
-                        y_class[0] += 1; 
-                    }else if (y_array[i] == 2){
-                        y_class[1] += 1;
-                    }
-                }
-                var max = Math.max(...y_class);
-                var y = y_class.indexOf(max) + 1;
-                if (y == 1){
-                    means_marker = "music";
-                }else if (y == 2){
-                    means_marker = "aurosal"
-                }
-                lat = Date.now()-data.lat;
-                io.sockets.emit('pred', {'pred': y, 'first': 0, 'lat': lat, 'marker': means_marker});
-            }else if(data.y_predict == 3){
-                y = 3;
-                means_marker = "blink"
-                lat = Date.now()-data.lat;
-                io.sockets.emit('pred', {'pred': y, 'first': 0, 'lat': lat, 'marker': means_marker});
-            };
-        };
+            to_record_data_ML[record_index_ML] = save_dat;
+            record_index_ML += 1;
+        }
     });
     
     socket.on('userCI', function(data) {
@@ -942,6 +921,8 @@ io.on('connect', function(socket){
                 console.log('Starting to record');
                 record_index = 0;
                 r_lat = true
+                save_dat = []
+                record_index_ML = 0;
                 io.emit('start', {'empezar': 1}); // Emite start el python
         }
         /*
@@ -1003,12 +984,13 @@ io.on('connect', function(socket){
                     finished = true;
                     means_marker = "finish";
                     on_record = false;
-                    //io.emit('command','ready');
                     console.log(to_record_data.length);
+                    console.log(to_record_data_ML.length);
                     let csvData = convertArrayToCSV(to_record_data, {
                       header,
                       separator: ','
                     });
+                    let csvData_ML = convertArrayToCSV(to_record_data_ML, {separator: ','})
                     var currentDate = new Date();
                     var date = currentDate.getDate();
                     var month = currentDate.getMonth() + 1;
@@ -1028,6 +1010,17 @@ io.on('connect', function(socket){
                           }
                         }
                     );
+                    fs.writeFile('./public/data/Musical/'+user_CI+'/data_ML_predict/'+model_num+'/'+dateString+'_ML.csv', csvData_ML, {
+                        "encoding": 'utf8',
+                        "flag": 'a+'
+                        }, function (err) {
+                          if (err) {
+                            console.log('Some error occured - file either not saved or corrupted file saved.');
+                            io.emit('error');
+                          } else{
+                            console.log('Data was saved correctly.');
+                          }
+                    })
                     console.log('Finished recording.');
                 }else{
                     console.log('Recording was already finished.');
@@ -1045,10 +1038,10 @@ io.on('connect', function(socket){
             process.exit();
         }
     });
-
-    socket.on('file_reader_ci', function(data){
-        
-    })
+    //Recive the electrodes data in the windowing.
+    socket.on('data_w', function(data){
+        io.sockets.emit('data_w', data);
+    });
 	/* uploader.on('start', (fileInfo) => {
 		console.log('Start uploading');
 		console.log("THIS IS THE UPLOADER",uploader);

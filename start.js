@@ -856,10 +856,16 @@ io.on('connect', function(socket){
                 save_dat[save_dat.length] = number_of_step
                 save_dat[save_dat.length] = data.id_num     
                 save_dat[save_dat.length] = data.id_prev     
-                save_dat[save_dat.length] = Date.now()-data.lat;     
+                latency = Date.now()-data.lat;
+                save_dat[save_dat.length] = latency     
             }
             to_record_data_ML[record_index_ML] = save_dat;
             record_index_ML += 1;
+            io.sockets.emit('data_inst', {
+                y: data.y,
+                lat: latency,
+                y_true: number_of_step
+            });
         }
     });
     

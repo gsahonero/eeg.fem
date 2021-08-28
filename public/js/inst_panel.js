@@ -55,21 +55,21 @@ document.addEventListener('DOMContentLoaded', function () {
         myChart.data.datasets[0].data = [fail, right];
         myChart.update();
     }
-    //Listen user id //Listen secuencia
-    socket.on('userId', function(data){
-        $("#user_ci").text(data.CI);
-        $("#user_song").text(data.song);
-        $('#img_2').attr('src', line(data.ML_start[0])[0]);
-        $('#img_3').attr('src', line(data.ML_start[0])[1]);
-        $('#img_5').attr('src', line(data.ML_start[0])[2]);
-        $('#img_6').attr('src', line(data.ML_start[0])[3]);
-    });
-    //Listen ML model
-    socket.on('model_ML', function(mod){
-        $("#nro_ML").text(mod.btn_ML);
-    });
     //Listen quality
     socket.on('connect', function () {        
+        //Listen user id //Listen secuencia
+        socket.on('userId', function(data){
+            $("#user_ci").text(data.CI);
+            $("#user_song").text(data.song);
+            $('#img_2').attr('src', line(data.ML_start[0])[0]);
+            $('#img_3').attr('src', line(data.ML_start[0])[1]);
+            $('#img_5').attr('src', line(data.ML_start[0])[2]);
+            $('#img_6').attr('src', line(data.ML_start[0])[3]);
+        });
+        //Listen ML model
+        socket.on('model_ML', function(mod){
+            $("#nro_ML").text(mod.btn_ML);
+        });
         socket.on('dev', function(data){
             let connection_information = data[2];
             let total = 0;
@@ -85,105 +85,108 @@ document.addEventListener('DOMContentLoaded', function () {
                 $('#quality').css('background-color', '#0FA67B');
             }
         });
-        console.log('Connected to server');        
-    });
-    //
-    socket.on('number_of', function(yr){
-        y_real = yr.number_of;
-        if(y_real == 'start'){
-            total = 0;
-            right = 0;
-            fail = 0;
-            pres_y = 0;
+        //
+        socket.on('number_of', function(yr){
+            y_real = yr.number_of;
+            if(y_real == 'start'){
+                total = 0;
+                right = 0;
+                fail = 0;
+                pres_y = 0;
+                update_values(right, fail);
+                $('#pres_y').text(pres_y);
+            }
+        });
+        //Listen pred
+        socket.on('data_inst', function(data){
+            setTimeout(function(){
+                latency.append(new Date().getTime(), data.lat);
+            }, 5);
+            if (data.y_true == 'music'){
+                y_true = 1
+            }else if (data.y_true == 'aurosal'){
+                y_true = 2
+            }
+            if(data.y_true == 'music' || data.y_true == 'aurosal'){
+                total +=1;
+                if(y_true == data.y){
+                    right += 1;
+                }else{
+                    fail +=1;
+                }
+                pres_y = ((right/total)*100).toFixed(2);
+            }
             update_values(right, fail);
             $('#pres_y').text(pres_y);
-        }
-    });
-    //Listen pred
-    socket.on('y_predict', function(data){
-        /* console.log('marker: ',data.marker); */
-        console.log(data.lat)
-        setTimeout(function(){
-            latency.append(new Date().getTime(), Date.now()-data.lat);
-        }, 5);
-        if(y_real == 'music' || y_real == 'aurosal'){
-            total +=1;
-            if(((y_real == 'music') && (data.y == 1)) || ((y_real == 'aurosal') && (data.y == 2))){
-                right += 1;
-            }else{
-                fail +=1;
+        });
+        //Listen sec step
+        socket.on('beep_next', function(beep){
+            if(beep.step == 'beep1'){
+                $('#img_1').css('background-color', '#4F4F59');
+                $('#img_2').css('background-color', '#0FA67B');
+                $('#img_3').css('background-color', '#0FA67B');
+                $('#img_4').css('background-color', '#0FA67B');
+                $('#img_5').css('background-color', '#0FA67B');
+                $('#img_6').css('background-color', '#0FA67B');
+                $('#img_7').css('background-color', '#0FA67B');
+            }else if(beep.step == 'beep2'){
+                $('#img_1').css('background-color', '#0FA67B');
+                $('#img_2').css('background-color', '#4F4F59');
+                $('#img_3').css('background-color', '#0FA67B');
+                $('#img_4').css('background-color', '#0FA67B');
+                $('#img_5').css('background-color', '#0FA67B');
+                $('#img_6').css('background-color', '#0FA67B');
+                $('#img_7').css('background-color', '#0FA67B');
+            }else if(beep.step == 'beep3'){
+                $('#img_1').css('background-color', '#0FA67B');
+                $('#img_2').css('background-color', '#0FA67B');
+                $('#img_3').css('background-color', '#4F4F59');
+                $('#img_4').css('background-color', '#0FA67B');
+                $('#img_5').css('background-color', '#0FA67B');
+                $('#img_6').css('background-color', '#0FA67B');
+                $('#img_7').css('background-color', '#0FA67B');
+            }else if(beep.step == 'beep4'){
+                $('#img_1').css('background-color', '#0FA67B');
+                $('#img_2').css('background-color', '#0FA67B');
+                $('#img_3').css('background-color', '#0FA67B');
+                $('#img_4').css('background-color', '#4F4F59');
+                $('#img_5').css('background-color', '#0FA67B');
+                $('#img_6').css('background-color', '#0FA67B');
+                $('#img_7').css('background-color', '#0FA67B');
+            }else if(beep.step == 'beep5'){
+                $('#img_1').css('background-color', '#0FA67B');
+                $('#img_2').css('background-color', '#0FA67B');
+                $('#img_3').css('background-color', '#0FA67B');
+                $('#img_4').css('background-color', '#0FA67B');
+                $('#img_5').css('background-color', '#4F4F59');
+                $('#img_6').css('background-color', '#0FA67B');
+                $('#img_7').css('background-color', '#0FA67B');
+            }else if(beep.step == 'beep6'){
+                $('#img_1').css('background-color', '#0FA67B');
+                $('#img_2').css('background-color', '#0FA67B');
+                $('#img_3').css('background-color', '#0FA67B');
+                $('#img_4').css('background-color', '#0FA67B');
+                $('#img_5').css('background-color', '#0FA67B');
+                $('#img_6').css('background-color', '#4F4F59');
+                $('#img_7').css('background-color', '#0FA67B');
+            }else if(beep.step == 'beep7'){
+                $('#img_1').css('background-color', '#0FA67B');
+                $('#img_2').css('background-color', '#0FA67B');
+                $('#img_3').css('background-color', '#0FA67B');
+                $('#img_4').css('background-color', '#0FA67B');
+                $('#img_5').css('background-color', '#0FA67B');
+                $('#img_6').css('background-color', '#0FA67B');
+                $('#img_7').css('background-color', '#4F4F59');
+            }else if(beep.step == 'beep8'){
+                $('#img_1').css('background-color', '#0FA67B');
+                $('#img_2').css('background-color', '#0FA67B');
+                $('#img_3').css('background-color', '#0FA67B');
+                $('#img_4').css('background-color', '#0FA67B');
+                $('#img_5').css('background-color', '#0FA67B');
+                $('#img_6').css('background-color', '#0FA67B');
+                $('#img_7').css('background-color', '#0FA67B');
             }
-            pres_y = ((right/total)*100).toFixed(2);
-        }
-        update_values(right, fail);
-        $('#pres_y').text(pres_y);
-    });
-    //Listen sec step
-    socket.on('beep_next', function(beep){
-        if(beep.step == 'beep1'){
-            $('#img_1').css('background-color', '#4F4F59');
-            $('#img_2').css('background-color', '#0FA67B');
-            $('#img_3').css('background-color', '#0FA67B');
-            $('#img_4').css('background-color', '#0FA67B');
-            $('#img_5').css('background-color', '#0FA67B');
-            $('#img_6').css('background-color', '#0FA67B');
-            $('#img_7').css('background-color', '#0FA67B');
-        }else if(beep.step == 'beep2'){
-            $('#img_1').css('background-color', '#0FA67B');
-            $('#img_2').css('background-color', '#4F4F59');
-            $('#img_3').css('background-color', '#0FA67B');
-            $('#img_4').css('background-color', '#0FA67B');
-            $('#img_5').css('background-color', '#0FA67B');
-            $('#img_6').css('background-color', '#0FA67B');
-            $('#img_7').css('background-color', '#0FA67B');
-        }else if(beep.step == 'beep3'){
-            $('#img_1').css('background-color', '#0FA67B');
-            $('#img_2').css('background-color', '#0FA67B');
-            $('#img_3').css('background-color', '#4F4F59');
-            $('#img_4').css('background-color', '#0FA67B');
-            $('#img_5').css('background-color', '#0FA67B');
-            $('#img_6').css('background-color', '#0FA67B');
-            $('#img_7').css('background-color', '#0FA67B');
-        }else if(beep.step == 'beep4'){
-            $('#img_1').css('background-color', '#0FA67B');
-            $('#img_2').css('background-color', '#0FA67B');
-            $('#img_3').css('background-color', '#0FA67B');
-            $('#img_4').css('background-color', '#4F4F59');
-            $('#img_5').css('background-color', '#0FA67B');
-            $('#img_6').css('background-color', '#0FA67B');
-            $('#img_7').css('background-color', '#0FA67B');
-        }else if(beep.step == 'beep5'){
-            $('#img_1').css('background-color', '#0FA67B');
-            $('#img_2').css('background-color', '#0FA67B');
-            $('#img_3').css('background-color', '#0FA67B');
-            $('#img_4').css('background-color', '#0FA67B');
-            $('#img_5').css('background-color', '#4F4F59');
-            $('#img_6').css('background-color', '#0FA67B');
-            $('#img_7').css('background-color', '#0FA67B');
-        }else if(beep.step == 'beep6'){
-            $('#img_1').css('background-color', '#0FA67B');
-            $('#img_2').css('background-color', '#0FA67B');
-            $('#img_3').css('background-color', '#0FA67B');
-            $('#img_4').css('background-color', '#0FA67B');
-            $('#img_5').css('background-color', '#0FA67B');
-            $('#img_6').css('background-color', '#4F4F59');
-            $('#img_7').css('background-color', '#0FA67B');
-        }else if(beep.step == 'beep7'){
-            $('#img_1').css('background-color', '#0FA67B');
-            $('#img_2').css('background-color', '#0FA67B');
-            $('#img_3').css('background-color', '#0FA67B');
-            $('#img_4').css('background-color', '#0FA67B');
-            $('#img_5').css('background-color', '#0FA67B');
-            $('#img_6').css('background-color', '#0FA67B');
-            $('#img_7').css('background-color', '#4F4F59');
-        }else if(beep.step == 'beep8'){
-            $('#img_1').css('background-color', '#0FA67B');
-            $('#img_2').css('background-color', '#0FA67B');
-            $('#img_3').css('background-color', '#0FA67B');
-            $('#img_4').css('background-color', '#0FA67B');
-            $('#img_5').css('background-color', '#0FA67B');
-            $('#img_6').css('background-color', '#0FA67B');
-            $('#img_7').css('background-color', '#0FA67B');
-        }
+        });
+        console.log('Connected to server');
     });
 }, false);

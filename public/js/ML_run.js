@@ -321,7 +321,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
         //We recive the prediction and make an action according to this
         socket.on('y_predict', function(data){
-            console.log(data.y)
             if(sound){
                 if(data.y == 1){
                     user_audio.play();

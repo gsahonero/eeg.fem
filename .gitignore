@@ -4,5 +4,4 @@ login.data
 public/json/users.json
 /.tmp.driveupload
 /.tmp.drivedownload
-/.idea
 /.vscode

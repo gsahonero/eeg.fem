@@ -26,33 +26,36 @@ document.addEventListener('DOMContentLoaded', function () {
     smoothie.streamTo(document.getElementById('mycanvas'));
     var latency = new TimeSeries();
     smoothie.addTimeSeries(latency, {lineWidth:2,strokeStyle:'#614BF2',fillStyle:'rgba(0,0,0,0.32)'});
-    //**************************************//
-    //
+    
     var y_real = '';
     var right = 0;
     var fail = 0;
     var total = 0;
     var pres_y = 0;
+    var blink_in = 0;
+    var blink_out = 0;
+    var blink = 0;
     //Para la precision fallos y ciertos//
     var ctx = document.getElementById("mycanvas2").getContext("2d");
-    /* ctx.style.backgroundColor = '#A0D9C9'; */
     var myChart = new Chart(ctx, {
         type:"bar",
         data:{
-            labels:['Fail','Aciertos'],
+            labels:['Fail','Aciertos','blink'],
             datasets:[{
                 label:'Num Datos',
-                data:[0, 0],
+                data:[0, 0, 0],
                 backgroundColor: [
                     '#D94E41',
-                    '#038C33'
+                    '#038C33',
+                    '#6796CD'
                 ],
                 borderWidth:1
             }]
         }
     });
-    function update_values(right, fail){
-        myChart.data.datasets[0].data = [fail, right];
+
+    function update_values(right, fail, blink_in){
+        myChart.data.datasets[0].data = [fail, right, blink_in];
         myChart.update();
     }
     //Listen quality
@@ -70,6 +73,7 @@ document.addEventListener('DOMContentLoaded', function () {
         socket.on('model_ML', function(mod){
             $("#nro_ML").text(mod.btn_ML);
         });
+        
         socket.on('dev', function(data){
             let connection_information = data[2];
             let total = 0;
@@ -93,11 +97,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 right = 0;
                 fail = 0;
                 pres_y = 0;
-                update_values(right, fail);
+                blink_in = 0;
+                blink_out = 0;
+                blink = 0;
+                update_values(right, fail, blink);
                 $('#pres_y').text(pres_y);
             }
         });
-        //Listen pred
+        //Listen data_inst
         socket.on('data_inst', function(data){
             setTimeout(function(){
                 latency.append(new Date().getTime(), data.lat);
@@ -106,6 +113,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 y_true = 1
             }else if (data.y_true == 'aurosal'){
                 y_true = 2
+            }else if (data.y_true == 'blink'){
+                y_true = 3
             }
             if(data.y_true == 'music' || data.y_true == 'aurosal'){
                 total +=1;
@@ -113,11 +122,22 @@ document.addEventListener('DOMContentLoaded', function () {
                     right += 1;
                 }else{
                     fail +=1;
+                    if (data.y == 3){
+                        blink_in += 1;
+                    }
                 }
                 pres_y = ((right/total)*100).toFixed(2);
+            }else if(data.y_true == 'blink'){
+                if(y_true == data.y){
+                    blink_out += 1;
+                }
             }
-            update_values(right, fail);
+            /* blink = blink_in + blink_out */
+            update_values(right, fail, blink_in);
             $('#pres_y').text(pres_y);
+            $('#total').text('Total: '+total);
+            $('#blink_in').text('Blink in: '+blink_in);
+            $('#blink_out').text('Blink out: '+blink_out);
         });
         //Listen sec step
         socket.on('beep_next', function(beep){

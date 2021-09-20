@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var user_audio = new Audio();
     var au_audio = new Audio();
     var audio_sound = new Audio();
-    //
+    //Define the order of the sequence, 1 for musical and 2 for aurosal
     var prev = [];
     //Id number setting
     var id_num = 0;
@@ -122,13 +122,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 window = 64;
             }
             document.body.style.backgroundColor = bk_color;
-        });
-        //We finish all process and terminate all the app
-        $("#finish").click(function(e){
-            e.preventDefault();
-            user_audio.pause();
-            au_audio.pause();
-            socket.emit('finish', 'true');
         });
         //We recive the user id to make the changes
         socket.on('userId', function(result) {
@@ -231,16 +224,17 @@ document.addEventListener('DOMContentLoaded', function () {
                 let commands = sentences[execution_line].split('(');
                 let func = commands[0];
                 let args = commands[1].split(')')[0];
-                let data = {
+                let data = {    
                     'command': func,
                     'args': args
                 };
                 if (func === "beep"){
                     console.log('Recognizing Beep')
                     let second_arg = args.split(',')[1];
-                    if(second_arg == 'beep1' || second_arg == 'beep4' ||second_arg == 'beep7'){
-                        predict = false;
-                        jump = 17;
+                    if(second_arg == 'beep1' || second_arg == 'beep4' ||second_arg == 'beep7'){ //Beep for Blink state
+                        console.log('predict: True; sound: False')
+                        predict = true;
+                        jump = 15;
                         data_w = [];
                         sound = false;
                     }else if (second_arg == 'beep3'){
@@ -324,14 +318,14 @@ document.addEventListener('DOMContentLoaded', function () {
             if(sound){
                 if(data.y == 1){
                     user_audio.play();
-                    au_volume -= 0.1;
-                    user_volume += 0.05;
+                    au_volume -= 0.05;
+                    user_volume += 0.1;
                     user_audio.volume = user_volume;
                     au_audio.pause();
                     au_audio.volume = 0;
                 } else if(data.y == 2){
                     au_audio.play();
-                    au_volume += 0.05;
+                    au_volume += 0.15;
                     user_volume -= 0.1;
                     au_audio.volume = au_volume;
                     user_audio.pause();

@@ -43,7 +43,12 @@ socket.on('connect', function () {
             $("#quality").text('Electrodos | 100');
         }
     });
-    console.log('Connected to server');        
+    console.log('Connected to server');
+    //We finish all process and terminate all the app
+    $("#finish").click(function(e){
+        e.preventDefault();
+        socket.emit('finish', 'true');
+    });     
 });
 
 btn1.addEventListener('click', function(){

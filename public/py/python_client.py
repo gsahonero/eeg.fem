@@ -1,10 +1,7 @@
 import socketio
 import numpy as np
-from pickle import dumps
-from numpy.lib.npyio import loads
 from sklearn.decomposition import PCA
 import joblib as jb
-import time
 from filter import param, filtro_zero
 
 sio = socketio.Client()

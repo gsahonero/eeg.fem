@@ -775,6 +775,12 @@ const userData = require('./public/json/users.json');
 const experiments = require('./public/json/experiments.json');
 const ML_exp = require('./public/json/ML_sec.json');
 
+//Colect all the CI's form the the file userData
+var names = []
+for(let i = 0; i < userData.length; i++){
+    names[i] = userData[i]['CI']
+}
+
 //define the directory path
 const directoryPath = path.join(__dirname, 'Documents');
 
@@ -788,8 +794,6 @@ function userIden(userData, data){
 var result = {'CI': 0};
 var exp = {};
 var exp_ ={};
-var y_array = [0, 0, 0];
-var y_class = [0, 0];
 var mod = {'btn_ML': ''};
 var py_server = 0;
 var empezar = {'empezar': 0};
@@ -1048,7 +1052,33 @@ io.on('connect', function(socket){
     socket.on('data_w', function(data){
         io.sockets.emit('data_w', data);
     });
-	/* uploader.on('start', (fileInfo) => {
+
+    io.sockets.emit('CI_list', {
+        'CI_list': names
+    });
+
+    socket.on('CI_selected', function(data){
+        let directory = `./public/data/Musical/${data.CI_selected}/data_ML_predict`;
+        let files = fs.readdirSync(directory);
+        io.sockets.emit('file_dir_model', {'model_list': files, 'dir': directory, 'CI_selected': data.CI_selected});
+    });
+
+    socket.on('model_selected', function(data){
+        let directory = `${data.dir}/${data.model_selected}`;
+        let files = fs.readdirSync(directory);
+        io.sockets.emit('file_dir_file', {'file_list': files, 'dir': directory, 'model_selected': data.model_selected, 'CI_selected': data.CI_selected});
+    });
+
+    socket.on('data_analysis', function(data){
+        io.sockets.emit('data_analysis', data);
+    });
+
+    socket.on('data_after_show', function(data){
+        io.sockets.emit('data_after_show', data);
+    });
+
+    
+    /* uploader.on('start', (fileInfo) => {
 		console.log('Start uploading');
 		console.log("THIS IS THE UPLOADER",uploader);
 	}); */

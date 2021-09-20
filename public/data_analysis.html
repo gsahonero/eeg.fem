@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="./css/bootstrap.min.css">
+        <script src="./js/jquery-1.10.1.min.js"></script>
+        <script src="./js/d3.v3.js" charset="utf-8"></script>
+        <script src="./js/epoch.js"></script>
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@100;200;300;400;500;600;700;900&display=swap" rel="stylesheet">
+    </head>
+    <body style="background-color:#D9D9D9;">
+        <style>
+            .title{
+                margin-top: 2vh;
+                font-weight: 900;
+                font-size: 3em;
+                color: '#343540';
+            }
+            .title_div{
+                border-bottom: 2.5px solid rgb(255, 255, 255);
+            }
+            .sub_title{
+                font-weight: 600;
+                font-size: 25px;
+                color: '#343540';
+            }
+            .nav_btn{
+                font-weight: 700;
+                font-size: 35px;
+            }
+            .list_toggle{
+                font-weight: 400;
+                font-size: 20px;
+            }
+            .btn_list{
+                padding: 12px 28px;
+            }
+            .btn-elec{
+                font-weight: 700;
+                font-size: 25px;
+                margin-top: 2vh;
+            }
+            .music_wrapper{
+                width: 50%;
+                height: 50%;
+                margin-left: 17vh;
+            }
+            .all_bc{
+                background-color:rgb(255, 255, 255);
+            }
+            .all_wrapper{
+                width: 50%;
+                height: 50%;
+            }
+            .body-text-title{
+                font-weight: 700;
+                font-size: 1em;
+                color: '#343540';
+            }
+            .body-text{
+                font-weight: 500;
+                font-size: 1.5em;
+                color: '#343540';
+            }
+            .data_content{
+                border-top: 2.5px solid rgb(255, 255, 255);
+            }
+        </style>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col d-flex justify-content-center title_div">
+                    <a class="h1 title">PANEL DE REVISOR</a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col d-flex justify-content-center">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="customSwitch1" checked>
+                        <label class="custom-control-label h1"  style="font-weight: 700; font-size: 1em; color: #343540" for="customSwitch1">Revisar individualmente</label>
+                    </div>
+                </div>
+            </div>
+            <div class='row title_div'>
+                <div class='col d-flex justify-content-end align-self-center '>
+                    <a class="h1 sub_title">Carne de ID</a>
+                </div>
+                <div class='col d-flex justify-content-start btn_list'>
+                    <button type="button" class="btn btn-danger dropdown-toggle list_toggle h1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="CI_select">
+                        Carne de ID
+                    </button>
+                    <div class="dropdown-menu" id="CI_list" aria-labelledby="CI_select" ></div>
+                </div>
+                <div class='col d-flex justify-content-end align-self-center '>
+                    <a class="h1 sub_title">Modelo</a>
+                </div>
+                <div class='col d-flex justify-content-start btn_list'>
+                    <button type="button" class="btn btn-info dropdown-toggle list_toggle h1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="model_select">
+                        Model
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="model_select" id="model_list"></div>
+                </div>
+                <div class='col d-flex justify-content-end align-self-center '>
+                    <a class="h1 sub_title">Archivo</a>
+                </div>
+                <div class='col d-flex justify-content-start btn_list'>
+                    <button type="button" class="btn btn-success dropdown-toggle list_toggle h1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="file_select">
+                        Archivo
+                    </button>
+                    <div class="dropdown-menu" id="file_list" aria-labelledby="file_select"></div>
+                </div>
+                <div class='col'>
+                    <a class="btn btn-x2 text-white h1 d-flex justify-content-center btn-elec" style="background-color:#4F4F58;" href="#" role="button" id="btn_analize">Analizar</a>
+                </div>
+            </div>
+            <div class='row'>
+                <div class='col'>
+                    <a class="h1 body-text-title">Predicciones hechas: </a><br>
+                    <a class="h1 body-text"  id="tot_pred"></a><br>
+                </div>
+                <div class='col'>
+                    <a class="h1 body-text-title">Tomadas en cuenta: </a><br>
+                    <a class="h1 body-text"  id="pred_keep"></a><br>
+                </div>
+                <div class='col'>
+                    <a class="h1 body-text-title">Latencia Promedio: </a><br>
+                    <a class="h1 body-text"  id="lat_prom"></a><br>
+                </div>
+                <div class='col'>
+                    <a class="h1 body-text-title">Latencia Maxima: </a><br>
+                    <a class="h1 body-text"   id="lat_max"></a><br>
+                </div>
+                <div class='col'>
+                    <a class="h1 body-text-title">Latencia Minima: </a><br>
+                    <a class="h1 body-text"  id="lat_min"></a><br>
+                </div>
+                <div class='col'>
+                    <a class="h1 body-text-title">Precision: </a><br>
+                    <a class="h1 body-text"  id="accu"></a><br>
+                </div>
+            </div>
+            <div class='row data_content d-none' id='single_file'>
+                <div class='col d-flex justify-content-center'>
+                    <canvas class="back-ac" id="mycanvas_music" height="300px"></canvas>  
+                </div>
+                <div class='col d-flex justify-content-center'>
+                    <canvas class="back-ac" id="mycanvas_total" height="350px"></canvas>
+                </div>
+                <div class='col d-flex justify-content-center'>
+                    <canvas class="back-ac" id="mycanvas_aurosal" height="300px"></canvas>
+                </div>
+            </div>
+            <div class='row data_content d-none' id='all_files'>
+                <div class='col'>
+
+                </div>
+                <div class='col-6 d-flex justify-content-center'>
+                    <div class='row d-flex justify-content-center'>
+                        <a class="h1 sub_title">% de precisión por modelo</a>
+                        <canvas class="all_bc" id="mycanvas_all_acc" height="150px"></canvas>
+                    </div>
+                </div>
+                <div class="col">
+
+                </div>
+            </div>
+        </div>
+        <script src="./js/popper.min.js"></script>
+        <script src="./js/bootstrap.min.js"></script>
+        <script src="./js/socket.io.js"> </script>
+        <script src="./js/smoothie.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.5.0/chart.js"></script>
+        <script src="./js/data_analysis.js"></script>
+    </body>
+</html>

@@ -72,9 +72,4 @@ If the process started correctly you should receive the following message: *Serv
 1. Open another tab, and enter to http://localhost:3000/, then click the *Record EEG*
 1. Click on the *Researcher* button, to access to the experiment customization page. You can change the experiment instructions on the script using the commands shown on the List of Commands section.
 1. If you have some media files, you have to click on the *Import Audio resources* button before starting the experiment.
-1. To start the experiment just click on the *Start experiment* button. After doing this the experiment should start. In the *Subject* page the experiment will be running, and all the data will be stored in ...
-1. kfj;sd 
-1. jd;kasjd;k
-1. jdlkajslkdja
-1. jdlkasjdlka
-1. jdlaksjdlakjs
+1. To start the experiment just click on the *Start experiment* button. After doing this the experiment should start. In the *Subject* page the experiment will be running, and all the data will be stored in .

@@ -1074,6 +1074,7 @@ io.on('connect', function(socket){
     });
 
     socket.on('data_after_show', function(data){
+        console.log(data.pred_music_num);
         io.sockets.emit('data_after_show', data);
     });
 

@@ -2,7 +2,6 @@ import socketio
 import numpy as np
 import pandas as pd
 from sklearn.decomposition import PCA
-import joblib as jb
 from filter import param, filtro_zero
 
 sio = socketio.Client()
@@ -129,13 +128,6 @@ def data_analy(CI, model, files, x_scaled, all):
         df_aurosal, aurosal_acc, aurosal_num = part_accuracy(df_good, 'aurosal', 2)
         lat_avg, lat_max, lat_min = latency(df)
         print(f'lat_avg: {lat_avg}, lat_max: {lat_max}, lat_min: {lat_min}')
-        """ mod = jb.load('D:/Github/eeg.fem/public/data/Musical/'+str(CI)+'/ML_models/'+str(model))
-        df_good_off = data_acc_offline(df_good, model, a_th, a_al, a_be, b_th, b_al, b_be, mod)
-        df_acc_off, tot_acc_off = total_accuracy(df_good_off)
-        df_musical_off, musical_acc_off, musical_num_off = part_accuracy(df_good_off, 'music', 1)
-        df_aurosal_off, aurosal_acc_off, aurosal_num_off = part_accuracy(df_good_off, 'aurosal', 2)
-        similarity = np.sum(df_good_off[:, -5] == df_good[:, -5])
-        print(f'Similarity: {similarity}') """
         sio.emit('data_after_show', {'pred_tot': pred_tot, 'pred_keep': pred_keep, 'tot_acc': tot_acc.tolist(), 'pred_music_num': music_num.tolist(), 'pred_aurosal_num': aurosal_num.tolist(), 
         'lat_avg': lat_avg, 'lat_max': lat_max, 'lat_min': lat_min})
         return ('Data done')

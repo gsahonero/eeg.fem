@@ -1,4 +1,4 @@
-call D:\Programas\anaconda3\Scripts\activate.bat D:\Programas\anaconda3\envs\BCIMusical
+call D:\Programas\miniconda\Scripts\activate.bat D:\Programas\miniconda\envs\BCIMusical
 node start.js
 cd ./public
 start chrome_data.bat

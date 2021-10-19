@@ -55,22 +55,22 @@ Semicolon usage is mandatory
 
 ## How to use
 1. Connect the headset to your PC
-2. Start the program. Open the file where you have cloned the repository and then type in the terminal:
-```bash
-cd eeg.fem
-node start
-```
+1. Start the program. Open the file where you have cloned the repository and then type in the terminal:
+  ```bash
+  cd eeg.fem
+  node start
+  ```
 If the process started correctly you should receive the following message: *Server is running on port 3000!*.
-3. Open your favorite browser, then enter to the localhost. For default the program is running on port 3000, so you'll have to enter to: http://localhost:3000/
-4. Put on your Epoc+ headset.
-5. When you are in the menu click on *Check electrodes quality* button to check if the electrodes are receiving signal correctly. You'll be taken to a page that looks like this:
+1. Open your favorite browser, then enter to the localhost. For default the program is running on port 3000, so you'll have to enter to: http://localhost:3000/
+1. Put on your Epoc+ headset.
+1. When you are in the menu click on *Check electrodes quality* button to check if the electrodes are receiving signal correctly. You'll be taken to a page that looks like this:
    
    Where you can see the quality of signal from each electrode. If the quality of the modules is poor, try humidifying the feltpads and make sure that ground electrodes are placed correctly.
-6. After checking the quality, go back to the menu, and click the *Watch Raw EEG Data* to see the data retrieved from the headset in real time. You can try blinking to see some artifacts, this could be seen as peaks in the signal.
-7. Go back to the menu. Then click on the *record EEG* button.
-8. Click on the *Subject* button to access to the subject page. This should become a blank page
-9. Open another tab, and enter to http://localhost:3000/, then click the *Record EEG*
-10. Click on the *Researcher* button, to access to the experiment customization page. You can change the experiment instructions on the script using the commands shown on the List of Commands section.
-11. If you have some media files, you have to click on the *Import Audio resources* button before starting the experiment.
-12. To start the experiment just click on the *Start experiment* button. After doing this the experiment should start. In the *Subject* page the experiment will be running, and all the data will be stored in ...
-13. 
+1. After checking the quality, go back to the menu, and click the *Watch Raw EEG Data* to see the data retrieved from the headset in real time. You can try blinking to see some artifacts, this could be seen as peaks in the signal.
+1. Go back to the menu. Then click on the *record EEG* button.
+1. Click on the *Subject* button to access to the subject page. This should become a blank page
+1. Open another tab, and enter to http://localhost:3000/, then click the *Record EEG*
+1. Click on the *Researcher* button, to access to the experiment customization page. You can change the experiment instructions on the script using the commands shown on the List of Commands section.
+1. If you have some media files, you have to click on the *Import Audio resources* button before starting the experiment.
+1. To start the experiment just click on the *Start experiment* button. After doing this the experiment should start. In the *Subject* page the experiment will be running, and all the data will be stored in ...
+1. 

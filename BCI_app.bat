@@ -1,4 +1,4 @@
-call D:\Programas\miniconda\Scripts\activate.bat D:\Programas\miniconda\envs\BCIMusical
+call D:\Programas\miniconda3\Scripts\activate.bat D:\Programas\miniconda3\envs\BCIMusical
 cd ./public
 start PyBat.bat
 start chrome_app.bat

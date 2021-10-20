@@ -538,7 +538,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             waiting_for_trigger = false;
                         });
                     }
-                }/* else if (func === "imagine"){
+                }else if (func === "imagine"){
                         //if (args>0 || args.length>0){
                         //    console.log('waiting server response');
                         //}else{
@@ -570,7 +570,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         $("#trigger_button").addClass('disabled');
                         waiting_for_trigger = false;
                     });
-                } */else if (func === "finish"){
+                }else if (func === "finish"){
                     console.log('finished');
                     $("#run_experiment").removeClass("disabled");
                     $("#trigger_button").addClass('disabled');

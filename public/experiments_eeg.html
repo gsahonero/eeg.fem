@@ -2,41 +2,85 @@
    <head>
         <title>EEG-fEM: EEG Emotiv Web Suite</title>
         <link rel="stylesheet" href="./css/bootstrap.min.css">
-        <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@900&display=swap" rel="stylesheet">
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@100;200;300;400;500;600;700;900&display=swap" rel="stylesheet">
     </head>
     <body style="background-color:#614BF2;">
         <style>
-            .content{
-                align-items: center;
-                text-align: center;
-            }
             html{
                 height:100%;
             }
             .main-show{
                 margin-top: 30vh;
-                margin-left: 70vh;
+                width: 71.3vh;
+                align-items: center;
             }
             .main-show1{
                 margin-top: 0vh;
-                margin-left: 70vh;
+                width: 71.6vh;
+                align-items: center;
+            }
+            .name{
+                margin-top: 5vh;
+            }
+            .low_btn{
+                margin-top: 15vh;
+                width: 50vh;
+                margin-left: 68vh;
+            }
+            .btn-x2{
+                font-size: 30px;
+                align-items: center;
+            }
+            .information{
+                font-weight: 400;
+            }
+            .btn_exp{
+                font-weight: 900;
+            }
+            .welcome{
+                font-weight: 900;
+            }
+            .btn_elec{
+                font-weight: 900;
             }
             </style>
-        <div class="container main-show">
-            <a class="btn btn-primary" style="background-color:#D94E41;" href="#" role="button"><h1>Exp. 1</h1></a>
-            <a class="btn btn-primary" style="background-color:#F2C53D;" href="#" role="button"><h1>Exp. 2</h1></a>
-            <a class="btn btn-primary" style="background-color:#1A1B26;" href="#" role="button"><h1>Exp. 3</h1></a>
-            <a class="btn btn-primary" style="background-color:#6796CD;" href="#" role="button"><h1>Exp. 4</h1></a>
+        <div id ='btn-container'>
+            <div class="container main-show col-md-5">
+                <a class="btn btn-primary" style="background-color:#D94E41;" href="icon_eeg.html" role="button" id='ex1'><h1 class="btn_exp">Exp. 1</h1></a>
+                <a class="btn btn-primary" style="background-color:#F2C53D;" href="icon_eeg.html" role="button" id='ex2'><h1 class="btn_exp">Exp. 2</h1></a>
+                <a class="btn btn-primary" style="background-color:#1A1B26;" href="icon_eeg.html" role="button" id='ex3'><h1 class="btn_exp">Exp. 3</h1></a>
+                <a class="btn btn-primary" style="background-color:#6796CD;" href="icon_eeg.html" role="button" id='ex4'><h1 class="btn_exp">Exp. 4</h1></a>
+            </div>
+            <div class="container main-show1 col-md-5">
+                <a class="btn btn-primary" style="background-color:#0442BF;" href="icon_eeg.html" role="button" id='ex5'><h1 class="btn_exp">Exp. 5</h1></a>
+                <a class="btn btn-primary" style="background-color:#F27649;" href="icon_eeg.html" role="button" id='ex6'><h1 class="btn_exp">Exp. 6</h1></a>
+                <a class="btn btn-primary" style="background-color:#038C33;" href="icon_eeg.html" role="button" id='ex7'><h1 class="btn_exp">Exp. 7</h1></a>
+                <a class="btn btn-primary" style="background-color:#9B45BF;" href="icon_eeg.html" role="button" id='ex8'><h1 class="btn_exp">Exp. 8</h1></a>
+            </div>
+            <div class="name col-md-6 offset-md-3 text-center">
+                <h1 class="text-white h8 welcome" id='id'>BIENVENIDO</h1>
+            </div>
+            <div class="info col-md-6 offset-md-3 text-start">
+                <h1 class="text-white h8 information" id='song'>SONG</h1>
+                <h1 class="text-white h8 information" id='instrument'>Instrument</h1>
+            </div>
+            <div class="song col-md-6 offset-md-3 d-flex justify-content-center">
+                <audio id="audio" controls="controls">
+                    <source id="user_audio" src=""></source>
+                </audio>
+            </div>
+            <div class="low_btn">
+                <a class="btn btn-x2 text-white h1 btn_elec disabled" style="background-color:#4F4F58;" href="check_connection.html" role="button" id='quality'></a>
+            </div>
         </div>
-        <div class="container main-show1">
-            <a class="btn btn-primary" style="background-color:#0442BF;" href="#" role="button"><h1>Exp. 5</h1></a>
-            <a class="btn btn-primary" style="background-color:#F27649;" href="#" role="button"><h1>Exp. 6</h1></a>
-            <a class="btn btn-primary" style="background-color:#038C33;" href="#" role="button"><h1>Exp. 7</h1></a>
-            <a class="btn btn-primary" style="background-color:#9B45BF;" href="#" role="button"><h1>Exp. 8</h1></a>
-        </div>
-    
+
         <script src="./js/jquery-3.3.1.min.js"></script>
         <script src="./js/popper.min.js"></script>
         <script src="./js/bootstrap.min.js"></script>
+        <script src="./js/socket.io.js"> </script>
+        <script src="./js/socket.io-file-client.js"></script>
+        <script src="./js/experiment_menu.js"></script>
     </body>
 </html>

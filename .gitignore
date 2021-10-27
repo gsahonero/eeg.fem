@@ -1,3 +1,10 @@
 /node_modules
 /public/data
 login.data
+public/json/users.json
+/.tmp.driveupload
+BCI Musical_files
+/venv
+/.idea
+/.vscode
+public/ipynb/.ipynb_checkpoints

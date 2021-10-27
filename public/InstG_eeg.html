@@ -5,112 +5,54 @@
         <script src="./js/jquery-1.10.1.min.js"></script>
         <script src="./js/d3.v3.js" charset="utf-8"></script>
         <script src="./js/epoch.js"></script>
-        <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@900&display=swap" rel="stylesheet">
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@100;200;300;400;500;600;700;900&display=swap" rel="stylesheet">
     </head>
     <body style="background-color:#9B45BF;">
         <style>
+            .instrucciones{
+              margin-top: 10vh;
+            }
             .title{
-            margin-top: 5vh;
-        }
-
-            .parrafo{
-                margin-top: 20vh;
+              margin-top: 5vh;
             }
-
+            .low_btn{
+              margin-top: 26.5vh;
+            }
+            .nro_exp{
+              font-weight: 900;
+            }
+            .inst{
+              font-weight: 400;
+            }
             .sig{
-                margin-top: 10vh;
+              font-weight: 900;
+              font-size: 35px;
             }
-            
+            .sig_btn{
+              margin-left: 35vh;
+            }
         </style>
         <div class="container">
-            <div class="title">
-                <div class="col-md-8 offset-md-0 text-left">
-                    <a class="h4 text-white"><h1>INSTRUCCIONES GENERALES</h1></a>                                        
-                </div>                
+          <div class='row justify-content-center title'>
+            <h1 class="h8 text-white nro_exp" id='nro_exp'>INSTRUCCIONES GENERALES</h1>
+          </div>
+          <div class='row justify-content-center instrucciones'>
+            <a class="h6 text-white" id='experiment'><h1 class="inst">1. Verificar la calidad de conneciones de los electrodos.</h1></a><br>
+            <a class="h6 text-white" id='experiment'><h1 class="inst">2. Recordar no mover ningun musculo del cuerpo mientras se realice el experimento.</h1></a><br>
+            <a class="h6 text-white" id='experiment'><h1 class="inst">3. Descansar entre experimentos minimamente 10 minutos.</h1></a><br>
+            <a class="h6 text-white" id='experiment'><h1 class="inst">4. Para cada experimento humedecer los pads.</h1></a>            <br>
+            <a class="h6 text-white" id='experiment'><h1 class="inst">5. Para cada experimento se tendra instrucciones especificas.</h1></a>
+          </div>
+          <div class="row low_btn">
+            <div class="col align-self-start">
+              <a class="btn btn-x2 text-white h1 sig" style="background-color:#4F4F58;" href="check_connection.html" role="button" id='quality'></a>
             </div>
-            <!--Carousel Wrapper-->
-<div id="carousel-example-2" class="carousel slide carousel-fade" data-ride="carousel">
-    <!--Indicators-->
-    <ol class="carousel-indicators">
-      <li data-target="#carousel-example-2" data-slide-to="0" class="active"></li>
-      <li data-target="#carousel-example-2" data-slide-to="1"></li>
-      <li data-target="#carousel-example-2" data-slide-to="2"></li>
-      <li data-target="#carousel-example-2" data-slide-to="3"></li>
-      <li data-target="#carousel-example-2" data-slide-to="4"></li>
-    </ol>
-    <div class="carousel-inner" role="listbox">
-      <div class="carousel-item active">
-        <div class="view">
-          <img class="d-block w-100" src="https://mdbootstrap.com/img/Photos/Slides/img%20(68).jpg"
-            alt="First slide">
-          <div class="mask rgba-black-light"></div>
-        </div>
-        <div class="carousel-caption">
-          <h1 class="h3-responsive">Verificar la calidad de coneccion de los electrodos</h1>
-          <p><h1 class="h4">1</h1></p>
-        </div>
-      </div>
-      <div class="carousel-item">
-        <div class="view">
-          <img class="d-block w-100" src="https://mdbootstrap.com/img/Photos/Slides/img%20(6).jpg"
-            alt="Second slide">
-          <div class="mask rgba-black-strong"></div>
-        </div>
-        <div class="carousel-caption">
-          <h1 class="h3-responsive">Recordar no mover ningun musculo del cuerpo mientras se realiza el experimento</h1>
-          <p><h1 class="h4">2</h1></p>
-        </div>
-      </div>
-      <div class="carousel-item">
-        <div class="view">
-          <img class="d-block w-100" src="https://mdbootstrap.com/img/Photos/Slides/img%20(9).jpg"
-            alt="Third slide">
-          <div class="mask rgba-black-slight"></div>
-        </div>
-        <div class="carousel-caption">
-          <h1 class="h3-responsive">Descansar entre experimentos minimamente 10 minutos</h1>
-          <p><h1 class="h4">3</h1></p>
-        </div>
-      </div>
-      <div class="carousel-item">
-        <div class="view">
-          <img class="d-block w-100" src="https://mdbootstrap.com/img/Photos/Slides/img%20(9).jpg"
-            alt="Four slide">
-          <div class="mask rgba-black-slight"></div>
-        </div>
-        <div class="carousel-caption">
-          <h1 class="h3-responsive">Para cada experimento humedecer los pads</h1>
-          <p><h1 class="h4">4</h1></p>
-        </div>
-      </div>
-      <div class="carousel-item">
-        <div class="view">
-          <img class="d-block w-100" src="https://mdbootstrap.com/img/Photos/Slides/img%20(9).jpg"
-            alt="Five slide">
-          <div class="mask rgba-black-slight"></div>
-        </div>
-        <div class="carousel-caption">
-          <h1 class="h3-responsive">Para cada experimento se tendra instrucciones especificas</h1>
-          <p><h1 class="h4">5</h1></p>
-        </div>
-      </div>
-    </div>
-    <a class="carousel-control-prev" href="#carousel-example-2" role="button" data-slide="prev">
-      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-      <span class="sr-only">Previous</span>
-    </a>
-    <a class="carousel-control-next" href="#carousel-example-2" role="button" data-slide="next">
-      <span class="carousel-control-next-icon" aria-hidden="true"></span>
-      <span class="sr-only">Next</span>
-    </a>
-  </div>
-            <div class="sig row">
-                <a class="offset-md-0 btn btn-x2 btn-default text-white" style="background-color:#4F4F58;" href="check_connection.html" role="button"><h1>ELECTRODOS</h1></a>
-                <h1 class="offset-md-0 btn btn-x2 btn-default text-white" style="background-color:#4F4F58;" role= "button" id="quality"></h1>
-                <a class="offset-md-5 btn btn-x2 btn-default text-white" style="background-color:#4F4F58;" href="CI_input.html" role="button"><h1>SIGUIENTE</h1></a>
+            <div class="col align-self-end">
+              <a class="btn btn-x2 text-white h1 sig sig_btn" style="background-color:#4F4F58;" href="experiments_eeg.html" role="button">SIGUIENTE</a>
             </div>
+            
         </div>
-
         <script src="./js/popper.min.js"></script>
         <script src="./js/bootstrap.min.js"></script>
         <script src="./js/socket.io.js"> </script>

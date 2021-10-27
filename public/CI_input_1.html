@@ -1,0 +1,42 @@
+<html>
+   <head>
+        <title>BCI Musical</title>
+        <link rel="stylesheet" href="./css/bootstrap.min.css">
+        <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@900&display=swap" rel="stylesheet">
+    </head>
+    <body style="background-color:#038C33;">
+        <style>
+        .content{
+            align-items: center;
+            text-align: center;
+        }
+        .main-show{
+            margin-top: 30vh;
+        }
+        .form-control{
+            font-size: 30px;
+            margin-top: 2vh;
+        }
+        .btn-x2{
+            margin-top: 2vh;
+        }
+        </style>
+        <div class="container main-show">
+            <div class="content">
+                <div class="col-md-4 offset-md-4 text-left">
+                    <h1 class="text-white">INGRESE SU CI:</h1>
+                </div>
+                <div class="col-md-4 offset-md-4">
+                    <input type="text" class="form-control h1" placeholder="SOLO NUMEROS" id='CI'>
+                </div>
+                <a class="btn btn-x2 btn-default text-white" style="background-color:#4F4F58;" href="" role="button" id="check"><h1>EMPEZAR</h1></a>
+            </div>
+        </div>
+    
+        <script src="./js/jquery-3.3.1.min.js"></script>
+        <script src="./js/popper.min.js"></script>
+        <script src="./js/bootstrap.min.js"></script>
+        <script src="./js/socket.io.js"> </script>
+        <script src="./js/CI_input_1.js"></script>
+    </body>
+</html>

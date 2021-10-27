@@ -1,8 +1,7 @@
 const WebSocket = require('ws');
-
+const path = require('path');
 
 // Requires:
-
 
 const { convertArrayToCSV } = require('convert-array-to-csv');
 const converter = require('convert-array-to-csv');
@@ -46,8 +45,11 @@ var on_wait = false;
 var ready = false;
 var writer;
 var to_record_data = [];
+var to_record_data_ML = [];
 var finished = true;
 var number_of_step = 0;
+var r_lat = false;
+var lat = 0;
 
 var state = ["","", ""];
 
@@ -237,8 +239,6 @@ class Cortex {
         })
     }
 
-
-
     injectMarkerRequest(authToken, sessionId, label, value, port, time){
         let socket = this.socket
         const INJECT_MARKER_REQUEST_ID = 13
@@ -269,8 +269,6 @@ class Cortex {
             })
         })
     }
-
-
 
     stopRecord(authToken, sessionId, recordName){
         let socket = this.socket
@@ -463,7 +461,6 @@ class Cortex {
         }
     }
 
-
     /**
      *
      * - check login and grant access
@@ -481,7 +478,11 @@ class Cortex {
                 if (json_data.eeg !== undefined){
                   if (on_record){
                       json_data.eeg[18] = means_marker + "." + number_of_step;
-                      json_data.eeg[19] = number_of_step;
+                      if (r_lat){
+                          json_data.eeg[19] = lat;
+                        }else{
+                          json_data.eeg[19] = number_of_step;
+                      }
                       to_record_data[record_index] = json_data.eeg;
                       record_index = record_index + 1;
                   }
@@ -492,7 +493,6 @@ class Cortex {
             })
         })
     }
-
 
     setupProfile(authToken, headsetId, profileName, status){
         const SETUP_PROFILE_ID = 7
@@ -561,7 +561,6 @@ class Cortex {
             })
         })
     }
-
 
     /**
      *  - handle send training request
@@ -771,12 +770,42 @@ const header = [
 let streams = ['eeg','dev']
 c.sub(streams)
 
+//read JSON
+const userData = require('./public/json/users.json');
+const experiments = require('./public/json/experiments.json');
+const ML_exp = require('./public/json/ML_sec.json');
+
+//Colect all the CI's form the the file userData
+var names = []
+for(let i = 0; i < userData.length; i++){
+    names[i] = userData[i]['CI']
+}
+
+//define the directory path
+const directoryPath = path.join(__dirname, 'Documents');
+
+//const { SSL_OP_COOKIE_EXCHANGE } = require('constants');
+
+////Find in JSON file
+function userIden(userData, data){
+    return userData.find(userIden => userIden.CI === data.CI);
+}
+
+var result = {'CI': 0};
+var exp = {};
+var exp_ ={};
+var mod = {'btn_ML': ''};
+var py_server = 0;
+var empezar = {'empezar': 0};
+var y = 0;
+var exp_ML = {};
+
 /*
 *   Instructions to be followed in case of receiving messages from the clients
 */
 io.on('connect', function(socket){
     
-    var uploader = new SocketIOFile(socket, {
+    /* var uploader = new SocketIOFile(socket, {
 		// uploadDir: {			// multiple directories
 		// 	music: 'data/music',
 		// 	document: 'data/document'
@@ -796,34 +825,288 @@ io.on('connect', function(socket){
 		// 	return `${fname}_${count++}.${ext}`;
 		// }
     });
-    console.log(uploader.options.uploadDir);
+    console.log(uploader.options.uploadDir); */
     
+    io.sockets.emit('py_server', {'py_server': py_server});
+    io.sockets.emit('userId', result);          //Envia de antemano a todos los sockets
+    io.sockets.emit('model_ML', mod);
+    io.sockets.emit('pred', {'pred': y, 'first': 0})
+    io.sockets.emit('start', empezar);
+    io.sockets.emit('exp', exp);
+    io.sockets.emit('experiment', exp_);
+    io.sockets.emit('exp_ML', exp_ML);
+    /* socket.on('filter', (data) => {
+        io.sockets.emit('filter', data);
+        console.log(data.theta)
+    }); */
+
+    socket.on('start', (data) =>{
+        empezar = data;
+        console.log(empezar);
+        io.sockets.emit('start', empezar);
+    });
+    //Recibe los datos iniciales
+    socket.on('y_init', function(data){
+        io.sockets.emit('y_init', data);
+    });
+    //Recibe y_predict de python
+    socket.on('y_predict', function(data){
+        io.sockets.emit('y_predict', data);
+        if (on_record){
+            if (r_lat){
+                save_dat = data.data
+                save_dat[save_dat.length] = data.y_prev     
+                save_dat[save_dat.length] = data.y
+                save_dat[save_dat.length] = number_of_step
+                save_dat[save_dat.length] = data.id_num     
+                save_dat[save_dat.length] = data.id_prev     
+                latency = Date.now()-data.lat;
+                save_dat[save_dat.length] = latency     
+            }
+            to_record_data_ML[record_index_ML] = save_dat;
+            record_index_ML += 1;
+            io.sockets.emit('data_inst', {
+                y: data.y,
+                lat: latency,
+                y_true: number_of_step
+            });
+        }
+    });
     
-	uploader.on('start', (fileInfo) => {
+    socket.on('userCI', function(data) {
+        result = userIden(userData, data);
+        console.log(result);
+        if(result){                             //Si no hay el usuario en JSON, no envia nada
+            io.sockets.emit('userId', result);  //Emite la informacion del usuario.
+            exp_ML = ML_exp[result.ML_start[0]-1];
+            io.sockets.emit('exp_ML', exp_ML);
+            user_CI = result.CI;
+        }else{
+            result = {};                        //Si el usuario ingresa el CI y no esta envia undefined
+            io.sockets.emit('userId', result);  //Emite la informacion del usuario.
+        }
+    });
+
+    socket.on('button_exp', (data) =>{
+        exp = data.experiment;
+        io.sockets.emit('exp', exp);
+        exp_ = experiments[data.experiment-1];
+        io.sockets.emit('experiment', exp_);
+    });
+
+    socket.on('button_ML', function(data) {
+        mod = data;
+        console.log(mod);
+        io.sockets.emit('model_ML', mod);
+        model_num = mod.btn_ML;
+    });
+
+    socket.on('song_ML', (data) =>{
+        song_ml = data;
+        io.sockets.emit('song_ML', song_ml);
+    });
+
+    socket.on('sub_experiment', (data) => {
+        console.log(data);
+        io.sockets.emit('sub_experiment', data);
+    });
+    //Command sec
+    socket.on('ML_sec', function(code){
+        //console.log('Recive: ',code);
+        let func = code.command;
+        let args = code.args;
+        /*
+        * If the command read is'experiment', it recognizes the experiment and
+        * starts recording data
+        */
+        if (func === "start"){
+                number_of_step = 'start';
+                finished = false;
+                console.log('Recognized experiment');
+                experiment = args;
+                io.emit('ML_sec','ready');
+                // we record as soon as we have the experiment defined
+                on_record = true;
+                to_record_data=[];
+                console.log('Starting to record');
+                record_index = 0;
+                r_lat = true
+                save_dat = []
+                record_index_ML = 0;
+                io.emit('start', {'empezar': 1}); // Emite start el python
+        }
+        /*
+        * If the command read is 'beep', it increases the number of step, sends a confirmation message,
+        * and sends  a message of beep with args to generate beep
+        */
+        else if (func === "beep"){
+            number_of_step = 'beep';
+            //console.log('Recognized beep '+args)
+            // send signal to beep
+            let first_arg = args.split(',')[0];
+            let second_arg = args.split(',')[1];
+            io.emit('beep_next', {'step': second_arg});
+            if (second_arg !== undefined){
+                number_of_step = second_arg;
+            }
+            io.emit('beep',parseInt(args,10))
+            setTimeout(function(){
+                io.emit('ML_sec','ready');
+            }, parseInt(args, 10)+20);
+        }
+        
+        else if (func === "play"){
+            number_of_step = number_of_step + 1;
+            means_marker = "play";
+            //console.log('Recognized play '+args)
+            io.emit('play','./data/Musical/'+args);
+            io.emit('ML_sec','ready');
+        }
+        /*
+        * If the command read is 'wait', it increases the number of step, and after that sends a
+        * confirmation message when the time shown in args elapsed.
+        */
+        else if (func === "wait"){
+                number_of_step = 'wait';
+                //console.log('Recognized wait '+args)
+                if (args!== undefined){
+                    let first_arg = args.split(',')[0];
+                    let second_arg = args.split(',')[1];
+                    if (second_arg !== undefined){
+                        number_of_step = second_arg;
+                    }
+                    //console.log('Waiting more than zero with '+first_arg+" and "+second_arg);
+                    setTimeout(function(){
+                        io.emit('ML_sec','ready');
+                    },first_arg);
+                }else{
+                    io.emit('ML_sec','ready');
+                }
+        }
+        /*
+        * If the command read is 'finish', it restart the number of step, saves a .csv document on
+        * the experiment/id folder with the date information on its name.
+        */
+        else if (func === "finish"){
+                number_of_step = 'finish';
+                io.emit('start', {'empezar': 0});
+                if (finished == false){
+                    finished = true;
+                    means_marker = "finish";
+                    on_record = false;
+                    console.log(to_record_data.length);
+                    console.log(to_record_data_ML.length);
+                    let csvData = convertArrayToCSV(to_record_data, {
+                      header,
+                      separator: ','
+                    });
+                    let csvData_ML = convertArrayToCSV(to_record_data_ML, {separator: ','})
+                    var currentDate = new Date();
+                    var date = currentDate.getDate();
+                    var month = currentDate.getMonth() + 1;
+                    var year = currentDate.getFullYear();
+                    var hour = currentDate.getHours();
+                    var minute = currentDate.getMinutes();
+                    var dateString = year + "_" + month + "_" + date + "_" + hour + "_" + minute;
+                    fs.writeFile('./public/data/Musical/'+user_CI+'/data_ML_predict/'+model_num+'/'+dateString+'.csv', csvData, {
+                        "encoding": 'utf8',
+                        "flag": 'a+'
+                        }, function (err) {
+                          if (err) {
+                            console.log('Some error occured - file either not saved or corrupted file saved.');
+                            io.emit('error');
+                          } else{
+                            console.log('Data was saved correctly.');
+                          }
+                        }
+                    );
+                    fs.writeFile('./public/data/Musical/'+user_CI+'/data_ML_predict/'+model_num+'/'+dateString+'_ML.csv', csvData_ML, {
+                        "encoding": 'utf8',
+                        "flag": 'a+'
+                        }, function (err) {
+                          if (err) {
+                            console.log('Some error occured - file either not saved or corrupted file saved.');
+                            io.emit('error');
+                          } else{
+                            console.log('Data was saved correctly.');
+                          }
+                    })
+                    console.log('Finished recording.');
+                }else{
+                    console.log('Recording was already finished.');
+                }
+        }else{
+            number_of_step = -10;
+            console.log('command not recognized.');
+        }
+        io.sockets.emit('number_of', {'number_of': number_of_step});
+    });
+    //Terminate the process in NodeJS and Python
+    socket.on('finish', (data) => {
+        if(data == 'true'){
+            io.sockets.emit('py_server', {'py_server': 1});
+            process.exit();
+        }
+    });
+    //Recive the electrodes data in the windowing.
+    socket.on('data_w', function(data){
+        io.sockets.emit('data_w', data);
+    });
+
+    io.sockets.emit('CI_list', {
+        'CI_list': names
+    });
+
+    socket.on('CI_selected', function(data){
+        let directory = `./public/data/Musical/${data.CI_selected}/data_ML_predict`;
+        let files = fs.readdirSync(directory);
+        io.sockets.emit('file_dir_model', {'model_list': files, 'dir': directory, 'CI_selected': data.CI_selected});
+    });
+
+    socket.on('model_selected', function(data){
+        let directory = `${data.dir}/${data.model_selected}`;
+        let files = fs.readdirSync(directory);
+        io.sockets.emit('file_dir_file', {'file_list': files, 'dir': directory, 'model_selected': data.model_selected, 'CI_selected': data.CI_selected});
+    });
+
+    socket.on('data_analysis', function(data){
+        io.sockets.emit('data_analysis', data);
+    });
+
+    socket.on('data_after_show', function(data){
+        console.log(data.pred_music_num);
+        io.sockets.emit('data_after_show', data);
+    });
+
+    
+    /* uploader.on('start', (fileInfo) => {
 		console.log('Start uploading');
 		console.log("THIS IS THE UPLOADER",uploader);
-	});
-	uploader.on('stream', (fileInfo) => {
+	}); */
+
+	/* uploader.on('stream', (fileInfo) => {
 		console.log(`${fileInfo.wrote} / ${fileInfo.size} byte(s)`);
-	});
-	uploader.on('complete', (fileInfo) => {
+	}); */
+
+	/* uploader.on('complete', (fileInfo) => {
 		console.log('Upload Complete.');
         console.log(fileInfo);
         console.log(experiment," / ",id);
-        
-	});
-	uploader.on('error', (err) => {
+	}); */
+
+	/* uploader.on('error', (err) => {
 		console.log('Error!', err);
-	});
-	uploader.on('abort', (fileInfo) => {
+	}); */
+
+	/* uploader.on('abort', (fileInfo) => {
 		console.log('Aborted: ', fileInfo);
-	});
-     
+	}); */ 
     
     /*
     *   When it receives the 'command' instruction, it responds depending on the command read 
     */
-    socket.on('command',function(code){
+    socket.on('command', function(code){
+        console.log('Recive: ',code);
         let func = code.command;
         let args = code.args;
         /*
@@ -852,9 +1135,9 @@ io.on('connect', function(socket){
             id = args;
             io.emit('command','ready');
             fs.mkdir('./public/data/'+experiment+'/'+id,{recursive: true} ,function(err){
-                if(err){
-                    console.log('Error while creating folder for id:'+id+'. Error:'+err);   
-                }
+                //if(err){
+                console.log('Error while creating folder for id:'+id+'. Error:'+err);   
+                //}
             });
         }
         /*
@@ -867,7 +1150,6 @@ io.on('connect', function(socket){
         * If the command read is 'beep', it increases the number of step, sends a confirmation message,
         * and sends  a message of beep with args to generate beep
         */
-
         else if (func === "beep"){
             number_of_step = number_of_step + 1;
             means_marker = "beep";
@@ -904,11 +1186,13 @@ io.on('connect', function(socket){
         /*
         * If the command read is 'play', it increases the number of step, sends a play instruction, and after that sends a confirmation message.
         */
-        }else if (func === "play"){
+        }
+        
+        else if (func === "play"){
             number_of_step = number_of_step + 1;
             means_marker = "play";
             console.log('Recognized play '+args)
-            io.emit('play',args);
+            io.emit('play','./data/'+experiment+'/'+args);
             io.emit('command','ready');
         }
         /*
@@ -996,15 +1280,14 @@ io.on('connect', function(socket){
         }
     });
 
-
     /*
     * When the instruction 'audio_files' is received , it broadcasts the info to the clients, or sends a message
     */
-    socket.on('media_files',(data)=>{
+    //socket.on('media_files',(data)=>{
         /*
             Reads the list of files in an specified path
         */
-        let missing=[];
+        /* let missing=[];
         fs.readdir(dir_path, function(err, items) {
             console.log("Look for this data",data);
             data.forEach(element => {
@@ -1028,11 +1311,11 @@ io.on('connect', function(socket){
             
         });
         
-    })
+    }) */
     /*
     * When the instruction 'folder' is received , it broadcasts the message to the clients
     */
-    socket.on('folder',(data)=>{
+    /* socket.on('folder',(data)=>{
         socket.broadcast.emit('folder','./data/'+data);
         experiment = data; 
         dir_path='./public/data/'+experiment;
@@ -1046,10 +1329,8 @@ io.on('connect', function(socket){
                 console.log('Created folder: '+dir_path);
             }
         });
-        uploader.options.uploadDir = dir_path;
-        
-        
-    })
+        uploader.options.uploadDir = dir_path; 
+    }) */
 
     /*
     * Actions of the joystick are saved on state
@@ -1060,7 +1341,6 @@ io.on('connect', function(socket){
     socket.on('joystick:axes',(data)=>{
         //console.log(data);
     });
-
     //Command Data
     socket.on('commands:x',(data)=>{
         state[1]=data;

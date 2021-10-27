@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="./css/bootstrap.min.css">
+        <script src="./js/jquery-1.10.1.min.js"></script>
+        <script src="./js/d3.v3.js" charset="utf-8"></script>
+        <script src="./js/epoch.js"></script>
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@100;200;300;400;500;600;700;900&display=swap" rel="stylesheet">
+    </head>
+    <body style="background-color:#0FA67B;">
+        <style>
+            .title{
+                margin-top: 2vh;
+                font-weight: 900;
+                font-size: 3em;
+            }
+            .cont{
+                margin-top: 5vh;
+            }
+            .body-text-title{
+                font-weight: 700;
+                font-size: 2.5em;
+            }
+            .body-text{
+                font-weight: 500;
+                font-size: 2.5em;
+                margin-left: 2vh;
+            }
+            .elec{
+                font-weight: 500;
+                font-size: 2.5em;
+                margin-left: 5vh;
+                background-color: red;
+            }
+            .img_sep{
+                margin-top: 2vh;
+                margin-left: 7vh;
+            }
+            .img_sep1{
+                margin-top: 3vh;
+                margin-left: 7vh;
+            }
+            .img_sep2{
+                margin-left: 7vh;   
+            }
+            .back-ac{
+                background-color: #A0D9C9;
+            }
+            .info{
+                border-right: 2.5px solid rgb(255, 255, 255);
+            }
+            .sec{
+                border-left: 2.5px solid rgb(255, 255, 255);
+            }
+        </style>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col d-flex justify-content-center">
+                    <a class="h1 text-white title">PANEL DE REVISOR</a>
+                </div>
+            </div>
+            <div class="row cont">
+                <div class="col info">
+                    <a class="h1 text-white body-text-title">SUJETO: </a><br>
+                    <a class="h1 text-white body-text"  id="user_ci"></a><br>
+                    <a class="h1 text-white body-text-title">CANCION: </a><br>
+                    <a class="h1 text-white body-text"  id="user_song"></a><br>
+                    <a class="h1 text-white body-text-title">MODELO: </a><br>
+                    <a class="h1 text-white body-text"  id="nro_ML"></a><br>
+                    <a class="h1 text-white body-text-title">ELECTRODOS: </a><br>
+                    <a class="h1 text-white elec"   id="quality"></a><br>
+                    <a class="h1 text-white body-text-title">PRECISION: </a><br>
+                    <a class="h1 text-white body-text"  id="pres_y"></a><br>
+                    <a class="h1 text-white body-text"  id="total"></a><br>
+                    <!-- <a class="h1 text-white body-text-title">PARPADEOS: </a><br>
+                    <a class="h1 text-white body-text"  id="blink_in"></a><br>
+                    <a class="h1 text-white body-text"  id="blink_out"></a><br> -->
+                </div>
+                <div class="col-6">
+                    <div class="col">
+                        <a class="h1 text-white body-text-title d-flex justify-content-center">LATENCIA</a>
+                        <canvas id="mycanvas" width="700px" height="250px"></canvas>
+                    </div>
+                    <div class="w-100"></div>
+                    <div class="col">
+                        <a class="h1 text-white body-text-title d-flex justify-content-center">ACIERTOS</a>
+                        <canvas class="back-ac" id="mycanvas2" width="700px" height="250px"></canvas>
+                    </div>
+                </div>
+                <div class="col sec">
+                    <a  class = "h1 text-white body-text-title">SECUENCIA: </a><br>
+                    <img    class = 'img_sep2' src="./img/5.png"   height="55px"    id="img_1"><br>
+                    <img    class = 'img_sep'  src=""   height="55px"   id="img_2"><br>
+                    <img    class = 'img_sep1' src=""   height="55px"   id="img_3"><br>
+                    <img    class = 'img_sep'  src="./img/5.png"   height="55px"    id="img_4"><br>
+                    <img    class = 'img_sep'  src=""   height="55px"   id="img_5"><br>
+                    <img    class = 'img_sep1' src=""   height="55px"   id="img_6"><br>
+                    <img    class = 'img_sep'  src="./img/5.png"   height="55px"    id="img_7">
+                </div>
+            </div>
+        </div>
+        <script src="./js/popper.min.js"></script>
+        <script src="./js/bootstrap.min.js"></script>
+        <script src="./js/socket.io.js"> </script>
+        <script src="./js/smoothie.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.5.0/chart.js"></script>
+        <script src="./js/inst_panel.js"></script>
+    </body>
+</html>

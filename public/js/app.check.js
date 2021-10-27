@@ -1,26 +1,24 @@
 document.addEventListener('DOMContentLoaded', function () {
-
-    
     /**
      *  Changes the style according to the params
      *
      * @param {*} param Connection quality
      * @returns appearance to be shown
      */
-    function defineClass(param){
+    function defineColor(param){
         if (param === 0){
-            verdict = "alert alert-dark";
+            verdict = "#C0C0C0";
         }else if (param === 1){
-            verdict = "alert alert-danger";
+            verdict = "#FF0000";
         }else if (param === 2){
-            verdict = "alert alert-warning";
+            verdict = "#FFFF00";
         }else if (param === 3){
-            verdict = "alert alert-info"
+            verdict = "#9ACD32"
         }else if (param === 4){
-            verdict = "alert alert-success"
+            verdict = "#00FF00"
         }
         else{
-            verdict = "alert alert-light";
+            verdict = "#f7f7f6";
         }
         return verdict;
     }
@@ -32,20 +30,20 @@ document.addEventListener('DOMContentLoaded', function () {
         */
         socket.on('dev', function(data){
             let connection_information = data[2];
-            $("#AF3").attr('class', defineClass(connection_information[0]));
-            $("#F7").attr('class', defineClass(connection_information[1]));
-            $("#F3").attr('class', defineClass(connection_information[2]));
-            $("#FC5").attr('class', defineClass(connection_information[3]));
-            $("#T7").attr('class', defineClass(connection_information[4]));
-            $("#P7").attr('class', defineClass(connection_information[5]));
-            $("#O1").attr('class', defineClass(connection_information[6]));
-            $("#O2").attr('class', defineClass(connection_information[7]));
-            $("#P8").attr('class', defineClass(connection_information[8]));
-            $("#T8").attr('class', defineClass(connection_information[9]));
-            $("#FC6").attr('class', defineClass(connection_information[10]));
-            $("#F4").attr('class', defineClass(connection_information[11]));
-            $("#F8").attr('class', defineClass(connection_information[12]));
-            $("#AF4").attr('class', defineClass(connection_information[13]));
+            $('#AF3').css('background-color', defineColor(connection_information[0]));
+            $("#F7").css('background-color', defineColor(connection_information[1]));
+            $("#F3").css('background-color', defineColor(connection_information[2]));
+            $("#FC5").css('background-color', defineColor(connection_information[3]));
+            $("#T7").css('background-color', defineColor(connection_information[4]));
+            $("#P7").css('background-color', defineColor(connection_information[5]));
+            $("#O1").css('background-color', defineColor(connection_information[6]));
+            $("#O2").css('background-color', defineColor(connection_information[7]));
+            $("#P8").css('background-color', defineColor(connection_information[8]));
+            $("#T8").css('background-color', defineColor(connection_information[9]));
+            $("#FC6").css('background-color', defineColor(connection_information[10]));
+            $("#F4").css('background-color', defineColor(connection_information[11]));
+            $("#F8").css('background-color', defineColor(connection_information[12]));
+            $("#AF4").css('background-color', defineColor(connection_information[13]));
         });
     });
 }, false);

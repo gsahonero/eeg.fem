@@ -80,13 +80,20 @@ document.addEventListener('DOMContentLoaded', function () {
                 total = total + connection_information[index];
             }
             let avg = (total/14/4*100).toFixed(2);
-            $("#quality").text(avg);
+            if(avg < 100){
+                $('#quality').removeClass('disabled');
+                $('#quality').css("background-color", "red");
+                $("#quality").text('Electrodos | '+avg);
+            }else{
+                $('#quality').addClass('disabled');
+                $('#quality').css("background-color", "#4F4F58");
+                $("#quality").text('Electrodos | 100');
+            }
         });
         /*
         * When the instruction 'data' is received , it changes the graph according to the data received
         */
         socket.on('data',function(data){
-
             counter = counter + 1;
             if (counter<100)
                 console.log(data)
